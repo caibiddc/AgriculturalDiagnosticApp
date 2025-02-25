@@ -5,11 +5,11 @@ import {VStack} from '@/components/ui/vstack';
 import {LucideIcon, SettingsIcon} from 'lucide-react-native';
 import {useState} from 'react';
 import {ScrollView} from 'react-native';
-import {DownloadIcon} from './icons/download';
-import {FaqIcon} from './icons/faq';
-import {NewsBlogIcon} from './icons/news-blog';
-import {ProfileIcon} from './icons/profile';
-import {SubscriptionIcon} from './icons/subscription';
+import {DownloadIcon} from '../icons/download';
+import {FaqIcon} from '../icons/faq';
+import {NewsBlogIcon} from '../icons/news-blog';
+import {ProfileIcon} from '../icons/profile';
+import {SubscriptionIcon} from '../icons/subscription';
 
 type Icons = {
   iconName: LucideIcon | typeof Icon;

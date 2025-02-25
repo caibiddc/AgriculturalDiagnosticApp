@@ -1,5 +1,5 @@
+import {localRemove, localSet} from '@/utils';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {localGet, localSet, localRemove} from '@/utils';
 
 interface AuthState {
   isAuthenticated: boolean;

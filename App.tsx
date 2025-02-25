@@ -1,6 +1,7 @@
 import {removeNavigation, setNavigation} from '@/api';
+import MobileFooter from '@/components/layout/footer/MobileFooter';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
-import {useAppDispatch} from '@/hooks';
+import {useAppDispatch, useAppSelector} from '@/hooks';
 import AppNavigator from '@/routes';
 import {RootStackParamList} from '@/routes/types';
 import {
@@ -17,9 +18,6 @@ import React, {useEffect} from 'react';
 import {SafeAreaView, useColorScheme} from 'react-native';
 import {Provider} from 'react-redux';
 import './global.css';
-import {bottomTabsList} from './screens/layout/config';
-import DashboardLayout from './screens/layout/DashboardLayout';
-import MobileFooter from './screens/layout/MobileFooter';
 import {store} from './store';
 
 // 从 AsyncStorage 获取初始数据
@@ -35,6 +33,7 @@ function App(): React.JSX.Element {
   const navigationRef =
     React.useRef<NavigationContainerRef<RootStackParamList>>(null);
   const dispatch = useAppDispatch();
+  const {isAuthenticated} = useAppSelector(state => state.auth);
 
   useEffect(() => {
     loadInitialData().then(({token, authRouter, authButtons}) => {
@@ -56,10 +55,8 @@ function App(): React.JSX.Element {
     <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
       <NavigationContainer ref={navigationRef}>
         <SafeAreaView className="h-full w-full">
-          <DashboardLayout title="Company Name" isSidebarVisible={true}>
-            <AppNavigator />
-          </DashboardLayout>
-          <MobileFooter footerIcons={bottomTabsList} />
+          <AppNavigator />
+          {isAuthenticated && <MobileFooter />}
         </SafeAreaView>
       </NavigationContainer>
     </GluestackUIProvider>

@@ -14,18 +14,13 @@ import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {
   ChevronRightIcon,
   GlobeIcon,
-  HomeIcon,
   InboxIcon,
   LucideIcon,
   PhoneIcon,
 } from 'lucide-react-native';
 import React, {useState} from 'react';
-import {Image, SafeAreaView, ScrollView} from 'react-native';
-import DashboardLayout from '../layout/DashboardLayout';
-import MobileFooter from '../layout/MobileFooter';
-import {HeartIcon} from '../layout/icons/heart';
-import {ProfileIcon} from '../layout/icons/profile';
-import {bottomTabsList} from '../layout/config';
+import {Image, ScrollView} from 'react-native';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
 interface UserStats {
   friends: string;
@@ -246,13 +241,14 @@ const MainContent: React.FC = () => {
               })}
             </VStack>
           </VStack>
+          <Button
+            onPress={() => {
+              setOpenLogoutAlertDialog(true);
+            }}>
+            <ButtonText className="font-medium">退出登陆</ButtonText>
+          </Button>
         </VStack>
-        <Button
-          onPress={() => {
-            setOpenLogoutAlertDialog(true);
-          }}>
-          <ButtonText className="font-medium">退出登陆</ButtonText>
-        </Button>
+
         <LogoutAlertDialog
           openLogoutAlertDialog={openLogoutAlertDialog}
           setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
@@ -263,7 +259,11 @@ const MainContent: React.FC = () => {
 };
 
 const ProfileScreen: React.FC<ProfileScreenProps> = () => {
-  return <MainContent />;
+  return (
+    <DashboardLayout title="个人信息">
+      <MainContent />
+    </DashboardLayout>
+  );
 };
 
 export default ProfileScreen;
