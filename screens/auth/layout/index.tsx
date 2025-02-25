@@ -19,8 +19,7 @@ const AuthLayout = (props: AuthLayoutProps) => {
             className="relative hidden md:flex h-full w-full flex-1  items-center  justify-center"
             space="md">
             <Image
-              height="100%"
-              width="100%"
+              style={{width: '100%', height: '100%'}}
               source={require('@/assets/auth/radialGradient.png')}
               className="object-cover h-full w-full"
               alt="Radial Gradient"
