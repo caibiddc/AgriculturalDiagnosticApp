@@ -78,8 +78,10 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
         password: data.password,
       });
 
-      if (response.code === 200 && response.data?.token) {
-        const token = response.data.token;
+      if (response.code !== 200) throw new Error(response.message);
+      const token = response.data?.token;
+
+      if (token) {
         toast.show({
           placement: 'bottom right',
           render: ({id}) => (
@@ -108,7 +110,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
           ),
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.show({
         placement: 'bottom right',
         render: ({id}) => (
