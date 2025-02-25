@@ -4,7 +4,7 @@ import SignIn from '@/screens/auth/signin';
 import {SignUp} from '@/screens/auth/signup';
 import {SplashScreen} from '@/screens/auth/splash-screen';
 import DocumentScreen from '@/screens/document';
-import HomeScreen from '@/screens/home'; // 假设你有一个 Home 页面
+import HomeScreen from '@/screens/home';
 import ProfileScreen from '@/screens/profile';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -16,9 +16,21 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Document" component={DocumentScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{title: '首页', headerShown: false}}
+      />
+      <Tab.Screen
+        name="Document"
+        component={DocumentScreen}
+        options={{title: '病害百科', headerShown: false}}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{title: '个人信息', headerShown: false}}
+      />
     </Tab.Navigator>
   );
 };

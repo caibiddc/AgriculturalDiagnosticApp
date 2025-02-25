@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@expo/html-elements": "^0.4.2",
+    "@gluestack-ui/alert-dialog": "^0.1.36",
     "@gluestack-ui/button": "^1.0.12",
     "@gluestack-ui/checkbox": "^0.1.37",
     "@gluestack-ui/form-control": "^0.1.19",
