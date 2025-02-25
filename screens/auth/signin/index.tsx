@@ -99,7 +99,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
 
       if (token) {
         toast.show({
-          placement: 'bottom right',
+          placement: 'top right',
           render: ({id}) => (
             <Toast nativeID={id} variant="solid" action="success">
               <ToastTitle>登录成功！</ToastTitle>
