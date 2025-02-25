@@ -43,7 +43,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   };
   return (
     <SafeAreaView>
-      <Heading size="2xl">Home</Heading>
+      <Heading size="2xl">Main</Heading>
       <Button
         onPress={() => {
           logout();
