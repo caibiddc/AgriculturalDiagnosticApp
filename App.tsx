@@ -16,7 +16,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
+import './global.css';
 import {
   Colors,
   DebugInstructions,
@@ -32,7 +32,7 @@ type SectionProps = PropsWithChildren<{
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
+    <View style={styles.sectionContainer} className="bg-red-500">
       <Text
         style={[
           styles.sectionTitle,
