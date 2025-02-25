@@ -1,4 +1,4 @@
-import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
+import {Button, ButtonText} from '@/components/ui/button';
 import {
   Checkbox,
   CheckboxIcon,
@@ -28,31 +28,18 @@ import {Pressable} from '@/components/ui/pressable';
 import {Text} from '@/components/ui/text';
 import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
 import {VStack} from '@/components/ui/vstack';
+import {SignInProps} from '@/routes/types';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {Link} from '@react-navigation/native';
 import {AlertTriangle} from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {Keyboard} from 'react-native';
 import {z} from 'zod';
 import {AuthLayout} from '../layout';
-import {SignInProps} from '@/routes/types';
-import {Link} from '@react-navigation/native';
-
-// 用户信息列表
-const USERS = [
-  {
-    email: 'gabrial@gmail.com',
-    password: 'Gabrial@123',
-  },
-  {
-    email: 'tom@gmail.com',
-    password: 'Tom@123',
-  },
-  {
-    email: 'thomas@gmail.com',
-    password: 'Thomas@1234',
-  },
-];
+import {loginApi} from '@/api/modules/auth';
+import {useAppDispatch} from '@/hooks';
+import {setAuthenticated, setToken} from '@/store/modules/authSlice';
 
 // 登录验证Schema，支持用户名或邮箱
 const loginSchema = z.object({
@@ -81,19 +68,18 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
     emailValid: true,
     passwordValid: true,
   });
+  const dispatch = useAppDispatch();
 
-  const onSubmit = (data: LoginSchemaType) => {
-    // 判断是否为邮箱
-    const isEmail = data.login.includes('@');
-    const user = isEmail
-      ? USERS.find(user => user.email === data.login) // 如果是邮箱，查找邮箱
-      : USERS.find(user => user.email.split('@')[0] === data.login); // 如果是用户名，查找用户名部分
+  const onSubmit = async (data: LoginSchemaType) => {
+    try {
+      // 发送网络请求，使用 loginApi 来进行登录验证
+      const response = await loginApi({
+        username: data.login, // 假设 `login` 字段保存的是邮箱或用户名
+        password: data.password,
+      });
 
-    if (user) {
-      if (user.password !== data.password) {
-        setValidated({emailValid: true, passwordValid: false});
-      } else {
-        setValidated({emailValid: true, passwordValid: true});
+      if (response.code === 200 && response.data?.token) {
+        const token = response.data.token;
         toast.show({
           placement: 'bottom right',
           render: ({id}) => (
@@ -102,13 +88,37 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
             </Toast>
           ),
         });
-        reset();
+
+        dispatch(setAuthenticated(true)); // 设置用户为已认证
+        dispatch(setToken(token)); // 保存 token
+
+        reset(); // 重置表单
+      } else {
+        // 如果返回的响应没有 token 或出错
+        setValidated({
+          emailValid: false,
+          passwordValid: false,
+        });
+        toast.show({
+          placement: 'bottom right',
+          render: ({id}) => (
+            <Toast nativeID={id} variant="solid" action="error">
+              <ToastTitle>登录失败，请检查您的用户名或密码</ToastTitle>
+            </Toast>
+          ),
+        });
       }
-    } else {
-      setValidated({emailValid: false, passwordValid: true});
+    } catch (error) {
+      toast.show({
+        placement: 'bottom right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>登录失败，请稍后重试</ToastTitle>
+          </Toast>
+        ),
+      });
     }
   };
-
   const [showPassword, setShowPassword] = useState(false);
 
   const handleState = () => {

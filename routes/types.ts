@@ -16,4 +16,7 @@ export type ForgotPasswordProps = NativeStackScreenProps<
   'ForgotPassword'
 >;
 export type SplashProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
-export type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
+export type HomeScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Home'
+>;

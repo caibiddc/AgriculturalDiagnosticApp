@@ -9,9 +9,9 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
-import {Alert} from 'react-native';
+import {Alert, ToastAndroid} from 'react-native';
 import {AxiosCanceler} from './helper/axiosCancel';
-import {checkStatus} from './helper/checkStatus';
+// import {checkStatus} from './helper/checkStatus';
 import {ApiResponse} from './interface';
 // import NProgress from '@/config/nprogress';
 // import {
@@ -43,7 +43,7 @@ export type DeleteConfig = Omit<AxiosRequestConfig, 'params'> & {
 export type DownloadConfig = Omit<PostConfig, 'responseType'>;
 
 const config = {
-  baseURL: '/api',
+  baseURL: 'http://10.114.25.159:5000',
   timeout: 10000,
   withCredentials: true,
 };
@@ -92,7 +92,7 @@ class RequestHttp {
         // config.loading && tryHideFullScreenLoading();
 
         if (data.code && data.code !== 200) {
-          Alert.alert('Error', data.msg);
+          ToastAndroid.show('Error', data.msg);
           return Promise.reject(data);
         }
 
@@ -108,13 +108,13 @@ class RequestHttp {
         }
 
         if (error.message.indexOf('timeout') !== -1)
-          Alert.alert('Error', '请求超时，请稍后再试');
+          ToastAndroid.show('请求超时，请稍后再试', ToastAndroid.SHORT);
         if (error.message.indexOf('Network Error') !== -1)
-          Alert.alert('Error', '网络错误！请您稍后重试');
+          ToastAndroid.show('网络错误！请您稍后重试', ToastAndroid.SHORT);
 
         if (response && response.status === 401) {
           store.dispatch(removeToken());
-          Alert.alert('Error', '登录失效，请重新登录');
+          ToastAndroid.show('登录失效，请重新登录', ToastAndroid.SHORT);
           if (navigation) {
             navigation.reset({
               index: 0,
@@ -124,7 +124,7 @@ class RequestHttp {
         }
 
         if (response) {
-          checkStatus(response.status);
+          // checkStatus(response.status);
         }
 
         return Promise.reject(error);

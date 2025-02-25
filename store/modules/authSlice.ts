@@ -2,12 +2,14 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {localGet, localSet, localRemove} from '@/utils';
 
 interface AuthState {
+  isAuthenticated: boolean;
   token: string | null;
   authRouter: string[];
   authButtons: {[propName: string]: any};
 }
 
 const initialState: AuthState = {
+  isAuthenticated: false,
   token: null,
   authRouter: [],
   authButtons: {},
@@ -17,6 +19,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setAuthenticated(state, action: PayloadAction<boolean>) {
+      state.isAuthenticated = action.payload;
+    },
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
       localSet('auth_token', action.payload);
@@ -50,6 +55,7 @@ const authSlice = createSlice({
 // 导出 actions 和 reducer
 export const {
   setToken,
+  setAuthenticated,
   removeToken,
   setAuthRouter,
   setAuthButtons,

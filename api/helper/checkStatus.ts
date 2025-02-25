@@ -1,4 +1,4 @@
-import {Alert} from 'react-native';
+import {Alert, ToastAndroid} from 'react-native';
 
 /**
  * @description: 校验网络请求状态码
@@ -8,36 +8,36 @@ import {Alert} from 'react-native';
 export const checkStatus = (status: number): void => {
   switch (status) {
     case 400:
-      Alert.alert('请求失败！请您稍后重试');
+      ToastAndroid.show('请求失败！请您稍后重试', ToastAndroid.SHORT);
       break;
     case 401:
-      Alert.alert('登录失效！请您重新登录');
+      ToastAndroid.show('登录失效！请您重新登录', ToastAndroid.SHORT);
       break;
     case 403:
-      Alert.alert('当前账号无权限访问！');
+      ToastAndroid.show('当前账号无权限访问！', ToastAndroid.SHORT);
       break;
     case 404:
-      Alert.alert('你所访问的资源不存在！');
+      ToastAndroid.show('你所访问的资源不存在！', ToastAndroid.SHORT);
       break;
     case 405:
-      Alert.alert('请求方式错误！请您稍后重试');
+      ToastAndroid.show('请求方式错误！请您稍后重试', ToastAndroid.SHORT);
       break;
     case 408:
-      Alert.alert('请求超时！请您稍后重试');
+      ToastAndroid.show('请求超时！请您稍后重试', ToastAndroid.SHORT);
       break;
     case 500:
-      Alert.alert('服务异常！');
+      ToastAndroid.show('服务异常！', ToastAndroid.SHORT);
       break;
     case 502:
-      Alert.alert('网关错误！');
+      ToastAndroid.show('网关错误！', ToastAndroid.SHORT);
       break;
     case 503:
-      Alert.alert('服务不可用！');
+      ToastAndroid.show('服务不可用！', ToastAndroid.SHORT);
       break;
     case 504:
-      Alert.alert('网关超时！');
+      ToastAndroid.show('网关超时！', ToastAndroid.SHORT);
       break;
     default:
-      Alert.alert('请求失败！');
+      ToastAndroid.show('请求失败！', ToastAndroid.SHORT);
   }
 };
