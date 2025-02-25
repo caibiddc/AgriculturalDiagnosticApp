@@ -7,7 +7,7 @@
 
 import SignIn from '@/screens/auth/signin';
 import React from 'react';
-import {SafeAreaView, useColorScheme} from 'react-native';
+import {useColorScheme} from 'react-native';
 import {GluestackUIProvider} from './components/ui/gluestack-ui-provider';
 import './global.css';
 
