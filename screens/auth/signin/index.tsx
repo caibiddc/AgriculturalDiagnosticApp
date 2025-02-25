@@ -35,6 +35,8 @@ import {Controller, useForm} from 'react-hook-form';
 import {Keyboard} from 'react-native';
 import {z} from 'zod';
 import {AuthLayout} from '../layout';
+import {SignInProps} from '@/routes/types';
+import {Link} from '@react-navigation/native';
 
 const USERS = [
   {
@@ -59,7 +61,7 @@ const loginSchema = z.object({
 
 type LoginSchemaType = z.infer<typeof loginSchema>;
 
-const LoginWithLeftBackground = () => {
+const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
   const {
     control,
     handleSubmit,
@@ -114,8 +116,7 @@ const LoginWithLeftBackground = () => {
       <VStack className="md:items-center" space="md">
         <Pressable
           onPress={() => {
-            //TODO: 返回
-            console.log('返回');
+            navigation.goBack();
           }}>
           <Icon
             as={ArrowLeftIcon}
@@ -238,9 +239,11 @@ const LoginWithLeftBackground = () => {
                 </Checkbox>
               )}
             />
-            <LinkText className="font-medium text-sm text-primary-700 group-hover/link:text-primary-600">
-              忘记密码?
-            </LinkText>
+            <Link screen="ForgotPassword">
+              <LinkText className="font-medium text-sm text-primary-700 group-hover/link:text-primary-600">
+                忘记密码?
+              </LinkText>
+            </Link>
           </HStack>
         </VStack>
         <VStack className="w-full my-7 " space="lg">
@@ -250,12 +253,13 @@ const LoginWithLeftBackground = () => {
         </VStack>
         <HStack className="self-center" space="sm">
           <Text size="md">没有账户?</Text>
-
-          <LinkText
-            className="font-medium text-primary-700 group-hover/link:text-primary-600  group-hover/pressed:text-primary-700"
-            size="md">
-            注册
-          </LinkText>
+          <Link screen="SignUp">
+            <LinkText
+              className="font-medium text-primary-700 group-hover/link:text-primary-600  group-hover/pressed:text-primary-700"
+              size="md">
+              注册
+            </LinkText>
+          </Link>
         </HStack>
       </VStack>
     </VStack>
@@ -264,10 +268,10 @@ const LoginWithLeftBackground = () => {
 
 LoginWithLeftBackground.displayName = 'LoginWithLeftBackground';
 
-const SignIn = () => {
+const SignIn: React.FC<SignInProps> = props => {
   return (
     <AuthLayout>
-      <LoginWithLeftBackground />
+      <LoginWithLeftBackground {...props} />
     </AuthLayout>
   );
 };
