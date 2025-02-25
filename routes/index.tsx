@@ -3,12 +3,12 @@ import {ForgotPassword} from '@/screens/auth/forgot-password';
 import SignIn from '@/screens/auth/signin';
 import {SignUp} from '@/screens/auth/signup';
 import {SplashScreen} from '@/screens/auth/splash-screen';
+import DocumentScreen from '@/screens/document';
 import HomeScreen from '@/screens/home'; // 假设你有一个 Home 页面
+import ProfileScreen from '@/screens/profile';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList, RootTabParamList} from './types';
-import DocumentScreen from '@/screens/document';
-import ProfileScreen from '@/screens/profile';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -23,12 +23,12 @@ const MainTabNavigator = () => {
   );
 };
 
-export default function AppNavigator() {
+const MainStackNavigator = () => {
   // 从 Redux 中获取用户是否已认证的状态
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
 
   return (
-    <Stack.Navigator initialRouteName="Splash">
+    <Stack.Navigator initialRouteName={isAuthenticated ? 'Main' : 'Splash'}>
       {/* 如果已认证，允许访问 Home；否则跳转到登录页面 */}
       {isAuthenticated ? (
         <Stack.Screen
@@ -62,4 +62,8 @@ export default function AppNavigator() {
       )}
     </Stack.Navigator>
   );
+};
+
+export default function AppNavigator() {
+  return <MainStackNavigator />;
 }
