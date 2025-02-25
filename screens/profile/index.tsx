@@ -14,12 +14,18 @@ import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {
   ChevronRightIcon,
   GlobeIcon,
+  HomeIcon,
   InboxIcon,
   LucideIcon,
   PhoneIcon,
 } from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Image, SafeAreaView, ScrollView} from 'react-native';
+import DashboardLayout from '../layout/DashboardLayout';
+import MobileFooter from '../layout/MobileFooter';
+import {HeartIcon} from '../layout/icons/heart';
+import {ProfileIcon} from '../layout/icons/profile';
+import {bottomTabsList} from '../layout/config';
 
 interface UserStats {
   friends: string;
@@ -257,11 +263,7 @@ const MainContent: React.FC = () => {
 };
 
 const ProfileScreen: React.FC<ProfileScreenProps> = () => {
-  return (
-    <SafeAreaView className="h-full w-full">
-      <MainContent />
-    </SafeAreaView>
-  );
+  return <MainContent />;
 };
 
 export default ProfileScreen;

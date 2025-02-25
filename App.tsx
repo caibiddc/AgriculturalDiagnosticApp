@@ -14,9 +14,12 @@ import {
   NavigationContainerRef,
 } from '@react-navigation/native';
 import React, {useEffect} from 'react';
-import {useColorScheme} from 'react-native';
+import {SafeAreaView, useColorScheme} from 'react-native';
 import {Provider} from 'react-redux';
 import './global.css';
+import {bottomTabsList} from './screens/layout/config';
+import DashboardLayout from './screens/layout/DashboardLayout';
+import MobileFooter from './screens/layout/MobileFooter';
 import {store} from './store';
 
 // 从 AsyncStorage 获取初始数据
@@ -52,7 +55,12 @@ function App(): React.JSX.Element {
   return (
     <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
       <NavigationContainer ref={navigationRef}>
-        <AppNavigator />
+        <SafeAreaView className="h-full w-full">
+          <DashboardLayout title="Company Name" isSidebarVisible={true}>
+            <AppNavigator />
+          </DashboardLayout>
+          <MobileFooter footerIcons={bottomTabsList} />
+        </SafeAreaView>
       </NavigationContainer>
     </GluestackUIProvider>
   );
