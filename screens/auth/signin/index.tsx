@@ -52,8 +52,8 @@ const USERS = [
 ];
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Email is required').email(),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().min(1, '请输入邮箱').email(),
+  password: z.string().min(1, '请输入密码'),
   rememberme: z.boolean().optional(),
 });
 
@@ -86,7 +86,7 @@ const LoginWithLeftBackground = () => {
           render: ({id}) => {
             return (
               <Toast nativeID={id} variant="solid" action="success">
-                <ToastTitle>Logged in successfully!</ToastTitle>
+                <ToastTitle>登录成功！</ToastTitle>
               </Toast>
             );
           },
@@ -114,8 +114,8 @@ const LoginWithLeftBackground = () => {
       <VStack className="md:items-center" space="md">
         <Pressable
           onPress={() => {
-            //TODO: Go back
-            console.log('Go back');
+            //TODO: 返回
+            console.log('返回');
           }}>
           <Icon
             as={ArrowLeftIcon}
@@ -125,9 +125,9 @@ const LoginWithLeftBackground = () => {
         </Pressable>
         <VStack>
           <Heading className="md:text-center" size="3xl">
-            Log in
+            登录
           </Heading>
-          <Text>Login to start using gluestack</Text>
+          <Text>登录后开始使用 智能诊断系统</Text>
         </VStack>
       </VStack>
       <VStack className="w-full">
@@ -136,7 +136,7 @@ const LoginWithLeftBackground = () => {
             isInvalid={!!errors?.email || !validated.emailValid}
             className="w-full">
             <FormControlLabel>
-              <FormControlLabelText>Email</FormControlLabelText>
+              <FormControlLabelText>邮箱</FormControlLabelText>
             </FormControlLabel>
             <Controller
               defaultValue=""
@@ -155,7 +155,7 @@ const LoginWithLeftBackground = () => {
               render={({field: {onChange, onBlur, value}}) => (
                 <Input>
                   <InputField
-                    placeholder="Enter email"
+                    placeholder="请输入邮箱"
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -169,16 +169,16 @@ const LoginWithLeftBackground = () => {
               <FormControlErrorIcon as={AlertTriangle} />
               <FormControlErrorText>
                 {errors?.email?.message ||
-                  (!validated.emailValid && 'Email ID not found')}
+                  (!validated.emailValid && '未找到该邮箱')}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
-          {/* Label Message */}
+          {/* 密码字段 */}
           <FormControl
             isInvalid={!!errors.password || !validated.passwordValid}
             className="w-full">
             <FormControlLabel>
-              <FormControlLabelText>Password</FormControlLabelText>
+              <FormControlLabelText>密码</FormControlLabelText>
             </FormControlLabel>
             <Controller
               defaultValue=""
@@ -198,7 +198,7 @@ const LoginWithLeftBackground = () => {
                 <Input>
                   <InputField
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter password"
+                    placeholder="请输入密码"
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -215,7 +215,7 @@ const LoginWithLeftBackground = () => {
               <FormControlErrorIcon as={AlertTriangle} />
               <FormControlErrorText>
                 {errors?.password?.message ||
-                  (!validated.passwordValid && 'Password was incorrect')}
+                  (!validated.passwordValid && '密码错误')}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
@@ -227,34 +227,34 @@ const LoginWithLeftBackground = () => {
               render={({field: {onChange, value}}) => (
                 <Checkbox
                   size="sm"
-                  value="Remember me"
+                  value="记住我"
                   isChecked={value}
                   onChange={onChange}
-                  aria-label="Remember me">
+                  aria-label="记住我">
                   <CheckboxIndicator>
                     <CheckboxIcon as={CheckIcon} />
                   </CheckboxIndicator>
-                  <CheckboxLabel>Remember me</CheckboxLabel>
+                  <CheckboxLabel>记住我</CheckboxLabel>
                 </Checkbox>
               )}
             />
             <LinkText className="font-medium text-sm text-primary-700 group-hover/link:text-primary-600">
-              Forgot Password?
+              忘记密码?
             </LinkText>
           </HStack>
         </VStack>
         <VStack className="w-full my-7 " space="lg">
           <Button className="w-full" onPress={handleSubmit(onSubmit)}>
-            <ButtonText className="font-medium">Log in</ButtonText>
+            <ButtonText className="font-medium">登录</ButtonText>
           </Button>
         </VStack>
         <HStack className="self-center" space="sm">
-          <Text size="md">Don't have an account?</Text>
+          <Text size="md">没有账户?</Text>
 
           <LinkText
             className="font-medium text-primary-700 group-hover/link:text-primary-600  group-hover/pressed:text-primary-700"
             size="md">
-            Sign up
+            注册
           </LinkText>
         </HStack>
       </VStack>
