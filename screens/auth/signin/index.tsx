@@ -38,6 +38,7 @@ import {AuthLayout} from '../layout';
 import {SignInProps} from '@/routes/types';
 import {Link} from '@react-navigation/native';
 
+// 用户信息列表
 const USERS = [
   {
     email: 'gabrial@gmail.com',
@@ -53,8 +54,13 @@ const USERS = [
   },
 ];
 
+// 登录验证Schema，支持用户名或邮箱
 const loginSchema = z.object({
-  email: z.string().min(1, '请输入邮箱').email(),
+  login: z
+    .string()
+    .min(1, '请输入用户名或邮箱')
+    .email()
+    .or(z.string().min(1, '请输入用户名')),
   password: z.string().min(1, '请输入密码'),
   rememberme: z.boolean().optional(),
 });
@@ -77,21 +83,24 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
   });
 
   const onSubmit = (data: LoginSchemaType) => {
-    const user = USERS.find(element => element.email === data.email);
+    // 判断是否为邮箱
+    const isEmail = data.login.includes('@');
+    const user = isEmail
+      ? USERS.find(user => user.email === data.login) // 如果是邮箱，查找邮箱
+      : USERS.find(user => user.email.split('@')[0] === data.login); // 如果是用户名，查找用户名部分
+
     if (user) {
-      if (user.password !== data.password)
+      if (user.password !== data.password) {
         setValidated({emailValid: true, passwordValid: false});
-      else {
+      } else {
         setValidated({emailValid: true, passwordValid: true});
         toast.show({
           placement: 'bottom right',
-          render: ({id}) => {
-            return (
-              <Toast nativeID={id} variant="solid" action="success">
-                <ToastTitle>登录成功！</ToastTitle>
-              </Toast>
-            );
-          },
+          render: ({id}) => (
+            <Toast nativeID={id} variant="solid" action="success">
+              <ToastTitle>登录成功！</ToastTitle>
+            </Toast>
+          ),
         });
         reset();
       }
@@ -99,6 +108,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
       setValidated({emailValid: false, passwordValid: true});
     }
   };
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleState = () => {
@@ -106,6 +116,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
       return !showState;
     });
   };
+
   const handleKeyPress = () => {
     Keyboard.dismiss();
     handleSubmit(onSubmit)();
@@ -134,19 +145,19 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
       <VStack className="w-full">
         <VStack space="xl" className="w-full">
           <FormControl
-            isInvalid={!!errors?.email || !validated.emailValid}
+            isInvalid={!!errors?.login || !validated.emailValid}
             className="w-full">
             <FormControlLabel>
-              <FormControlLabelText>邮箱</FormControlLabelText>
+              <FormControlLabelText>用户名或邮箱</FormControlLabelText>
             </FormControlLabel>
             <Controller
               defaultValue=""
-              name="email"
+              name="login"
               control={control}
               rules={{
                 validate: async value => {
                   try {
-                    await loginSchema.parseAsync({email: value});
+                    await loginSchema.parseAsync({login: value});
                     return true;
                   } catch (error: any) {
                     return error.message;
@@ -156,7 +167,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
               render={({field: {onChange, onBlur, value}}) => (
                 <Input>
                   <InputField
-                    placeholder="请输入邮箱"
+                    placeholder="请输入用户名或邮箱"
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -169,8 +180,8 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
             <FormControlError>
               <FormControlErrorIcon as={AlertTriangle} />
               <FormControlErrorText>
-                {errors?.email?.message ||
-                  (!validated.emailValid && '未找到该邮箱')}
+                {errors?.login?.message ||
+                  (!validated.emailValid && '未找到该用户名或邮箱')}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
