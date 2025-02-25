@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
-import {HStack} from '@/components/ui/hstack';
-import {VStack} from '@/components/ui/vstack';
-import {Heading} from '@/components/ui/heading';
-import {Text} from '@/components/ui/text';
-import {LinkText} from '@/components/ui/link';
+import {registerApi} from '@/api/modules/auth';
+import {Button, ButtonText} from '@/components/ui/button';
+import {
+  Checkbox,
+  CheckboxIcon,
+  CheckboxIndicator,
+  CheckboxLabel,
+} from '@/components/ui/checkbox';
 import {
   FormControl,
   FormControlError,
@@ -13,13 +14,8 @@ import {
   FormControlLabel,
   FormControlLabelText,
 } from '@/components/ui/form-control';
-import {Input, InputField, InputIcon, InputSlot} from '@/components/ui/input';
-import {
-  Checkbox,
-  CheckboxIcon,
-  CheckboxIndicator,
-  CheckboxLabel,
-} from '@/components/ui/checkbox';
+import {Heading} from '@/components/ui/heading';
+import {HStack} from '@/components/ui/hstack';
 import {
   ArrowLeftIcon,
   CheckIcon,
@@ -27,16 +23,20 @@ import {
   EyeOffIcon,
   Icon,
 } from '@/components/ui/icon';
-import {Button, ButtonText, ButtonIcon} from '@/components/ui/button';
-import {Keyboard} from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
-import {z} from 'zod';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {AlertTriangle} from 'lucide-react-native';
+import {Input, InputField, InputIcon, InputSlot} from '@/components/ui/input';
+import {LinkText} from '@/components/ui/link';
 import {Pressable} from '@/components/ui/pressable';
-import {AuthLayout} from '../layout';
+import {Text} from '@/components/ui/text';
+import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
+import {VStack} from '@/components/ui/vstack';
 import {SignUpProps} from '@/routes/types';
+import {zodResolver} from '@hookform/resolvers/zod';
 import {Link} from '@react-navigation/native';
+import {AlertTriangle} from 'lucide-react-native';
+import React, {useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {AuthLayout} from '../layout';
 
 const signUpSchema = z.object({
   email: z.string().min(1, '邮箱是必填项').email('请输入有效的邮箱地址'),
@@ -75,19 +75,53 @@ const SignUpWithLeftBackground: React.FC<SignUpProps> = ({navigation}) => {
   });
   const toast = useToast();
 
-  const onSubmit = (data: SignUpSchemaType) => {
+  const onSubmit = async (data: SignUpSchemaType) => {
     if (data.password === data.confirmpassword) {
-      toast.show({
-        placement: 'bottom right',
-        render: ({id}) => {
-          return (
-            <Toast nativeID={id} variant="solid" action="success">
-              <ToastTitle>成功</ToastTitle>
-            </Toast>
-          );
-        },
-      });
-      reset();
+      try {
+        // 注册
+        const response = await registerApi({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (response.code !== 201) {
+          toast.show({
+            placement: 'bottom right',
+            render: ({id}) => {
+              return (
+                <Toast nativeID={id} variant="solid" action="error">
+                  <ToastTitle>注册失败</ToastTitle>
+                </Toast>
+              );
+            },
+          });
+          return;
+        }
+
+        toast.show({
+          placement: 'bottom right',
+          render: ({id}) => {
+            return (
+              <Toast nativeID={id} variant="solid" action="success">
+                <ToastTitle>注册成功！</ToastTitle>
+              </Toast>
+            );
+          },
+        });
+        navigation.pop();
+        reset();
+      } catch (error: any) {
+        toast.show({
+          placement: 'bottom right',
+          render: ({id}) => {
+            return (
+              <Toast nativeID={id} variant="solid" action="error">
+                <ToastTitle>{error.response.data.message}</ToastTitle>
+              </Toast>
+            );
+          },
+        });
+      }
     } else {
       toast.show({
         placement: 'bottom right',
@@ -115,11 +149,6 @@ const SignUpWithLeftBackground: React.FC<SignUpProps> = ({navigation}) => {
     setShowConfirmPassword(showState => {
       return !showState;
     });
-  };
-
-  const handleKeyPress = () => {
-    Keyboard.dismiss();
-    handleSubmit(onSubmit)();
   };
 
   return (
@@ -171,7 +200,6 @@ const SignUpWithLeftBackground: React.FC<SignUpProps> = ({navigation}) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    onSubmitEditing={handleKeyPress}
                     returnKeyType="done"
                   />
                 </Input>
@@ -212,7 +240,6 @@ const SignUpWithLeftBackground: React.FC<SignUpProps> = ({navigation}) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    onSubmitEditing={handleKeyPress}
                     returnKeyType="done"
                     type={showPassword ? 'text' : 'password'}
                   />
@@ -257,7 +284,6 @@ const SignUpWithLeftBackground: React.FC<SignUpProps> = ({navigation}) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    onSubmitEditing={handleKeyPress}
                     returnKeyType="done"
                     type={showConfirmPassword ? 'text' : 'password'}
                   />

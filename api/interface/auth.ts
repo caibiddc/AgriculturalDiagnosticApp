@@ -1,21 +1,24 @@
 export interface DictItem {
-	key: number;
-	value: string;
+  key: number;
+  value: string;
 }
 
 export interface ReqLogin {
-	username: string;
-	password: string;
+  login: string;
+  password: string;
 }
 
-export interface ReqRegister extends ReqLogin {}
+export interface ReqRegister {
+  email: string;
+  password: string;
+}
 
 export type ResLogin = {
-	token: string;
+  token: string;
 };
 
 export type ResAuthButtons = {
-	[propName: string]: any;
+  [propName: string]: any;
 };
 
 export type ResAuthDict = Array<DictItem>;

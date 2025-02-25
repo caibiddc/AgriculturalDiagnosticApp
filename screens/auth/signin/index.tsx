@@ -74,7 +74,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
     try {
       // 发送网络请求，使用 loginApi 来进行登录验证
       const response = await loginApi({
-        username: data.login, // 假设 `login` 字段保存的是邮箱或用户名
+        login: data.login,
         password: data.password,
       });
 

@@ -18,6 +18,7 @@ import {ApiResponse} from './interface';
 //   showFullScreenLoading,
 //   tryHideFullScreenLoading,
 // } from '@/config/serviceLoading';
+import {ResultEnum} from '@/enums';
 import {RootStackParamList} from '@/routes/types';
 
 export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -68,8 +69,11 @@ class RequestHttp {
         }
 
         // NProgress.start();
+        // 重复请求不需要取消，在 api 服务中通过指定的第三个参数: { cancel: false } 来控制
         config.cancel ??= true;
         config.cancel && axiosCanceler.addPending(config);
+
+        // 当前请求不需要显示 loading，在 api 服务中通过指定的第三个参数: { loading: false } 来控制
         config.loading ??= true;
         // config.loading && showFullScreenLoading();
 
@@ -88,10 +92,16 @@ class RequestHttp {
       (response: AxiosResponse & {config: CustomAxiosRequestConfig}) => {
         const {data, config} = response;
         // NProgress.done();
+        // * 在请求结束后，移除本次请求(关闭loading)
         axiosCanceler.removePending(config);
         // config.loading && tryHideFullScreenLoading();
 
-        if (data.code && data.code !== 200) {
+        if (
+          data.code &&
+          data.code !== ResultEnum.SUCCESS &&
+          data.code !== ResultEnum.CREATE_SUCCESS &&
+          data.code !== ResultEnum.DELETE_SUCCESS
+        ) {
           ToastAndroid.show('Error', data.msg);
           return Promise.reject(data);
         }
