@@ -32,7 +32,7 @@ import {SignInProps} from '@/routes/types';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Link} from '@react-navigation/native';
 import {AlertTriangle} from 'lucide-react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {Keyboard} from 'react-native';
 import {z} from 'zod';
@@ -40,6 +40,7 @@ import {AuthLayout} from '../layout';
 import {loginApi} from '@/api/modules/auth';
 import {useAppDispatch} from '@/hooks';
 import {setAuthenticated, setToken} from '@/store/modules/authSlice';
+import {localGet, localSet} from '@/utils';
 
 // 登录验证Schema，支持用户名或邮箱
 const loginSchema = z.object({
@@ -59,6 +60,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: {errors},
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
@@ -69,6 +71,20 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
     passwordValid: true,
   });
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    (async () => {
+      const [login, password] = await Promise.all([
+        localGet('login'),
+        localGet('password'),
+      ]);
+      if (login && password) {
+        setValue('login', login);
+        setValue('password', password);
+        setValue('rememberme', true);
+      }
+    })();
+  }, []);
 
   const onSubmit = async (data: LoginSchemaType) => {
     try {
@@ -90,6 +106,11 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
             </Toast>
           ),
         });
+
+        if (data.rememberme) {
+          localSet('login', data.login);
+          localSet('password', data.password);
+        }
 
         dispatch(setAuthenticated(true)); // 设置用户为已认证
         dispatch(setToken(token)); // 保存 token
