@@ -139,7 +139,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
           <Heading className="md:text-center" size="3xl">
             登录
           </Heading>
-          <Text>登录后开始使用 智能诊断系统</Text>
+          <Text>登录后开始使用“病害智能诊断系统”</Text>
         </VStack>
       </VStack>
       <VStack className="w-full">

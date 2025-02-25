@@ -139,7 +139,7 @@ const SignUpWithLeftBackground: React.FC<SignUpProps> = ({navigation}) => {
           <Heading className="md:text-center" size="3xl">
             注册
           </Heading>
-          <Text>注册并开始使用 Gluestack</Text>
+          <Text>注册并开始使用“病害智能诊断系统”</Text>
         </VStack>
       </VStack>
       <VStack className="w-full">
