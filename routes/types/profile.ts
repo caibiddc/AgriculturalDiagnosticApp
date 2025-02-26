@@ -3,7 +3,7 @@ import {ProfileParamList} from '../module/ProfileNavigator';
 import {RootStackParamList} from '../module/RootNavigator';
 
 export type ProfileScreenProps = NativeStackScreenProps<
-  ProfileParamList,
+  ProfileParamList & {CreatePassword: undefined},
   'ProfileMain'
 >;
 export type DiagnosisHistoryProps = NativeStackScreenProps<
