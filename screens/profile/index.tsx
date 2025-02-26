@@ -9,7 +9,7 @@ import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
 import {Center} from '@/components/ui/center';
 import {Divider} from '@/components/ui/divider';
 import {HStack} from '@/components/ui/hstack';
-import {EditIcon, Icon} from '@/components/ui/icon';
+import {EditIcon} from '@/components/ui/icon';
 import {Text} from '@/components/ui/text';
 import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
 import {VStack} from '@/components/ui/vstack';
@@ -19,36 +19,12 @@ import {
   ChevronRightIcon,
   CircleHelp,
   LogOut,
-  LucideIcon,
   MessageSquareMore,
   RotateCcw,
   Settings,
 } from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {Image, ScrollView} from 'react-native';
-
-interface UserStats {
-  history: number;
-  historyLabel: string;
-  report: number;
-  reportLabel: string;
-  star: number;
-  starLabel: string;
-  order: number;
-  orderLabel: string;
-}
-const userData: UserStats[] = [
-  {
-    history: 23,
-    historyLabel: '诊断历史',
-    report: 123,
-    reportLabel: '上报历史',
-    star: 40,
-    starLabel: '我的收藏',
-    order: 1,
-    orderLabel: '我的订单',
-  },
-];
 
 const MainContent: React.FC<ProfileScreenProps> = () => {
   const toast = useToast();
@@ -59,6 +35,12 @@ const MainContent: React.FC<ProfileScreenProps> = () => {
     username: '未知',
     address: '未知',
   } as ResUserProfile);
+  const [userData, setUserData] = useState({
+    history: 23,
+    report: 123,
+    star: 40,
+    order: 1,
+  });
 
   const fetchAvatar = async () => {
     const response = await getAvatar();
@@ -135,49 +117,43 @@ const MainContent: React.FC<ProfileScreenProps> = () => {
                   {profileData.address}
                 </Text>
               </VStack>
-              <>
-                {userData.map((item, index) => {
-                  return (
-                    <HStack className="items-center gap-1" key={index}>
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold justify-center items-center">
-                          {item.history}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.historyLabel}
-                        </Text>
-                      </VStack>
-                      <Divider orientation="vertical" className="h-10" />
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold">
-                          {item.report}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.reportLabel}
-                        </Text>
-                      </VStack>
-                      <Divider orientation="vertical" className="h-10" />
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold">
-                          {item.star}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.starLabel}
-                        </Text>
-                      </VStack>
-                      <Divider orientation="vertical" className="h-10" />
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold">
-                          {item.order}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.orderLabel}
-                        </Text>
-                      </VStack>
-                    </HStack>
-                  );
-                })}
-              </>
+              <HStack className="items-center gap-1">
+                <VStack className="py-3 px-4 items-center" space="xs">
+                  <Text className="text-dark font-roboto font-semibold justify-center items-center">
+                    {userData.history}
+                  </Text>
+                  <Text className="text-dark text-xs font-roboto">
+                    诊断历史
+                  </Text>
+                </VStack>
+                <Divider orientation="vertical" className="h-10" />
+                <VStack className="py-3 px-4 items-center" space="xs">
+                  <Text className="text-dark font-roboto font-semibold">
+                    {userData.report}
+                  </Text>
+                  <Text className="text-dark text-xs font-roboto">
+                    上报历史
+                  </Text>
+                </VStack>
+                <Divider orientation="vertical" className="h-10" />
+                <VStack className="py-3 px-4 items-center" space="xs">
+                  <Text className="text-dark font-roboto font-semibold">
+                    {userData.star}
+                  </Text>
+                  <Text className="text-dark text-xs font-roboto">
+                    我的收藏
+                  </Text>
+                </VStack>
+                <Divider orientation="vertical" className="h-10" />
+                <VStack className="py-3 px-4 items-center" space="xs">
+                  <Text className="text-dark font-roboto font-semibold">
+                    {userData.order}
+                  </Text>
+                  <Text className="text-dark text-xs font-roboto">
+                    我的订单
+                  </Text>
+                </VStack>
+              </HStack>
               <Button
                 variant="outline"
                 action="secondary"
@@ -227,7 +203,7 @@ const MainContent: React.FC<ProfileScreenProps> = () => {
                 },
                 {
                   iconName: RotateCcw,
-                  subText: '重置密码',
+                  subText: '修改密码',
                   endIcon: ChevronRightIcon,
                 },
                 {
