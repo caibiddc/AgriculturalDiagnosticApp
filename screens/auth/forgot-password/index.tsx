@@ -19,7 +19,7 @@ import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {AlertTriangle} from 'lucide-react-native';
 import {Pressable} from '@/components/ui/pressable';
-import {AuthLayout} from '../layout';
+import {AuthLayout} from '../../../components/layout/AuthLayout';
 import {ForgotPasswordProps} from '@/routes/types';
 
 const forgotPasswordSchema = z.object({

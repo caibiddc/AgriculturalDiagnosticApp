@@ -36,7 +36,7 @@ import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {Keyboard} from 'react-native';
 import {z} from 'zod';
-import {AuthLayout} from '../layout';
+import {AuthLayout} from '../../../components/layout/AuthLayout';
 import {loginApi} from '@/api/modules/auth';
 import {useAppDispatch} from '@/hooks';
 import {setAuthenticated, setToken} from '@/store/modules/authSlice';

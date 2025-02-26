@@ -1,8 +1,8 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import DocumentScreen from '@/screens/document';
 import HomeScreen from '@/screens/home';
-import ProfileScreen from '@/screens/profile';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IconMap, IconSelectedMap} from '../config/icons';
+import ProfileNavigator from './ProfileNavigator';
 
 export type BottomTabParamList = {
   Home: undefined;
@@ -35,7 +35,7 @@ const TabNavigator = () => (
     />
     <Tab.Screen
       name="Profile"
-      component={ProfileScreen}
+      component={ProfileNavigator}
       options={{title: '个人信息', headerShown: false}}
     />
   </Tab.Navigator>

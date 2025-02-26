@@ -3,7 +3,7 @@ import {Heading} from '@/components/ui/heading';
 import {Icon} from '@/components/ui/icon';
 import {VStack} from '@/components/ui/vstack';
 import {SplashProps} from '@/routes/types';
-import {AuthLayout} from '../layout';
+import {AuthLayout} from '../../../components/layout/AuthLayout';
 import {LogoIcon} from './assets/icons/logo-icon';
 
 const SplashScreenWithLeftBackground: React.FC<SplashProps> = ({

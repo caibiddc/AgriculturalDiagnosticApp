@@ -36,7 +36,7 @@ import {AlertTriangle} from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {z} from 'zod';
-import {AuthLayout} from '../layout';
+import {AuthLayout} from '../../../components/layout/AuthLayout';
 
 const signUpSchema = z.object({
   email: z.string().min(1, '邮箱是必填项').email('请输入有效的邮箱地址'),

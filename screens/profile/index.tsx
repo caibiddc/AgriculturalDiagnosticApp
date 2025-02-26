@@ -26,7 +26,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {Image, ScrollView} from 'react-native';
 
-const MainContent: React.FC<ProfileScreenProps> = () => {
+const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const toast = useToast();
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -200,11 +200,17 @@ const MainContent: React.FC<ProfileScreenProps> = () => {
                   iconName: Settings,
                   subText: '系统设置',
                   endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('SystemSettings');
+                  },
                 },
                 {
                   iconName: RotateCcw,
                   subText: '修改密码',
                   endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('CreatePassword');
+                  },
                 },
                 {
                   iconName: LogOut,
@@ -223,11 +229,17 @@ const MainContent: React.FC<ProfileScreenProps> = () => {
                   iconName: CircleHelp,
                   subText: '用户协议及服务条款',
                   endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('UserAgreement');
+                  },
                 },
                 {
                   iconName: MessageSquareMore,
                   subText: '应用反馈',
                   endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('AppFeedback');
+                  },
                 },
               ]}
             />
