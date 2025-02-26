@@ -211,10 +211,14 @@ module.exports = {
         roboto: ['Roboto', 'sans-serif'],
       },
       fontWeight: {
+        hairline: '100',
         extrablack: '950',
       },
       fontSize: {
         '2xs': '10px',
+      },
+      border: {
+        2: '2px',
       },
       boxShadow: {
         'hard-1': '-2px 2px 8px 0px rgba(38, 38, 38, 0.20)',
