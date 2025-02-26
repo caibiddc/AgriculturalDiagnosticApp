@@ -3,7 +3,7 @@ import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
 import {useAppDispatch, useAppSelector} from '@/hooks';
 import {setSidebar} from '@/store/modules/globalSlice';
-import {PropsWithChildren} from 'react';
+import {PropsWithChildren, useState} from 'react';
 import MobileHeader from './header/MobileHeader';
 import WebHeader from './header/WebHeader';
 import Sidebar from './sidebar';
@@ -13,11 +13,10 @@ export interface DashboardLayoutProps extends PropsWithChildren<{}> {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({title, children}) => {
-  const {sidebar} = useAppSelector(state => state.global);
-  const dispatch = useAppDispatch();
+  const [sidebar, setSidebar] = useState<boolean>(false);
 
   function toggleSidebar() {
-    dispatch(setSidebar(!sidebar));
+    setSidebar(!sidebar);
   }
 
   return (
