@@ -82,8 +82,7 @@ const MainContent: React.FC = () => {
           <Box className="relative w-full md:h-[478px] h-[380px]">
             <Image
               source={require('@/assets/profile/image2.png')}
-              height={100}
-              width={100}
+              style={{width: '100%', height: '100%'}}
               alt="Banner Image"
             />
           </Box>
@@ -161,7 +160,7 @@ const MainContent: React.FC = () => {
                   // setShowModal(true)
                 }}
                 className="gap-3 relative">
-                <ButtonText className="text-dark">Edit Profile</ButtonText>
+                <ButtonText className="text-dark">编辑信息</ButtonText>
                 <ButtonIcon as={EditIcon} />
               </Button>
             </VStack>
