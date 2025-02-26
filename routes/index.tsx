@@ -9,12 +9,36 @@ import ProfileScreen from '@/screens/profile';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {BottomTabParamList, RootStackParamList} from './types';
+import {BookIcon, HomeIcon, UserIcon} from 'lucide-react-native';
+
+const IconMap = {
+  Home: <HomeIcon />,
+  Document: <BookIcon />,
+  Profile: <UserIcon />,
+} as const;
+
+const IconSelectedMap = {
+  Home: <HomeIcon />,
+  Document: <BookIcon />,
+  Profile: <UserIcon />,
+} as const;
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 const TabNavigator = () => (
-  <Tab.Navigator initialRouteName="Home">
+  <Tab.Navigator
+    initialRouteName="Home"
+    screenOptions={({route}) => {
+      return {
+        tabBarIcon: ({focused, color, size}) => {
+          const icon = focused
+            ? IconSelectedMap[route.name as keyof typeof IconSelectedMap]
+            : IconMap[route.name as keyof typeof IconMap];
+          return <icon.type size={size} color={color} />;
+        },
+      };
+    }}>
     <Tab.Screen
       name="Home"
       component={HomeScreen}
