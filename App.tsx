@@ -1,7 +1,6 @@
 import {removeNavigation, setNavigation} from '@/api';
-import MobileFooter from '@/components/layout/footer/MobileFooter';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
-import {useAppDispatch, useAppSelector} from '@/hooks';
+import {useAppDispatch} from '@/hooks';
 import AppNavigator from '@/routes';
 import {RootStackParamList} from '@/routes/types';
 import {
@@ -31,11 +30,9 @@ const loadInitialData = async () => {
 };
 
 function App(): React.JSX.Element {
-  const {isAuthenticated} = useAppSelector(state => state.auth);
   return (
     <SafeAreaView className="h-full w-full">
       <AppNavigator />
-      {isAuthenticated && <MobileFooter />}
     </SafeAreaView>
   );
 }

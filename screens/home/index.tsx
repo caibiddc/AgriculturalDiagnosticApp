@@ -2,14 +2,14 @@ import {Heading} from '@/components/ui/heading';
 import {SafeAreaView} from '@/components/ui/safe-area-view';
 import {HomeScreenProps} from '@/routes/types';
 import React from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   return (
     <SafeAreaView>
-      <DashboardLayout title="首页">
+      <MainLayout>
         <Heading size="2xl">Main</Heading>
-      </DashboardLayout>
+      </MainLayout>
     </SafeAreaView>
   );
 };

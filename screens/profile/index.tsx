@@ -20,7 +20,7 @@ import {
 } from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Image, ScrollView} from 'react-native';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 interface UserStats {
   friends: string;
@@ -260,9 +260,9 @@ const MainContent: React.FC = () => {
 
 const ProfileScreen: React.FC<ProfileScreenProps> = () => {
   return (
-    <DashboardLayout title="个人信息">
+    <MainLayout>
       <MainContent />
-    </DashboardLayout>
+    </MainLayout>
   );
 };
 

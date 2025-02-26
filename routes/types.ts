@@ -7,6 +7,11 @@ export type RootStackParamList = {
   SignUp: undefined;
   ForgotPassword: undefined;
   Splash: undefined;
+  Main: undefined;
+};
+
+// 底部 Tab 参数类型
+export type BottomTabParamList = {
   Home: undefined;
   Document: undefined;
   Profile: undefined;
@@ -20,15 +25,14 @@ export type ForgotPasswordProps = NativeStackScreenProps<
   'ForgotPassword'
 >;
 export type SplashProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
-export type HomeScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Home'
->;
-export type DocumentScreenProps = NativeStackScreenProps<
-  RootStackParamList,
+
+// Tab 组件参数
+export type HomeScreenProps = BottomTabScreenProps<BottomTabParamList, 'Home'>;
+export type DocumentScreenProps = BottomTabScreenProps<
+  BottomTabParamList,
   'Document'
 >;
-export type ProfileScreenProps = NativeStackScreenProps<
-  RootStackParamList,
+export type ProfileScreenProps = BottomTabScreenProps<
+  BottomTabParamList,
   'Profile'
 >;
