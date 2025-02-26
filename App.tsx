@@ -6,6 +6,7 @@ import AppNavigator from '@/routes';
 import {RootStackParamList} from '@/routes/types';
 import {
   setAuthButtons,
+  setAuthenticated,
   setAuthRouter,
   setToken,
 } from '@/store/modules/authSlice';
@@ -23,9 +24,10 @@ import {store} from './store';
 // 从 AsyncStorage 获取初始数据
 const loadInitialData = async () => {
   const token = await localGet('auth_token');
+  const isAuthenticated = (await localGet('is_authenticated')) || false;
   const authRouter = await localGet('auth_router');
   const authButtons = await localGet('auth_buttons');
-  return {token, authRouter, authButtons};
+  return {token, authRouter, authButtons, isAuthenticated};
 };
 
 function App(): React.JSX.Element {
@@ -36,12 +38,15 @@ function App(): React.JSX.Element {
   const {isAuthenticated} = useAppSelector(state => state.auth);
 
   useEffect(() => {
-    loadInitialData().then(({token, authRouter, authButtons}) => {
-      // 初始化 store
-      dispatch(setToken(token));
-      dispatch(setAuthRouter(authRouter));
-      dispatch(setAuthButtons(authButtons));
-    });
+    loadInitialData().then(
+      ({token, authRouter, authButtons, isAuthenticated}) => {
+        // 初始化 store
+        dispatch(setToken(token));
+        dispatch(setAuthenticated(isAuthenticated));
+        dispatch(setAuthRouter(authRouter));
+        dispatch(setAuthButtons(authButtons));
+      },
+    );
     if (navigationRef.current) {
       setNavigation(navigationRef.current);
     }
