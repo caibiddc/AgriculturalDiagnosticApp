@@ -1,6 +1,5 @@
 import ProfileScreen from '@/screens/profile';
 import AppFeedbackScreen from '@/screens/profile/app-feedback';
-import CreatePassword from '@/screens/profile/create-password';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
 import MyOrdersScreen from '@/screens/profile/my-order';
 import MyCollectionScreen from '@/screens/profile/my-collection';
@@ -16,7 +15,6 @@ export type ProfileParamList = {
   MyCollection: undefined;
   MyOrders: undefined;
   SystemSettings: undefined;
-  CreatePassword: undefined;
   UserAgreement: undefined;
   AppFeedback: undefined;
 };
@@ -55,11 +53,6 @@ const ProfileNavigator = () => {
         name="SystemSettings"
         component={SystemSettingsScreen}
         options={{title: '系统设置'}}
-      />
-      <Stack.Screen
-        name="CreatePassword"
-        component={CreatePassword}
-        options={{title: '修改密码'}}
       />
       <Stack.Screen
         name="UserAgreement"

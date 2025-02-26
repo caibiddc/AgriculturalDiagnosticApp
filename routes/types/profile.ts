@@ -1,5 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfileParamList} from '../module/ProfileNavigator';
+import {RootStackParamList} from '../module/RootNavigator';
 
 export type ProfileScreenProps = NativeStackScreenProps<
   ProfileParamList,
@@ -30,7 +31,7 @@ export type UserAgreementProps = NativeStackScreenProps<
   'UserAgreement'
 >;
 export type CreatePasswordProps = NativeStackScreenProps<
-  ProfileParamList,
+  RootStackParamList,
   'CreatePassword'
 >;
 export type AppFeedbackProps = NativeStackScreenProps<
