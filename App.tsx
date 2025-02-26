@@ -31,16 +31,24 @@ const loadInitialData = async () => {
 };
 
 function App(): React.JSX.Element {
+  const {isAuthenticated} = useAppSelector(state => state.auth);
+  return (
+    <SafeAreaView className="h-full w-full">
+      <AppNavigator />
+      {isAuthenticated && <MobileFooter />}
+    </SafeAreaView>
+  );
+}
+
+function NavigationWrapper(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const navigationRef =
     React.useRef<NavigationContainerRef<RootStackParamList>>(null);
   const dispatch = useAppDispatch();
-  const {isAuthenticated} = useAppSelector(state => state.auth);
 
   useEffect(() => {
     loadInitialData().then(
       ({token, authRouter, authButtons, isAuthenticated}) => {
-        // 初始化 store
         dispatch(setToken(token));
         dispatch(setAuthenticated(isAuthenticated));
         dispatch(setAuthRouter(authRouter));
@@ -55,14 +63,10 @@ function App(): React.JSX.Element {
       removeNavigation();
     };
   }, []);
-
   return (
     <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
       <NavigationContainer ref={navigationRef}>
-        <SafeAreaView className="h-full w-full">
-          <AppNavigator />
-          {isAuthenticated && <MobileFooter />}
-        </SafeAreaView>
+        <App />
       </NavigationContainer>
     </GluestackUIProvider>
   );
@@ -71,7 +75,7 @@ function App(): React.JSX.Element {
 function AppWrapper(): React.JSX.Element {
   return (
     <Provider store={store}>
-      <App />
+      <NavigationWrapper />
     </Provider>
   );
 }
