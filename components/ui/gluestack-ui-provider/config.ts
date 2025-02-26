@@ -1,5 +1,5 @@
 'use client';
-import { vars } from 'nativewind';
+import {vars} from 'nativewind';
 
 export const config = {
   light: vars({
@@ -148,6 +148,20 @@ export const config = {
     '--color-background-success': '237 252 242',
     '--color-background-muted': '247 248 247',
     '--color-background-info': '235 248 254',
+
+    /* Border */
+    '--color-border-0': '#FDFEFE',
+    '--color-border-50': '#F3F3F3',
+    '--color-border-100': '#E6E6E6',
+    '--color-border-200': '#DDDCDB',
+    '--color-border-300': '#D3D3D3',
+    '--color-border-400': '#A5A3A3',
+    '--color-border-500': '#8C8D8D',
+    '--color-border-600': '#737474',
+    '--color-border-700': '#535252',
+    '--color-border-800': '#414141',
+    '--color-border-900': '#272624',
+    '--color-border-950': '#1A1717',
 
     /* Focus Ring Indicator  */
     '--color-indicator-primary': '55 55 55',
@@ -300,6 +314,20 @@ export const config = {
     '--color-background-success': '28 43 33',
     '--color-background-muted': '51 51 51',
     '--color-background-info': '26 40 46',
+
+    /* Border */
+    '--color-border-0': '#1A1717',
+    '--color-border-50': '#272624',
+    '--color-border-100': '#414141',
+    '--color-border-200': '#535252',
+    '--color-border-300': '#737474',
+    '--color-border-400': '#8C8D8D',
+    '--color-border-500': '#A5A3A3',
+    '--color-border-600': '#D3D3D3',
+    '--color-border-700': '#DDDCDB',
+    '--color-border-800': '#E6E6E6',
+    '--color-border-900': '#F3F3F3',
+    '--color-border-950': '#FDFEFE',
 
     /* Focus Ring Indicator  */
     '--color-indicator-primary': '247 247 247',
