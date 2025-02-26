@@ -3,6 +3,8 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthStackParamList} from './module/AuthNavigator';
 import {BottomTabParamList} from './module/TabNavigator';
 
+export type RootStackParamList = AuthStackParamList & BottomTabParamList;
+
 export type SignInProps = NativeStackScreenProps<AuthStackParamList, 'SignIn'>;
 export type SignUpProps = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 export type ForgotPasswordProps = NativeStackScreenProps<
