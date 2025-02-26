@@ -3,11 +3,11 @@ import {getAvatar, getUserProfile} from '@/api/modules/user';
 import LogoutAlertDialog from '@/components/dialog/LogoutAlertDialog';
 import MainLayout from '@/components/layout/MainLayout';
 import MenuList from '@/components/menu/MenuList';
+import ProfileStatistics from '@/components/statistics/ProfileStatistics';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
 import {Center} from '@/components/ui/center';
-import {Divider} from '@/components/ui/divider';
 import {HStack} from '@/components/ui/hstack';
 import {EditIcon} from '@/components/ui/icon';
 import {Text} from '@/components/ui/text';
@@ -86,6 +86,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
           flexGrow: 1,
         }}>
         <VStack className="h-full w-full pb-8" space="2xl">
+          {/* 信息栏背景 */}
           <Box className="relative w-full md:h-[478px] h-[380px]">
             <Image
               source={require('@/assets/profile/image2.png')}
@@ -93,6 +94,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
               alt="Banner Image"
             />
           </Box>
+          {/* 面包屑导航 */}
           <HStack className="absolute pt-6 px-10 hidden md:flex">
             <Text className="text-typography-900 font-roboto">
               home &gt; {` `}
@@ -100,6 +102,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
             <Text className="font-semibold text-typography-900 ">profile</Text>
           </HStack>
           <Center className="absolute md:mt-14 mt-6 w-full md:px-10 md:pt-6 pb-4">
+            {/* 头像及个人信息 */}
             <VStack space="lg" className="items-center">
               <Avatar size="2xl" className="bg-primary-600">
                 <AvatarImage
@@ -117,43 +120,9 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                   {profileData.address}
                 </Text>
               </VStack>
-              <HStack className="items-center gap-1">
-                <VStack className="py-3 px-4 items-center" space="xs">
-                  <Text className="text-dark font-roboto font-semibold justify-center items-center">
-                    {userData.history}
-                  </Text>
-                  <Text className="text-dark text-xs font-roboto">
-                    诊断历史
-                  </Text>
-                </VStack>
-                <Divider orientation="vertical" className="h-10" />
-                <VStack className="py-3 px-4 items-center" space="xs">
-                  <Text className="text-dark font-roboto font-semibold">
-                    {userData.report}
-                  </Text>
-                  <Text className="text-dark text-xs font-roboto">
-                    上报历史
-                  </Text>
-                </VStack>
-                <Divider orientation="vertical" className="h-10" />
-                <VStack className="py-3 px-4 items-center" space="xs">
-                  <Text className="text-dark font-roboto font-semibold">
-                    {userData.star}
-                  </Text>
-                  <Text className="text-dark text-xs font-roboto">
-                    我的收藏
-                  </Text>
-                </VStack>
-                <Divider orientation="vertical" className="h-10" />
-                <VStack className="py-3 px-4 items-center" space="xs">
-                  <Text className="text-dark font-roboto font-semibold">
-                    {userData.order}
-                  </Text>
-                  <Text className="text-dark text-xs font-roboto">
-                    我的订单
-                  </Text>
-                </VStack>
-              </HStack>
+              {/* 数据统计组件 */}
+              <ProfileStatistics navigation={navigation} data={userData} />
+              {/* 编辑信息按钮 */}
               <Button
                 variant="outline"
                 action="secondary"
@@ -167,6 +136,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
             </VStack>
           </Center>
           <VStack className="mx-6" space="2xl">
+            {/* 专家问诊 */}
             <HStack
               className="py-5 px-6 border rounded-xl border-border-300 justify-between items-center"
               space="2xl">
@@ -193,6 +163,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                 </ButtonText>
               </Button>
             </HStack>
+            {/* 个人账户菜单 */}
             <MenuList
               title="个人账户"
               items={[
@@ -222,6 +193,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                 },
               ]}
             />
+            {/* 联系我们菜单 */}
             <MenuList
               title="联系我们"
               items={[
@@ -245,6 +217,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
             />
           </VStack>
         </VStack>
+        {/* 退出确认 */}
         <LogoutAlertDialog
           openLogoutAlertDialog={openDialog}
           setOpenLogoutAlertDialog={setOpenDialog}
