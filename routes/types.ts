@@ -1,30 +1,15 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {AuthStackParamList} from './module/AuthNavigator';
+import {BottomTabParamList} from './module/TabNavigator';
 
-// 根 Stack 参数类型
-export type RootStackParamList = {
-  SignIn: undefined;
-  SignUp: undefined;
-  ForgotPassword: undefined;
-  Splash: undefined;
-  Main: undefined;
-};
-
-// 底部 Tab 参数类型
-export type BottomTabParamList = {
-  Home: undefined;
-  Document: undefined;
-  Profile: undefined;
-};
-
-// Stack 组件参数
-export type SignInProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
-export type SignUpProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+export type SignInProps = NativeStackScreenProps<AuthStackParamList, 'SignIn'>;
+export type SignUpProps = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 export type ForgotPasswordProps = NativeStackScreenProps<
-  RootStackParamList,
+  AuthStackParamList,
   'ForgotPassword'
 >;
-export type SplashProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
+export type SplashProps = NativeStackScreenProps<AuthStackParamList, 'Splash'>;
 
 // Tab 组件参数
 export type HomeScreenProps = BottomTabScreenProps<BottomTabParamList, 'Home'>;
