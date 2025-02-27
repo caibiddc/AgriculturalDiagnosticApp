@@ -39,7 +39,7 @@ const LogoutAlertDialog = ({
       dispatch(setAuthenticated(false));
       dispatch(setToken(''));
       toast.show({
-        placement: 'bottom right',
+        placement: 'top right',
         render: ({id}) => (
           <Toast nativeID={id} action="success">
             <ToastTitle>退出成功！</ToastTitle>
@@ -49,7 +49,7 @@ const LogoutAlertDialog = ({
       handleClose();
     } catch (e) {
       toast.show({
-        placement: 'bottom right',
+        placement: 'top right',
         render: ({id}) => (
           <Toast nativeID={id} variant="solid" action="error">
             <ToastTitle>退出失败!</ToastTitle>

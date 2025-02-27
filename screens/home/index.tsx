@@ -3,62 +3,35 @@ import {Button, ButtonText} from '@/components/ui/button';
 import {Heading} from '@/components/ui/heading';
 import {Image} from '@/components/ui/image';
 import {Text} from '@/components/ui/text';
+import useImagePicker from '@/hooks/useImagePicker';
 import {HomeScreenProps} from '@/routes/types';
-import React, {useState} from 'react';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import React, {useEffect, useState} from 'react';
 
 const MainContent: React.FC<HomeScreenProps> = () => {
-  const [imageUri, setImageUri] = useState<string>();
-  const [imageType, setImageType] = useState<string>();
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const {image, loading, error, takePhoto, choosePhoto, clearImage} =
+    useImagePicker();
+
+  useEffect(() => {
+    if (error) {
+      console.log('Error: ', error);
+    }
+  }, [error]);
 
   // 打开相机拍照
   const handleTakePhoto = () => {
-    launchCamera(
-      {
-        mediaType: 'photo',
-        cameraType: 'back',
-        quality: 1,
-      },
-      response => {
-        if (response.didCancel) {
-          console.log('User cancelled camera');
-        } else if (response.errorCode) {
-          console.log('Camera Error: ', response.errorMessage);
-        } else {
-          const source = response.assets && response.assets[0].uri;
-          const type = response.assets && response.assets[0].type;
-          setImageUri(source);
-          setImageType(type); // 获取图片类型
-        }
-      },
-    );
+    takePhoto();
   };
 
   // 从相册选择图片
   const handleChoosePhoto = () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        quality: 1,
-      },
-      response => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-        } else {
-          const source = response.assets && response.assets[0].uri;
-          const type = response.assets && response.assets[0].type;
-          setImageUri(source);
-          setImageType(type); // 获取图片类型
-        }
-      },
-    );
+    choosePhoto();
   };
 
   // 上传图片到服务器
   const handleUploadImage = async () => {
+    const imageUri = image?.uri;
+    const imageType = image?.type;
     if (!imageUri || !imageType) {
       console.log('No image selected or type not found!');
       return;
@@ -91,11 +64,11 @@ const MainContent: React.FC<HomeScreenProps> = () => {
       <Button onPress={handleChoosePhoto}>
         <ButtonText>从相册选择</ButtonText>
       </Button>
-      {imageUri && (
+      {image?.uri && (
         <>
           <Text>图片已选择:</Text>
           <Image
-            source={{uri: imageUri}}
+            source={{uri: image.uri}}
             style={{width: 200, height: 200}}
             alt="选中图片"
           />

@@ -27,7 +27,7 @@ import {
 } from './interface';
 
 const config = {
-  baseURL: 'http://www.mmdxiaoxin.top:5000',
+  baseURL: 'http://47.93.13.123:5000',
   timeout: 10000,
   withCredentials: true,
 };
@@ -158,6 +158,7 @@ class RequestHttp {
           }
           // 其他状态码错误
           checkStatus(response.status, this.toast);
+          console.log(response.data);
         }
 
         // 检查网络连接
