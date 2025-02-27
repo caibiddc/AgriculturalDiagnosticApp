@@ -11,7 +11,8 @@ import {VStack} from '../ui/vstack';
 interface ListItemType {
   iconName: LucideIcon | typeof Icon;
   subText: string;
-  endIcon: LucideIcon | typeof Icon;
+  endIcon?: LucideIcon | typeof Icon;
+  endContent?: React.ReactNode;
   onPress?: () => void;
 }
 
@@ -20,7 +21,7 @@ export type ButtonMenuProps = {
   items?: ListItemType[];
 };
 
-const ButtonMenu: React.FC<ButtonMenuProps> = ({title, items}) => {
+const ListMenu: React.FC<ButtonMenuProps> = ({title, items}) => {
   if (!items) return null;
   return (
     <VStack className="w-full" space="2xl">
@@ -44,7 +45,9 @@ const ButtonMenu: React.FC<ButtonMenuProps> = ({title, items}) => {
                       <Icon as={item.iconName} className="stroke-[#747474]" />
                       <Text size="lg">{item.subText}</Text>
                     </HStack>
-                    <Icon as={item.endIcon} />
+                    {item.endContent
+                      ? item.endContent
+                      : item.endIcon && <Icon as={item.endIcon} />}
                   </HStack>
                 )}
               </Pressable>
@@ -57,4 +60,4 @@ const ButtonMenu: React.FC<ButtonMenuProps> = ({title, items}) => {
   );
 };
 
-export default ButtonMenu;
+export default ListMenu;
