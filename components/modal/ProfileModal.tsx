@@ -1,4 +1,9 @@
-import {getAvatar, getUserProfile, updateUserProfile} from '@/api/modules/user';
+import {
+  getAvatar,
+  getUserProfile,
+  updateUserProfile,
+  uploadAvatar,
+} from '@/api/modules/user';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonText} from '@/components/ui/button';
@@ -25,6 +30,7 @@ import {
 } from '@/components/ui/modal';
 import {Pressable} from '@/components/ui/pressable';
 import {VStack} from '@/components/ui/vstack';
+import useImagePicker, {ImagePickerResult} from '@/hooks/useImagePicker';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {SquareX} from 'lucide-react-native';
 import React, {useEffect, useRef, useState} from 'react';
@@ -48,7 +54,7 @@ const userSchema = z.object({
 export interface ProfileModalProps {
   showModal: boolean;
   setShowModal: any;
-  onSave?: (_data: userSchemaDetails) => void;
+  onSave?: (_data: userSchemaDetails, avatar?: ImagePickerResult) => void;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -66,6 +72,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   } = useForm<userSchemaDetails>({
     resolver: zodResolver(userSchema),
   });
+  const {image, takePhoto, choosePhoto, clearImage} = useImagePicker();
   const toast = useToast();
   const [imageData, setImageData] = useState<string>();
 
@@ -101,6 +108,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     }
   };
 
+  // 打开相机拍照
+  const handleTakePhoto = () => {
+    takePhoto();
+  };
+
+  // 从相册选择图片
+  const handleChoosePhoto = () => {
+    choosePhoto();
+  };
+
   useEffect(() => {
     if (showModal) {
       Promise.all([fetchAvatar(), fetchProfile()]);
@@ -113,9 +130,20 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   const onSubmit = async (_data: userSchemaDetails) => {
     try {
-      const response = await updateUserProfile(_data);
-      if (response.code !== 200) {
-        throw new Error(response.message);
+      // 更新用户信息
+      const profileResp = await updateUserProfile(_data);
+      if (profileResp.code !== 200) {
+        throw new Error(profileResp.message);
+      }
+      // 头像上传处理
+      if (image?.uri) {
+        const formData = new FormData();
+        formData.append('file', image);
+        uploadAvatar(formData).then(resp => {
+          if (resp.code !== 200) {
+            throw new Error(resp.message);
+          }
+        });
       }
       toast.show({
         placement: 'top right',
@@ -125,7 +153,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           </Toast>
         ),
       });
-      onSave?.(_data);
+      image ? onSave?.(_data, image) : onSave?.(_data);
       setShowModal(false);
     } catch (error: any) {
       toast.show({
@@ -143,6 +171,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     <Modal
       isOpen={showModal}
       onClose={() => {
+        clearImage();
+        reset();
         setShowModal(false);
       }}
       finalFocusRef={ref}
@@ -157,7 +187,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             alt="Banner Image"
           />
         </Box>
-        <Pressable className="absolute bg-background-500 rounded-full items-center justify-center h-8 w-8 right-12 md:right-6 top-48 md:top-44">
+        <Pressable
+          onPress={handleTakePhoto}
+          className="absolute bg-background-500 rounded-full items-center justify-center h-8 w-8 right-12 md:right-6 top-48 md:top-44">
           <Icon as={CameraSparklesIcon} />
         </Pressable>
         <ModalHeader className="absolute w-full">
@@ -173,12 +205,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           </ModalCloseButton>
         </ModalHeader>
         <Center className="w-full absolute top-24 md:top-16">
-          <Avatar size="2xl">
-            <AvatarImage source={{uri: imageData}} />
-            <AvatarBadge className="justify-center items-center bg-background-500">
-              <Icon as={EditPhotoIcon} />
-            </AvatarBadge>
-          </Avatar>
+          <Pressable onPress={handleChoosePhoto}>
+            <Avatar size="2xl">
+              <AvatarImage source={image?.uri ? image : {uri: imageData}} />
+              <AvatarBadge className="justify-center items-center bg-background-500">
+                <Icon as={EditPhotoIcon} />
+              </AvatarBadge>
+            </Avatar>
+          </Pressable>
         </Center>
         <ModalBody className="px-3 py-3 md:px-10 md:py-6">
           <VStack space="2xl">

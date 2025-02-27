@@ -117,13 +117,16 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
       <ProfileModal
         showModal={showModal}
         setShowModal={setShowModal}
-        onSave={data => {
+        onSave={(data, avatar) => {
           setProfileData(prev => {
             return {
               ...prev,
               ...data,
             };
           });
+          if (avatar) {
+            setImageData(avatar.uri);
+          }
         }}
       />
       <ScrollView
