@@ -64,7 +64,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
       toast.show({
         placement: 'top right',
         render: ({id}) => (
-          <Toast nativeID={id} variant="solid" action="success">
+          <Toast nativeID={id} variant="solid" action="error">
             <ToastTitle>用户信息获取失败！</ToastTitle>
           </Toast>
         ),
@@ -73,8 +73,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   };
 
   useEffect(() => {
-    fetchAvatar();
-    fetchProfile();
+    Promise.all([fetchAvatar(), fetchProfile()]);
   }, []);
 
   return (
