@@ -1,4 +1,4 @@
-import http from '@/api';
+import RequestHttp from '@/api';
 import {
   ReqLogin,
   ReqRegister,
@@ -9,22 +9,28 @@ import {
 
 // * 用户登录接口
 export const loginApi = (params: ReqLogin) =>
-  http.post<ResLogin>(`/auth/login`, {
+  RequestHttp.instance.post<ResLogin>(`/auth/login`, {
     ...params,
   });
 
 // * 用户注册接口
 export const registerApi = (params: ReqRegister) =>
-  http.post<null>(`/auth/register`, {
+  RequestHttp.instance.post<null>(`/auth/register`, {
     ...params,
   });
 
 // * 获取按钮权限
-export const getAuthorButtons = () => http.get<ResAuthButtons>(`/auth/buttons`);
+export const getAuthorButtons = () =>
+  RequestHttp.instance.get<ResAuthButtons>(`/auth/buttons`);
 
 // * 获取菜单列表
-export const getMenuList = () => http.get<Menu.MenuOptions[]>(`/auth/route`);
+export const getMenuList = () =>
+  RequestHttp.instance.get<Menu.MenuOptions[]>(`/auth/route`);
 
 // * 获取角色字典
 export const getRoleDict = () =>
-  http.get<ResAuthDict>(`/auth/role-dict`, {}, {loading: false});
+  RequestHttp.instance.get<ResAuthDict>(
+    `/auth/role-dict`,
+    {},
+    {loading: false},
+  );

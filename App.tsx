@@ -1,8 +1,9 @@
-import {removeNavigation, setNavigation} from '@/api';
+import RequestHttp from '@/api';
+import {RequestProvider, useRequest} from '@/components/request';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
 import {useAppDispatch} from '@/hooks';
 import AppNavigator from '@/routes';
-import {RootStackParamList} from '@/routes/types';
+import {store} from '@/store';
 import {
   setAuthButtons,
   setAuthenticated,
@@ -10,15 +11,11 @@ import {
   setToken,
 } from '@/store/modules/authSlice';
 import {localGet} from '@/utils';
-import {
-  NavigationContainer,
-  NavigationContainerRef,
-} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {SafeAreaView, useColorScheme} from 'react-native';
 import {Provider} from 'react-redux';
 import './global.css';
-import {store} from './store';
 
 // 从 AsyncStorage 获取初始数据
 const loadInitialData = async () => {
@@ -26,10 +23,30 @@ const loadInitialData = async () => {
   const isAuthenticated = (await localGet('is_authenticated')) || false;
   const authRouter = await localGet('auth_router');
   const authButtons = await localGet('auth_buttons');
-  return {token, authRouter, authButtons, isAuthenticated};
+  if (token) {
+    return {
+      token,
+      isAuthenticated,
+      authRouter,
+      authButtons,
+    };
+  } else {
+    return {
+      token: '',
+      isAuthenticated: false,
+      authRouter: '',
+      authButtons: '',
+    };
+  }
 };
 
 function App(): React.JSX.Element {
+  const {loading, toast} = useRequest();
+
+  useEffect(() => {
+    RequestHttp.initialize(loading, toast);
+  }, [loading, toast]);
+
   return (
     <SafeAreaView className="h-full w-full">
       <AppNavigator />
@@ -39,8 +56,6 @@ function App(): React.JSX.Element {
 
 function NavigationWrapper(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const navigationRef =
-    React.useRef<NavigationContainerRef<RootStackParamList>>(null);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -52,18 +67,13 @@ function NavigationWrapper(): React.JSX.Element {
         dispatch(setAuthButtons(authButtons));
       },
     );
-    if (navigationRef.current) {
-      setNavigation(navigationRef.current);
-    }
-
-    return () => {
-      removeNavigation();
-    };
   }, []);
   return (
     <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
-      <NavigationContainer ref={navigationRef}>
-        <App />
+      <NavigationContainer>
+        <RequestProvider>
+          <App />
+        </RequestProvider>
       </NavigationContainer>
     </GluestackUIProvider>
   );

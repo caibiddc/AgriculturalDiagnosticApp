@@ -1,4 +1,5 @@
-import http from "@/api";
+import RequestHttp from '@/api';
 
 // * 病害数据诊断
-export const diagnoseDisease = async (fileId: string) => http.get<any>(`/diagnosis/${fileId}`);
+export const diagnoseDisease = async (fileId: string) =>
+  RequestHttp.instance.get<any>(`/diagnosis/${fileId}`);
