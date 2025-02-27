@@ -8,18 +8,19 @@ import {Pressable} from '../ui/pressable';
 import {Text} from '../ui/text';
 import {VStack} from '../ui/vstack';
 
-export type MenuListProps = {
-  title: string;
-  items?: ListItemType[];
-};
-export interface ListItemType {
+interface ListItemType {
   iconName: LucideIcon | typeof Icon;
   subText: string;
   endIcon: LucideIcon | typeof Icon;
   onPress?: () => void;
 }
 
-const MenuList: React.FC<MenuListProps> = ({title, items}) => {
+export type ButtonMenuProps = {
+  title: string;
+  items?: ListItemType[];
+};
+
+const ButtonMenu: React.FC<ButtonMenuProps> = ({title, items}) => {
   if (!items) return null;
   return (
     <VStack className="w-full" space="2xl">
@@ -56,4 +57,4 @@ const MenuList: React.FC<MenuListProps> = ({title, items}) => {
   );
 };
 
-export default MenuList;
+export default ButtonMenu;

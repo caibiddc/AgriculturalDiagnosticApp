@@ -2,7 +2,7 @@ import {ResUserProfile} from '@/api/interface';
 import {getAvatar, getUserProfile} from '@/api/modules/user';
 import LogoutAlertDialog from '@/components/dialog/LogoutAlertDialog';
 import MainLayout from '@/components/layout/MainLayout';
-import MenuList from '@/components/menu/MenuList';
+import ButtonMenu from '@/components/menu/ButtonMenu';
 import ProfileModal from '@/components/modal/ProfileModal';
 import ProfileStatistics from '@/components/statistics/ProfileStatistics';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
@@ -217,7 +217,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
               </Button>
             </HStack>
             {/* 个人账户菜单 */}
-            <MenuList
+            <ButtonMenu
               title="个人账户"
               items={[
                 {
@@ -247,7 +247,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
               ]}
             />
             {/* 联系我们菜单 */}
-            <MenuList
+            <ButtonMenu
               title="联系我们"
               items={[
                 {
