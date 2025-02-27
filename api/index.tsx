@@ -27,7 +27,7 @@ import {
 } from './interface';
 
 const config = {
-  baseURL: 'http://10.114.25.159:5000',
+  baseURL: 'http://www.mmdxiaoxin.top:5000',
   timeout: 10000,
   withCredentials: true,
 };

@@ -25,11 +25,12 @@ import {
   Settings,
 } from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
-import {Image, ScrollView} from 'react-native';
+import {Image, RefreshControl, ScrollView} from 'react-native';
 
 const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const toast = useToast();
 
+  const [refreshing, setRefreshing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [imageData, setImageData] = useState<string>();
@@ -74,6 +75,33 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
     }
   };
 
+  // 处理下拉刷新
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([fetchAvatar(), fetchProfile()]);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="success">
+            <ToastTitle>更新成功！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } catch (error) {
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>刷新失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     Promise.all([fetchAvatar(), fetchProfile()]);
   }, []);
@@ -92,7 +120,10 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
         contentContainerStyle={{
           paddingBottom: isWeb ? 0 : 160,
           flexGrow: 1,
-        }}>
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <VStack className="h-full w-full pb-8" space="2xl">
           {/* 信息栏背景 */}
           <Box className="relative w-full md:h-[478px] h-[380px]">
@@ -118,7 +149,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                   style={{width: '100%', height: '100%'}}
                   source={{uri: imageData}}
                 />
-                <AvatarBadge />
+                {imageData && <AvatarBadge />}
               </Avatar>
               <VStack className="gap-1 w-full items-center">
                 <Text size="2xl" className="font-roboto text-dark">
