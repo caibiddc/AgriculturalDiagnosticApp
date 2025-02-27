@@ -94,7 +94,7 @@ const ProfileModal = ({
           <Heading size="2xl" className="text-typography-800 pt-4 pl-4">
             编辑个人信息
           </Heading>
-          <ModalCloseButton>
+          <ModalCloseButton className="top-2 md:top-0">
             <Icon
               as={SquareX}
               size="md"
