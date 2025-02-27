@@ -80,6 +80,13 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
 
   return (
     <VStack className="h-full w-full mb-16 md:mb-0">
+      {/* 退出确认 */}
+      <LogoutAlertDialog
+        openLogoutAlertDialog={openDialog}
+        setOpenLogoutAlertDialog={setOpenDialog}
+      />
+      {/* 编辑信息弹窗 */}
+      <ProfileModal showModal={showModal} setShowModal={setShowModal} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -218,13 +225,6 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
             />
           </VStack>
         </VStack>
-        {/* 退出确认 */}
-        <LogoutAlertDialog
-          openLogoutAlertDialog={openDialog}
-          setOpenLogoutAlertDialog={setOpenDialog}
-        />
-        {/* 编辑信息弹窗 */}
-        <ProfileModal showModal={showModal} setShowModal={setShowModal} />
       </ScrollView>
     </VStack>
   );
