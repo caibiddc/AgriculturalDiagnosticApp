@@ -17,7 +17,7 @@ interface ListItemType {
 }
 
 export type ButtonMenuProps = {
-  title: string;
+  title?: string;
   items?: ListItemType[];
 };
 
@@ -39,7 +39,7 @@ const ListMenu: React.FC<ButtonMenuProps> = ({title, items}) => {
                   <HStack
                     space="2xl"
                     className={`justify-between items-center w-full flex-1 py-3 px-2 ${
-                      pressed ? 'bg-background-100 rounded' : ''
+                      pressed && item.onPress ? 'bg-background-100 rounded' : ''
                     }`}>
                     <HStack className="items-center" space="md">
                       <Icon as={item.iconName} className="stroke-[#747474]" />

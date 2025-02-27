@@ -1,7 +1,7 @@
 import RequestHttp from '@/api';
 import {RequestProvider, useRequest} from '@/components/request';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
-import {useAppDispatch} from '@/hooks';
+import {useAppDispatch, useAppSelector} from '@/hooks';
 import AppNavigator from '@/routes';
 import {store} from '@/store';
 import {
@@ -11,11 +11,13 @@ import {
   setToken,
 } from '@/store/modules/authSlice';
 import {localGet} from '@/utils';
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {SafeAreaView, useColorScheme} from 'react-native';
 import {Provider} from 'react-redux';
+import colors from 'tailwindcss/colors';
 import './global.css';
+import {setThemeConfig} from './store/modules/globalSlice';
 
 // 从 AsyncStorage 获取初始数据
 const loadInitialData = async () => {
@@ -54,8 +56,22 @@ function App(): React.JSX.Element {
   );
 }
 
+const DarkTheme = {
+  ...DefaultTheme,
+  dark: true,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: colors.orange[500],
+    background: colors.neutral[900],
+    card: colors.neutral[800],
+    text: colors.neutral[50],
+    border: colors.neutral[700],
+  },
+};
+
 function NavigationWrapper(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const {isDark} = useAppSelector(state => state.global.themeConfig);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -65,12 +81,14 @@ function NavigationWrapper(): React.JSX.Element {
         dispatch(setAuthenticated(isAuthenticated));
         dispatch(setAuthRouter(authRouter));
         dispatch(setAuthButtons(authButtons));
+        dispatch(setThemeConfig({isDark: isDarkMode}));
       },
     );
   }, []);
+
   return (
-    <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
-      <NavigationContainer>
+    <GluestackUIProvider mode={isDark ? 'dark' : 'light'}>
+      <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
         <RequestProvider>
           <App />
         </RequestProvider>
