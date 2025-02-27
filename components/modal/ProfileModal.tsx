@@ -1,3 +1,4 @@
+import {getAvatar, getUserProfile} from '@/api/modules/user';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonText} from '@/components/ui/button';
@@ -26,10 +27,11 @@ import {Pressable} from '@/components/ui/pressable';
 import {VStack} from '@/components/ui/vstack';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {SquareX} from 'lucide-react-native';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {Keyboard} from 'react-native';
 import {z} from 'zod';
+import {Toast, ToastTitle, useToast} from '../ui/toast';
 import {CameraSparklesIcon} from './assets/icons/camera-sparkles';
 import {EditPhotoIcon} from './assets/icons/edit-photo';
 
@@ -43,22 +45,65 @@ const userSchema = z.object({
   address: z.string().min(1, '地址是必填项').max(255, '地址不能超过255个字符'),
 });
 
-const ProfileModal = ({
-  showModal,
-  setShowModal,
-}: {
+export interface ProfileModalProps {
   showModal: boolean;
   setShowModal: any;
+}
+
+const ProfileModal: React.FC<ProfileModalProps> = ({
+  showModal,
+  setShowModal,
 }) => {
   const ref = useRef(null);
   const {
     control,
     formState: {errors},
+    setValue,
     handleSubmit,
     reset,
   } = useForm<userSchemaDetails>({
     resolver: zodResolver(userSchema),
   });
+  const toast = useToast();
+  const [imageData, setImageData] = useState<string>();
+
+  const fetchAvatar = async () => {
+    const response = await getAvatar();
+    const reader = new FileReader();
+    // 将 Blob 转换为 base64 编码
+    reader.readAsDataURL(response);
+    reader.onloadend = () => {
+      const base64Image = reader.result as string;
+      setImageData(base64Image);
+    };
+  };
+
+  const fetchProfile = async () => {
+    try {
+      const response = await getUserProfile();
+      if (response.code !== 200 || !response.data) {
+        throw new Error(response.message);
+      }
+      setValue('name', response.data.name || '');
+      setValue('phone', response.data.phone || '');
+      setValue('address', response.data.address || '');
+    } catch (error) {
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>用户信息获取失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (showModal) {
+      Promise.all([fetchAvatar(), fetchProfile()]);
+    }
+  }, [showModal]);
 
   const handleKeyPress = () => {
     Keyboard.dismiss();
@@ -104,7 +149,7 @@ const ProfileModal = ({
         </ModalHeader>
         <Center className="w-full absolute top-24 md:top-16">
           <Avatar size="2xl">
-            <AvatarImage source={require('@/assets/profile/image.png')} />
+            <AvatarImage source={{uri: imageData}} />
             <AvatarBadge className="justify-center items-center bg-background-500">
               <Icon as={EditPhotoIcon} />
             </AvatarBadge>
