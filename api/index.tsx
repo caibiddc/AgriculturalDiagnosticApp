@@ -28,7 +28,7 @@ import {
 
 const config = {
   baseURL: 'http://47.93.13.123:5000',
-  timeout: 10000,
+  timeout: 50000,
   withCredentials: true,
 };
 
