@@ -114,7 +114,18 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
         setOpenLogoutAlertDialog={setOpenDialog}
       />
       {/* 编辑信息弹窗 */}
-      <ProfileModal showModal={showModal} setShowModal={setShowModal} />
+      <ProfileModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        onSave={data => {
+          setProfileData(prev => {
+            return {
+              ...prev,
+              ...data,
+            };
+          });
+        }}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{

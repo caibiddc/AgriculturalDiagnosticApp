@@ -1,4 +1,4 @@
-import {getAvatar, getUserProfile} from '@/api/modules/user';
+import {getAvatar, getUserProfile, updateUserProfile} from '@/api/modules/user';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonText} from '@/components/ui/button';
@@ -48,11 +48,13 @@ const userSchema = z.object({
 export interface ProfileModalProps {
   showModal: boolean;
   setShowModal: any;
+  onSave?: (_data: userSchemaDetails) => void;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
   showModal,
   setShowModal,
+  onSave,
 }) => {
   const ref = useRef(null);
   const {
@@ -109,9 +111,32 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     Keyboard.dismiss();
   };
 
-  const onSubmit = (_data: userSchemaDetails) => {
-    setShowModal(false);
-    reset();
+  const onSubmit = async (_data: userSchemaDetails) => {
+    try {
+      const response = await updateUserProfile(_data);
+      if (response.code !== 200) {
+        throw new Error(response.message);
+      }
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="success">
+            <ToastTitle>用户信息更新成功！</ToastTitle>
+          </Toast>
+        ),
+      });
+      onSave?.(_data);
+      setShowModal(false);
+    } catch (error: any) {
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>{error.message}</ToastTitle>
+          </Toast>
+        ),
+      });
+    }
   };
 
   return (
