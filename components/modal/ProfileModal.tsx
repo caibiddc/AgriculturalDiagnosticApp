@@ -139,11 +139,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       if (image?.uri) {
         const formData = new FormData();
         formData.append('file', image);
-        uploadAvatar(formData).then(resp => {
-          if (resp.code !== 200) {
-            throw new Error(resp.message);
-          }
-        });
+        const avatarResp = await uploadAvatar(formData);
+        if (avatarResp.code !== 200) {
+          throw new Error(avatarResp.message);
+        }
       }
       toast.show({
         placement: 'top right',
