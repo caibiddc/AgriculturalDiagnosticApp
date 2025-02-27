@@ -27,7 +27,10 @@ export const getAvatar = (): Promise<Blob> =>
   ) as unknown as Promise<Blob>;
 
 export const uploadAvatar = (data: FormData) =>
-  RequestHttp.instance.post<null>('/user/avatar', data, {loading: false});
+  RequestHttp.instance.post<null>('/user/avatar', data, {
+    loading: false,
+    headers: {'Content-Type': 'multipart/form-data'},
+  });
 
 export const updateUserProfile = (data: UserProfileParams) =>
   RequestHttp.instance.put<null>('/user/profile', data);
