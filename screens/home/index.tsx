@@ -9,6 +9,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const MainContent: React.FC<HomeScreenProps> = () => {
   const [imageUri, setImageUri] = useState<string>();
+  const [imageType, setImageType] = useState<string>();
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // 打开相机拍照
@@ -26,7 +27,9 @@ const MainContent: React.FC<HomeScreenProps> = () => {
           console.log('Camera Error: ', response.errorMessage);
         } else {
           const source = response.assets && response.assets[0].uri;
+          const type = response.assets && response.assets[0].type;
           setImageUri(source);
+          setImageType(type); // 获取图片类型
         }
       },
     );
@@ -46,7 +49,9 @@ const MainContent: React.FC<HomeScreenProps> = () => {
           console.log('ImagePicker Error: ', response.errorMessage);
         } else {
           const source = response.assets && response.assets[0].uri;
+          const type = response.assets && response.assets[0].type;
           setImageUri(source);
+          setImageType(type); // 获取图片类型
         }
       },
     );
@@ -54,8 +59,8 @@ const MainContent: React.FC<HomeScreenProps> = () => {
 
   // 上传图片到服务器
   const handleUploadImage = async () => {
-    if (!imageUri) {
-      console.log('No image selected!');
+    if (!imageUri || !imageType) {
+      console.log('No image selected or type not found!');
       return;
     }
     setIsUploading(true);
@@ -63,8 +68,8 @@ const MainContent: React.FC<HomeScreenProps> = () => {
     const formData = new FormData();
     formData.append('image', {
       uri: imageUri,
-      type: 'image/jpeg', // 根据图片类型可以选择其他
-      name: 'disease_image.jpg',
+      type: imageType, // 使用获取到的类型
+      name: `disease_image-${Date.now()}.` + imageType.split('/')[1], // 根据类型来确定文件扩展名
     });
 
     try {
