@@ -4,7 +4,12 @@ import {
   updateUserProfile,
   uploadAvatar,
 } from '@/api/modules/user';
-import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallbackText,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonSpinner, ButtonText} from '@/components/ui/button';
 import {Center} from '@/components/ui/center';
@@ -82,8 +87,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   } = useImagePicker();
   const toast = useToast();
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [imageData, setImageData] = useState<string>();
+  const [username, setUsername] = useState<string>('');
 
   const fetchAvatar = async () => {
     const response = await getAvatar();
@@ -105,6 +112,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       setValue('name', response.data.name || '');
       setValue('phone', response.data.phone || '');
       setValue('address', response.data.address || '');
+      setUsername(response.data.username);
     } catch (error) {
       toast.show({
         placement: 'top right',
@@ -128,9 +136,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   };
 
   useEffect(() => {
-    if (showModal) {
-      Promise.all([fetchAvatar(), fetchProfile()]);
-    }
+    const fetchData = async () => {
+      if (showModal) {
+        setLoading(true);
+        await Promise.all([fetchAvatar(), fetchProfile()]);
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [showModal]);
 
   const handleKeyPress = () => {
@@ -182,17 +195,17 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     }
   };
 
+  const onClose = () => {
+    clearImage();
+    reset();
+    setShowModal(false);
+    setSaveLoading(false);
+    setLoading(false);
+    setUsername('');
+  };
+
   return (
-    <Modal
-      isOpen={showModal}
-      onClose={() => {
-        clearImage();
-        reset();
-        setShowModal(false);
-        setSaveLoading(false);
-      }}
-      finalFocusRef={ref}
-      size="lg">
+    <Modal isOpen={showModal} onClose={onClose} finalFocusRef={ref} size="lg">
       <ModalBackdrop />
       <ModalContent>
         <Box
@@ -224,6 +237,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           <Pressable onPress={handleChoosePhoto}>
             <Avatar size="2xl">
               <AvatarImage source={image?.uri ? image : {uri: imageData}} />
+              {!imageData && (
+                <AvatarFallbackText>{username}</AvatarFallbackText>
+              )}
               <AvatarBadge className="justify-center items-center bg-background-500">
                 <Icon as={EditPhotoIcon} />
               </AvatarBadge>

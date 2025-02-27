@@ -5,7 +5,12 @@ import MainLayout from '@/components/layout/MainLayout';
 import ListMenu from '@/components/menu/ListMenu';
 import ProfileModal from '@/components/modal/ProfileModal';
 import ProfileStatistics from '@/components/statistics/ProfileStatistics';
-import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallbackText,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
 import {Center} from '@/components/ui/center';
@@ -163,6 +168,11 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                   style={{width: '100%', height: '100%'}}
                   source={{uri: imageData}}
                 />
+                {!imageData && (
+                  <AvatarFallbackText>
+                    {profileData.username}
+                  </AvatarFallbackText>
+                )}
                 {imageData && <AvatarBadge />}
               </Avatar>
               <VStack className="gap-1 w-full items-center">
