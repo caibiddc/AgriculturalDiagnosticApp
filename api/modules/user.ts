@@ -30,6 +30,7 @@ export const uploadAvatar = (data: FormData) =>
   RequestHttp.instance.post<null>('/user/avatar', data, {
     loading: false,
     headers: {'Content-Type': 'multipart/form-data'},
+    timeout: 100000,
   });
 
 export const updateUserProfile = (data: UserProfileParams) =>

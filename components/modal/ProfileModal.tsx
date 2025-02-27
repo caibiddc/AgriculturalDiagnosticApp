@@ -6,7 +6,7 @@ import {
 } from '@/api/modules/user';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
-import {Button, ButtonText} from '@/components/ui/button';
+import {Button, ButtonSpinner, ButtonText} from '@/components/ui/button';
 import {Center} from '@/components/ui/center';
 import {
   FormControl,
@@ -40,6 +40,7 @@ import {z} from 'zod';
 import {Toast, ToastTitle, useToast} from '../ui/toast';
 import {CameraSparklesIcon} from './assets/icons/camera-sparkles';
 import {EditPhotoIcon} from './assets/icons/edit-photo';
+import colors from 'tailwindcss/colors';
 
 type userSchemaDetails = z.infer<typeof userSchema>;
 
@@ -72,8 +73,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   } = useForm<userSchemaDetails>({
     resolver: zodResolver(userSchema),
   });
-  const {image, takePhoto, choosePhoto, clearImage} = useImagePicker();
+  const {
+    image,
+    loading: imageLoading,
+    takePhoto,
+    choosePhoto,
+    clearImage,
+  } = useImagePicker();
   const toast = useToast();
+
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [imageData, setImageData] = useState<string>();
 
   const fetchAvatar = async () => {
@@ -129,6 +138,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   };
 
   const onSubmit = async (_data: userSchemaDetails) => {
+    setSaveLoading(true);
     try {
       // 更新用户信息
       const profileResp = await updateUserProfile(_data);
@@ -137,11 +147,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       }
       // 头像上传处理
       if (image?.uri) {
-        const formData = new FormData();
-        formData.append('file', image);
-        const avatarResp = await uploadAvatar(formData);
-        if (avatarResp.code !== 200) {
-          throw new Error(avatarResp.message);
+        if (imageLoading) {
+          return;
+        } else {
+          const formData = new FormData();
+          formData.append('file', image);
+          const avatarResp = await uploadAvatar(formData);
+          if (avatarResp.code !== 200) {
+            throw new Error(avatarResp.message);
+          }
         }
       }
       toast.show({
@@ -163,6 +177,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           </Toast>
         ),
       });
+    } finally {
+      setSaveLoading(false);
     }
   };
 
@@ -173,6 +189,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         clearImage();
         reset();
         setShowModal(false);
+        setSaveLoading(false);
       }}
       finalFocusRef={ref}
       size="lg">
@@ -301,10 +318,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
-
-            <Button onPress={handleSubmit(onSubmit)} className="flex-1 p-2">
-              <ButtonText>保存更改</ButtonText>
-            </Button>
+            {saveLoading ? (
+              <Button disabled>
+                <ButtonSpinner color={colors.gray[400]} />
+                <ButtonText className="font-medium text-sm ml-2">
+                  请稍等...
+                </ButtonText>
+              </Button>
+            ) : (
+              <Button onPress={handleSubmit(onSubmit)} className="flex-1 p-2">
+                <ButtonText>保存更改</ButtonText>
+              </Button>
+            )}
           </VStack>
         </ModalBody>
       </ModalContent>
