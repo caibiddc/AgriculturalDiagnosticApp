@@ -152,13 +152,6 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
               alt="Banner Image"
             />
           </Box>
-          {/* 面包屑导航 */}
-          <HStack className="absolute pt-6 px-10 hidden md:flex">
-            <Text className="text-typography-900 font-roboto">
-              home &gt; {` `}
-            </Text>
-            <Text className="font-semibold text-typography-900 ">profile</Text>
-          </HStack>
           <Center className="absolute md:mt-14 mt-6 w-full md:px-10 md:pt-6 pb-4">
             {/* 头像及个人信息 */}
             <VStack space="lg" className="items-center">
