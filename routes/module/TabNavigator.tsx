@@ -1,4 +1,4 @@
-import DocumentScreen from '@/screens/document';
+import EncyclopediaScreen from '@/screens/document';
 import HomeScreen from '@/screens/home';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IconMap, IconSelectedMap} from '../config/icons';
@@ -6,7 +6,7 @@ import ProfileNavigator from './ProfileNavigator';
 
 export type BottomTabParamList = {
   Home: undefined;
-  Document: undefined;
+  Encyclopedia: undefined;
   Profile: undefined;
 };
 
@@ -29,8 +29,8 @@ const TabNavigator = () => (
       options={{title: '首页', headerShown: false}}
     />
     <Tab.Screen
-      name="Document"
-      component={DocumentScreen}
+      name="Encyclopedia"
+      component={EncyclopediaScreen}
       options={{title: '病害百科', headerShown: false}}
     />
     <Tab.Screen

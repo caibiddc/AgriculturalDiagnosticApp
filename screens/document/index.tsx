@@ -4,7 +4,7 @@ import {Box} from '@/components/ui/box';
 import {Grid, GridItem} from '@/components/ui/grid';
 import {Heading} from '@/components/ui/heading';
 import {Text} from '@/components/ui/text';
-import {DocumentScreenProps} from '@/routes/types';
+import {EncyclopediaScreenProps} from '@/routes/types';
 import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import React from 'react';
 import {SafeAreaView, ScrollView} from 'react-native';
@@ -29,7 +29,7 @@ const Header: React.FC = () => {
   );
 };
 
-const MainContent: React.FC<DocumentScreenProps> = () => {
+const MainContent: React.FC<EncyclopediaScreenProps> = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -57,7 +57,7 @@ const MainContent: React.FC<DocumentScreenProps> = () => {
   );
 };
 
-const DocumentScreen: React.FC<DocumentScreenProps> = props => {
+const EncyclopediaScreen: React.FC<EncyclopediaScreenProps> = props => {
   return (
     <SafeAreaView>
       <MainLayout>
@@ -67,4 +67,4 @@ const DocumentScreen: React.FC<DocumentScreenProps> = props => {
   );
 };
 
-export default DocumentScreen;
+export default EncyclopediaScreen;
