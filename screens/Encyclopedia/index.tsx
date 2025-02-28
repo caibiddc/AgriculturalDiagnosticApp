@@ -1,4 +1,5 @@
 import KnowledgeCard from '@/components/card/KnowledgeCard';
+import EncyclopediaFilter from '@/components/filter/EncyclopediaFilter';
 import MainLayout from '@/components/layout/MainLayout';
 import {Box} from '@/components/ui/box';
 import {Grid, GridItem} from '@/components/ui/grid';
@@ -20,15 +21,16 @@ const knowledgeList = [
 
 const Header: React.FC = () => {
   return (
-    <HStack className="py-6 px-5 md:px-8 md:pt-9 xl:pt-[90px] lg:pt-[70px] lg:px-[70px] xl:px-[100px] bg-background-100">
+    <HStack className="py-6 px-5 items-center justify-between md:px-8 md:pt-9 xl:pt-[90px] lg:pt-[70px] lg:px-[70px] xl:px-[100px] bg-background-100">
       <VStack>
         <Box className="text-typography-900 font-bold text-2xl md:text-3xl lg:text-4xl">
           <Heading>病害百科</Heading>
         </Box>
         <Box className="text-typography-600 text-base md:text-lg lg:text-xl">
-          <Text>这里列举了一些常见的病害</Text>
+          <Text>点击链接获取病害详情</Text>
         </Box>
       </VStack>
+      <EncyclopediaFilter />
     </HStack>
   );
 };
