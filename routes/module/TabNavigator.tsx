@@ -1,4 +1,4 @@
-import EncyclopediaScreen from '@/screens/document';
+import EncyclopediaScreen from '@/screens/Encyclopedia';
 import HomeScreen from '@/screens/home';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IconMap, IconSelectedMap} from '../config/icons';
