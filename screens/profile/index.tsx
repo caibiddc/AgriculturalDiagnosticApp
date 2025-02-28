@@ -3,7 +3,7 @@ import {getAvatar, getUserProfile} from '@/api/modules/user';
 import LogoutAlertDialog from '@/components/dialog/LogoutAlertDialog';
 import MainLayout from '@/components/layout/MainLayout';
 import ListMenu from '@/components/menu/ListMenu';
-import ProfileModal from '@/components/modal/ProfileModal';
+import ProfileModal, {ProfileModalRef} from '@/components/modal/ProfileModal';
 import ProfileStatistics from '@/components/statistics/ProfileStatistics';
 import {
   Avatar,
@@ -29,14 +29,15 @@ import {
   RotateCcw,
   Settings,
 } from 'lucide-react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Image, RefreshControl, ScrollView} from 'react-native';
 
 const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const toast = useToast();
 
+  const profileRef = useRef<ProfileModalRef>(null);
+
   const [refreshing, setRefreshing] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [imageData, setImageData] = useState<string>();
   const [profileData, setProfileData] = useState<ResUserProfile>({
@@ -120,8 +121,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
       />
       {/* 编辑信息弹窗 */}
       <ProfileModal
-        showModal={showModal}
-        setShowModal={setShowModal}
+        ref={profileRef}
         onSave={(data, avatar) => {
           setProfileData(prev => {
             return {
@@ -190,7 +190,9 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                 variant="outline"
                 action="secondary"
                 onPress={() => {
-                  setShowModal(true);
+                  if (profileRef.current) {
+                    profileRef.current.openModal();
+                  }
                 }}
                 className="gap-3 relative">
                 <ButtonText className="text-dark">编辑信息</ButtonText>
