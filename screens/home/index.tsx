@@ -131,13 +131,13 @@ const MainContent: React.FC<HomeScreenProps> = () => {
           {/* 图片上传 */}
           <Center className="w-full pb-8">
             <Pressable onPress={handleChoosePhoto}>
-              <Avatar size="2xl">
+              <Avatar size="2xl" className="w-48 h-48">
                 {image ? (
                   <AvatarImage source={image} />
                 ) : (
                   <Icon as={Sprout} size="lg" className="text-primary-0" />
                 )}
-                <AvatarBadge className="justify-center items-center bg-background-500">
+                <AvatarBadge className="justify-center items-center bg-background-500 w-12 h-12">
                   <Icon as={EditPhotoIcon} />
                 </AvatarBadge>
               </Avatar>
