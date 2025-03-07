@@ -97,7 +97,7 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
 
       if (response.code !== 200 || !response.data)
         throw new Error(response.message);
-      const token = response.data?.token;
+      const token = response.data?.access_token;
       toast.show({
         placement: 'top right',
         render: ({id}) => (
