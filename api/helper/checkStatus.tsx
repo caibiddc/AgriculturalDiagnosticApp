@@ -13,6 +13,7 @@ import {
 export const checkStatus = (
   status: number,
   toast: ReturnType<typeof useToast>,
+  message?: string,
 ): void => {
   switch (status) {
     case 400:
@@ -22,7 +23,9 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>请求失败</ToastTitle>
-            <ToastDescription>请您稍后重试</ToastDescription>
+            <ToastDescription>
+              {message ?? '请求失败！请您稍后重试'}
+            </ToastDescription>
           </Toast>
         ),
       });
@@ -34,7 +37,9 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>登录失效</ToastTitle>
-            <ToastDescription>请您重新登录</ToastDescription>
+            <ToastDescription>
+              {message ?? '登录失效！请您重新登录'}
+            </ToastDescription>
           </Toast>
         ),
       });
@@ -46,7 +51,9 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>无权限访问</ToastTitle>
-            <ToastDescription>当前账号无权限访问</ToastDescription>
+            <ToastDescription>
+              {message ?? '当前账号无权限访问！'}
+            </ToastDescription>
           </Toast>
         ),
       });
@@ -58,7 +65,9 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>资源不存在</ToastTitle>
-            <ToastDescription>你所访问的资源不存在</ToastDescription>
+            <ToastDescription>
+              {message ?? '你所访问的资源不存在！'}
+            </ToastDescription>
           </Toast>
         ),
       });
@@ -70,7 +79,9 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>请求方式错误</ToastTitle>
-            <ToastDescription>请您稍后重试</ToastDescription>
+            <ToastDescription>
+              {message ?? '请求方式错误！请您稍后重试'}
+            </ToastDescription>
           </Toast>
         ),
       });
@@ -82,7 +93,9 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>请求超时</ToastTitle>
-            <ToastDescription>请您稍后重试</ToastDescription>
+            <ToastDescription>
+              {message ?? '请求超时！请您稍后重试'}
+            </ToastDescription>
           </Toast>
         ),
       });
@@ -94,7 +107,7 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>服务异常</ToastTitle>
-            <ToastDescription>服务暂时不可用</ToastDescription>
+            <ToastDescription>{message ?? '服务暂不可用'}</ToastDescription>
           </Toast>
         ),
       });
@@ -106,7 +119,7 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>网关错误</ToastTitle>
-            <ToastDescription>网关无法响应</ToastDescription>
+            <ToastDescription>{message ?? '网关无法响应！'}</ToastDescription>
           </Toast>
         ),
       });
@@ -118,7 +131,7 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>服务不可用</ToastTitle>
-            <ToastDescription>服务暂时不可用</ToastDescription>
+            <ToastDescription>{message ?? '服务不可用！'}</ToastDescription>
           </Toast>
         ),
       });
@@ -130,7 +143,7 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>网关超时</ToastTitle>
-            <ToastDescription>网关请求超时</ToastDescription>
+            <ToastDescription>{message ?? '网关超时！'}</ToastDescription>
           </Toast>
         ),
       });
@@ -142,7 +155,7 @@ export const checkStatus = (
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="error" variant="solid">
             <ToastTitle>请求失败</ToastTitle>
-            <ToastDescription>请稍后再试</ToastDescription>
+            <ToastDescription>{message ?? '请求失败！'}</ToastDescription>
           </Toast>
         ),
       });

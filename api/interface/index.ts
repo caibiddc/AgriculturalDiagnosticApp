@@ -31,25 +31,30 @@ export interface CustomInternalAxiosRequestConfig
   extends InternalAxiosRequestConfig {
   loading?: boolean;
   cancel?: boolean;
+  toast?: boolean;
 }
 export interface CustomAxiosError extends AxiosError {
-  config?: CustomInternalAxiosRequestConfig;
+  config: CustomInternalAxiosRequestConfig;
 }
 export type GetConfig = Omit<AxiosRequestConfig, 'params'> & {
   loading?: boolean;
   cancel?: boolean;
+  toast?: boolean;
 };
 export type PostConfig = AxiosRequestConfig & {
   loading?: boolean;
   cancel?: boolean;
+  toast?: boolean;
 };
 export type PutConfig = AxiosRequestConfig & {
   loading?: boolean;
   cancel?: boolean;
+  toast?: boolean;
 };
 export type DeleteConfig = Omit<AxiosRequestConfig, 'params'> & {
   loading?: boolean;
   cancel?: boolean;
+  toast?: boolean;
 };
 
 export * from './file';

@@ -9,9 +9,13 @@ import {
 
 // * 用户登录接口
 export const loginApi = (params: ReqLogin) =>
-  RequestHttp.instance.post<ResLogin>(`/auth/login`, {
-    ...params,
-  });
+  RequestHttp.instance.post<ResLogin>(
+    `/auth/login`,
+    {
+      ...params,
+    },
+    {toast: true},
+  );
 
 // * 用户注册接口
 export const registerApi = (params: ReqRegister) =>

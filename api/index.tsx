@@ -27,7 +27,7 @@ import {
 } from './interface';
 
 const config = {
-  baseURL: 'http://47.93.13.123:5000',
+  baseURL: 'http://47.93.13.123:5000/api',
   timeout: 50000,
   withCredentials: true,
 };
@@ -176,7 +176,9 @@ class RequestHttp {
             });
           }
           // 其他状态码错误
-          checkStatus(response.status, this.toast);
+          error.config.toast &&
+            // @ts-ignore
+            checkStatus(response.status, this.toast, response?.data?.message);
           console.log(response.data);
         }
 

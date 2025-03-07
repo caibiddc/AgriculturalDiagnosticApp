@@ -41,6 +41,7 @@ import {loginApi} from '@/api/modules/auth';
 import {useAppDispatch} from '@/hooks';
 import {setAuthenticated, setToken} from '@/store/modules/authSlice';
 import {localGet, localSet} from '@/utils';
+import {AxiosError} from 'axios';
 
 // 登录验证Schema，支持用户名或邮箱
 const loginSchema = z.object({
@@ -94,52 +95,33 @@ const LoginWithLeftBackground: React.FC<SignInProps> = ({navigation}) => {
         password: data.password,
       });
 
-      if (response.code !== 200) throw new Error(response.message);
+      if (response.code !== 200 || !response.data)
+        throw new Error(response.message);
       const token = response.data?.token;
-
-      if (token) {
-        toast.show({
-          placement: 'top right',
-          render: ({id}) => (
-            <Toast nativeID={id} variant="solid" action="success">
-              <ToastTitle>登录成功！</ToastTitle>
-            </Toast>
-          ),
-        });
-
-        if (data.rememberme) {
-          localSet('login', data.login);
-          localSet('password', data.password);
-        }
-
-        dispatch(setAuthenticated(true)); // 设置用户为已认证
-        dispatch(setToken(token)); // 保存 token
-
-        reset(); // 重置表单
-      } else {
-        // 如果返回的响应没有 token 或出错
-        setValidated({
-          emailValid: false,
-          passwordValid: false,
-        });
-        toast.show({
-          placement: 'bottom right',
-          render: ({id}) => (
-            <Toast nativeID={id} variant="solid" action="error">
-              <ToastTitle>登录失败，请检查您的用户名或密码</ToastTitle>
-            </Toast>
-          ),
-        });
-      }
-    } catch (error: any) {
       toast.show({
-        placement: 'bottom right',
+        placement: 'top right',
         render: ({id}) => (
-          <Toast nativeID={id} variant="solid" action="error">
-            <ToastTitle>登录失败，请稍后重试</ToastTitle>
+          <Toast nativeID={id} variant="solid" action="success">
+            <ToastTitle>登录成功！</ToastTitle>
           </Toast>
         ),
       });
+      if (data.rememberme) {
+        localSet('login', data.login);
+        localSet('password', data.password);
+      }
+      dispatch(setAuthenticated(true));
+      dispatch(setToken(token));
+      reset();
+    } catch (error: any) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 403) {
+          setValidated({
+            emailValid: false,
+            passwordValid: false,
+          });
+        }
+      }
     }
   };
   const [showPassword, setShowPassword] = useState(false);
