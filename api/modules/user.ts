@@ -5,7 +5,7 @@ import {
   ResUserProfile,
   UserCreateParams,
   UserListParams,
-  UserProfileParams,
+  ReqUpdateProfile,
   UserUpdateParams,
 } from '../interface';
 
@@ -32,7 +32,7 @@ export const uploadAvatar = (data: FormData) =>
     headers: {'Content-Type': 'multipart/form-data'},
   });
 
-export const updateUserProfile = (data: UserProfileParams) =>
+export const updateUserProfile = (data: ReqUpdateProfile) =>
   RequestHttp.instance.put<null>('/user/profile', data);
 
 export const resetUserPassword = (data: {

@@ -40,27 +40,13 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [imageData, setImageData] = useState<string>();
-  const [profileData, setProfileData] = useState<ResUserProfile>({
-    username: '未知',
-    address: '未知',
-  } as ResUserProfile);
+  const [profileData, setProfileData] = useState<ResUserProfile>();
   const [userData, setUserData] = useState({
     history: 23,
     report: 123,
     star: 40,
     order: 1,
   });
-
-  const fetchAvatar = async () => {
-    const response = await getAvatar();
-    const reader = new FileReader();
-    // 将 Blob 转换为 base64 编码
-    reader.readAsDataURL(response);
-    reader.onloadend = () => {
-      const base64Image = reader.result as string;
-      setImageData(base64Image);
-    };
-  };
 
   const fetchProfile = async () => {
     try {
@@ -69,6 +55,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
         throw new Error(response.message);
       }
       setProfileData(response.data);
+      setImageData(response.data.profile?.avatar || '');
     } catch (error) {
       toast.show({
         placement: 'top right',
@@ -85,7 +72,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([fetchAvatar(), fetchProfile()]);
+      await fetchProfile();
       toast.show({
         placement: 'top right',
         render: ({id}) => (
@@ -109,7 +96,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   };
 
   useEffect(() => {
-    Promise.all([fetchAvatar(), fetchProfile()]);
+    fetchProfile();
   }, []);
 
   return (
@@ -123,14 +110,18 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
       <ProfileModal
         ref={profileRef}
         onSave={(data, avatar) => {
+          // @ts-ignore
           setProfileData(prev => {
             return {
               ...prev,
-              ...data,
+              profile: {
+                ...prev?.profile,
+                ...data,
+              },
             };
           });
           if (avatar) {
-            setImageData(avatar.uri);
+            setImageData(avatar);
           }
         }}
       />
@@ -163,17 +154,17 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                 />
                 {!imageData && (
                   <AvatarFallbackText>
-                    {profileData.username}
+                    {profileData?.username}
                   </AvatarFallbackText>
                 )}
                 {imageData && <AvatarBadge />}
               </Avatar>
               <VStack className="gap-1 w-full items-center">
                 <Text size="2xl" className="font-roboto text-dark">
-                  {profileData.username}
+                  {profileData?.username}
                 </Text>
                 <Text className="font-roboto text-sm text-typograpphy-700">
-                  {profileData.address}
+                  {profileData?.profile?.address}
                 </Text>
               </VStack>
               {/* 数据统计组件 */}
@@ -184,7 +175,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                 action="secondary"
                 onPress={() => {
                   if (profileRef.current) {
-                    profileRef.current.openModal();
+                    profileRef.current.openModal(profileData);
                   }
                 }}
                 className="gap-3 relative">

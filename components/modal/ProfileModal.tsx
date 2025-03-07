@@ -1,9 +1,5 @@
-import {
-  getAvatar,
-  getUserProfile,
-  updateUserProfile,
-  uploadAvatar,
-} from '@/api/modules/user';
+import {ResUserProfile} from '@/api/interface';
+import {updateUserProfile, uploadAvatar} from '@/api/modules/user';
 import {
   Avatar,
   AvatarBadge,
@@ -37,7 +33,7 @@ import {Pressable} from '@/components/ui/pressable';
 import {VStack} from '@/components/ui/vstack';
 import useImagePicker, {ImagePickerResult} from '@/hooks/useImagePicker';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {SquareX} from 'lucide-react-native';
+import {ChevronDownIcon, SquareX} from 'lucide-react-native';
 import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {Keyboard} from 'react-native';
@@ -46,32 +42,43 @@ import {z} from 'zod';
 import {Toast, ToastTitle, useToast} from '../ui/toast';
 import {CameraSparklesIcon} from './assets/icons/camera-sparkles';
 import {EditPhotoIcon} from './assets/icons/edit-photo';
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from '../ui/select';
 
 type userSchemaDetails = z.infer<typeof userSchema>;
 
 const userSchema = z.object({
-  name: z.string().min(1, '姓名是必填项').max(100, '姓名不能超过100个字符'),
+  gender: z.string().optional(),
+  name: z.string().min(0).max(100, '姓名不能超过100个字符').optional(),
   phone: z
     .string()
-    .regex(/^\+?[1-9]\d{1,14}$/, '手机号必须是有效的国际电话号码'),
-  address: z.string().min(1, '地址是必填项').max(255, '地址不能超过255个字符'),
+    .regex(/^\+?[1-9]\d{1,14}$/, '手机号必须是有效的国际电话号码')
+    .optional(),
+  address: z.string().min(0).max(255, '地址不能超过255个字符').optional(),
 });
 
 export interface ProfileModalProps {
-  onSave?: (_data: userSchemaDetails, avatar?: ImagePickerResult) => void;
+  onSave?: (_data: userSchemaDetails, avatar?: string) => void;
 }
 
 export interface ProfileModalRef {
-  openModal: () => void;
+  openModal: (value?: ResUserProfile) => void;
 }
 
 const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
   ({onSave}, ref) => {
     useImperativeHandle(ref, () => ({
-      openModal: () => {
-        fetchData();
-        setShowModal(true);
-      },
+      openModal: handleOpenModal,
     }));
     const profileModalRef = useRef(null);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -98,56 +105,16 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
     const [imageData, setImageData] = useState<string>();
     const [username, setUsername] = useState<string>('');
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        await Promise.all([fetchAvatar(), fetchProfile()]);
-        setLoading(false);
-      } catch (error) {
-        toast.show({
-          placement: 'top right',
-          render: ({id}) => (
-            <Toast nativeID={id} variant="solid" action="error">
-              <ToastTitle>无法获取个人信息！</ToastTitle>
-            </Toast>
-          ),
-        });
-      } finally {
-        setLoading(false);
+    const handleOpenModal = (values?: ResUserProfile) => {
+      if (values && values.profile) {
+        setValue('gender', '' + values.profile.gender || '0');
+        setValue('name', values.profile.name || '');
+        setValue('phone', values.profile.phone || '');
+        setValue('address', values.profile.address || '');
+        setImageData(values.profile.avatar || '');
+        setUsername(values.profile.name || '');
       }
-    };
-
-    const fetchAvatar = async () => {
-      const response = await getAvatar();
-      const reader = new FileReader();
-      // 将 Blob 转换为 base64 编码
-      reader.readAsDataURL(response);
-      reader.onloadend = () => {
-        const base64Image = reader.result as string;
-        setImageData(base64Image);
-      };
-    };
-
-    const fetchProfile = async () => {
-      try {
-        const response = await getUserProfile();
-        if (response.code !== 200 || !response.data) {
-          throw new Error(response.message);
-        }
-        setValue('name', response.data.name || '');
-        setValue('phone', response.data.phone || '');
-        setValue('address', response.data.address || '');
-        setUsername(response.data.username);
-      } catch (error) {
-        toast.show({
-          placement: 'top right',
-          render: ({id}) => (
-            <Toast nativeID={id} variant="solid" action="error">
-              <ToastTitle>用户信息获取失败！</ToastTitle>
-            </Toast>
-          ),
-        });
-      }
+      setShowModal(true);
     };
 
     // 打开相机拍照
@@ -167,8 +134,11 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
     const onSubmit = async (_data: userSchemaDetails) => {
       setSaveLoading(true);
       try {
-        // 更新用户信息
-        const profileResp = await updateUserProfile(_data);
+        // @ts-ignore
+        const profileResp = await updateUserProfile({
+          ..._data,
+          gender: parseInt(_data.gender || '0'),
+        });
         if (profileResp.code !== 200) {
           throw new Error(profileResp.message);
         }
@@ -193,7 +163,7 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
             </Toast>
           ),
         });
-        image ? onSave?.(_data, image) : onSave?.(_data);
+        image ? onSave?.(_data, image.uri) : onSave?.(_data);
         setShowModal(false);
       } catch (error: any) {
         toast.show({
@@ -204,6 +174,7 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
             </Toast>
           ),
         });
+        console.log('error', error);
       } finally {
         setSaveLoading(false);
       }
@@ -268,6 +239,45 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
           </Center>
           <ModalBody className="px-3 py-3 md:px-10 md:py-6">
             <VStack space="2xl">
+              {/* gender Field */}
+              <FormControl isInvalid={!!errors.name} isDisabled={loading}>
+                <FormControlLabel className="mb-2">
+                  <FormControlLabelText>性别</FormControlLabelText>
+                </FormControlLabel>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({field: {onChange, onBlur, value}}) => (
+                    <Select onValueChange={onChange} selectedValue={value}>
+                      <SelectTrigger
+                        variant="outline"
+                        size="md"
+                        className="h-12">
+                        <SelectInput placeholder="Select" />
+                        <SelectIcon className="mr-3" as={ChevronDownIcon} />
+                      </SelectTrigger>
+                      <SelectPortal>
+                        <SelectBackdrop />
+                        <SelectContent>
+                          <SelectDragIndicatorWrapper>
+                            <SelectDragIndicator />
+                          </SelectDragIndicatorWrapper>
+                          <SelectItem label="隐藏" value="0" />
+                          <SelectItem label="男" value="1" />
+                          <SelectItem label="女" value="2" />
+                        </SelectContent>
+                      </SelectPortal>
+                    </Select>
+                  )}
+                />
+                <FormControlError>
+                  <FormControlErrorIcon as={AlertCircleIcon} size="md" />
+                  <FormControlErrorText>
+                    {errors?.gender?.message}
+                  </FormControlErrorText>
+                </FormControlError>
+              </FormControl>
+
               {/* Name Field */}
               <FormControl isInvalid={!!errors.name} isDisabled={loading}>
                 <FormControlLabel className="mb-2">
