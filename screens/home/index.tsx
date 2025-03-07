@@ -1,3 +1,4 @@
+import {uploadDiseaseImage} from '@/api/modules/diagnosis';
 import MainLayout from '@/components/layout/MainLayout';
 import {EditPhotoIcon} from '@/components/modal/assets/icons/edit-photo';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
@@ -59,18 +60,22 @@ const MainContent: React.FC<HomeScreenProps> = () => {
   // 上传图片到服务器
   const handleUploadImage = async () => {
     setIsUploading(true);
-
-    const mock = new Promise(resolve => {
-      setTimeout(() => {
-        resolve('success');
-      }, 2000);
-    });
-
-    const formData = new FormData();
-    formData.append('file', image);
-
+    if (!image) {
+      toast.show({
+        placement: 'top right',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastTitle>请先选择图片</ToastTitle>
+          </Toast>
+        ),
+      });
+      setIsUploading(false);
+      return;
+    }
     try {
-      await mock;
+      console.log('Uploading image: ', image);
+      await uploadDiseaseImage(image);
       toast.show({
         placement: 'top right',
         duration: 3000,

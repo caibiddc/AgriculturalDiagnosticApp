@@ -27,7 +27,7 @@ import {
 } from './interface';
 
 const config = {
-  baseURL: 'http://47.93.13.123:5000/api',
+  baseURL: 'http://10.114.25.159:5000/api',
   timeout: 10000,
   withCredentials: true,
 };
