@@ -28,7 +28,7 @@ import {
 
 const config = {
   baseURL: 'http://47.93.13.123:5000/api',
-  timeout: 50000,
+  timeout: 10000,
   withCredentials: true,
 };
 
@@ -65,24 +65,6 @@ class RequestHttp {
         if (config.headers && typeof config.headers.set === 'function') {
           token && config.headers.set('Authorization', `Bearer ${token}`);
         }
-
-        const netState = await NetInfo.fetch();
-
-        let timeout = 50000; // 默认超时为50秒
-
-        if (netState.isConnected && netState.type === 'wifi') {
-          // 如果连接到WiFi，增加超时时间（假设带宽更好）
-          timeout = 70000;
-        } else if (netState.isConnected && netState.type === 'cellular') {
-          // 如果是蜂窝网络，减少超时时间
-          timeout = 30000;
-        } else if (!netState.isConnected) {
-          // 无网络时，可能需要等待更长时间，设置为较长的超时
-          timeout = 60000;
-        }
-
-        // 更新请求的timeout配置
-        config.timeout = timeout;
 
         return config;
       },
