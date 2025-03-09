@@ -10,25 +10,20 @@ import {
 } from '../interface';
 
 export const getUserList = (data: UserListParams) =>
-  RequestHttp.instance.get<ResUserList>('/user/list', data, {loading: false});
+  RequestHttp.instance.get<ResUserList>('/user/list', data);
 
 export const getUserProfile = () =>
-  RequestHttp.instance.get<ResUserProfile>(
-    '/user/profile',
-    {},
-    {loading: false},
-  );
+  RequestHttp.instance.get<ResUserProfile>('/user/profile', {});
 
 export const getAvatar = (): Promise<Blob> =>
   RequestHttp.instance.get(
     `/user/avatar`,
     {},
-    {loading: false, responseType: 'blob'},
+    {responseType: 'blob'},
   ) as unknown as Promise<Blob>;
 
 export const uploadAvatar = (data: FormData) =>
   RequestHttp.instance.post<null>('/user/avatar', data, {
-    loading: false,
     headers: {'Content-Type': 'multipart/form-data'},
   });
 
@@ -38,19 +33,16 @@ export const updateUserProfile = (data: ReqUpdateProfile) =>
 export const resetUserPassword = (data: {
   currentPassword: string;
   newPassword: string;
-}) =>
-  RequestHttp.instance.put<null>('/user/reset/password', data, {
-    loading: false,
-  });
+}) => RequestHttp.instance.put<null>('/user/reset/password', data);
 
 export const createUser = (data: UserCreateParams) =>
   RequestHttp.instance.post<null>('/user/create', data);
 
 export const getUserById = (id: number | string) =>
-  RequestHttp.instance.get<ResUserDetail>(`/user/${id}`, {}, {loading: false});
+  RequestHttp.instance.get<ResUserDetail>(`/user/${id}`, {});
 
 export const updateUserById = (id: number | string, data: UserUpdateParams) =>
-  RequestHttp.instance.put<null>(`/user/${id}`, data, {loading: false});
+  RequestHttp.instance.put<null>(`/user/${id}`, data);
 
 export const deleteUserById = (id: number | string) =>
   RequestHttp.instance.delete<null>(`/user/${id}`);

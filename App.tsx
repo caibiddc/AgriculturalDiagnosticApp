@@ -43,11 +43,11 @@ const loadInitialData = async () => {
 };
 
 function App(): React.JSX.Element {
-  const {loading, toast} = useRequest();
+  const {toast} = useRequest();
 
   useEffect(() => {
-    RequestHttp.initialize(loading, toast);
-  }, [loading, toast]);
+    RequestHttp.initialize(toast);
+  }, [toast]);
 
   return (
     <SafeAreaView className="h-full w-full">

@@ -35,7 +35,6 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
             <ListItem.Content>
               <VStack>
                 <Text>{diagnosis?.status}</Text>
-                <Text>{diagnosis?.file?.originalFileName}</Text>
                 <Text>{diagnosis?.createdAt}</Text>
               </VStack>
             </ListItem.Content>

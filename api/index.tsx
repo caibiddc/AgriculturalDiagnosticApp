@@ -36,7 +36,6 @@ const axiosCanceler = new AxiosCanceler();
 
 class RequestHttp {
   service: AxiosInstance;
-  loading: (loading: boolean) => void;
   toast: ReturnType<typeof useToast>;
 
   // 单例模式
@@ -44,10 +43,8 @@ class RequestHttp {
 
   private constructor(
     config: AxiosRequestConfig,
-    loading: (loading: boolean) => void,
     toast: ReturnType<typeof useToast>,
   ) {
-    this.loading = loading;
     this.service = axios.create(config);
     this.toast = toast;
 
@@ -55,12 +52,6 @@ class RequestHttp {
       async (config: CustomInternalAxiosRequestConfig) => {
         config.cancel ??= true;
         config.cancel && axiosCanceler.addPending(config);
-
-        config.loading ??= true;
-        if (config.loading) {
-          this.loading(true); // 显示加载状态
-        }
-
         const token = store.getState().auth.token;
         if (config.headers && typeof config.headers.set === 'function') {
           token && config.headers.set('Authorization', `Bearer ${token}`);
@@ -79,11 +70,8 @@ class RequestHttp {
       ) => {
         const {data, config} = response;
 
-        // * 在请求结束后，移除本次请求(关闭loading)
+        // * 在请求结束后，移除本次请求
         axiosCanceler.removePending(config);
-        if (config.loading) {
-          this.loading(false);
-        }
 
         if (
           data.code &&
@@ -108,10 +96,6 @@ class RequestHttp {
       },
       async (error: CustomAxiosError) => {
         const {response} = error;
-        if (error.config?.loading) {
-          this.loading(false);
-        }
-
         // 请求取消单独判断，不需要提示错误信息
         if (error.message === 'canceled') {
           return Promise.reject(error);
@@ -185,12 +169,9 @@ class RequestHttp {
     );
   }
 
-  static initialize(
-    loading: (loading: boolean) => void,
-    toast: ReturnType<typeof useToast>,
-  ) {
+  static initialize(toast: ReturnType<typeof useToast>) {
     if (!RequestHttp.instance) {
-      RequestHttp.instance = new RequestHttp(config, loading, toast);
+      RequestHttp.instance = new RequestHttp(config, toast);
     }
     return RequestHttp.instance;
   }
