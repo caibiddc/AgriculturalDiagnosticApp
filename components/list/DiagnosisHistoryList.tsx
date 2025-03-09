@@ -19,7 +19,7 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
       <Heading>诊断历史</Heading>
       <VStack className="w-full" space="md">
         {diagnosisList.map(diagnosis => (
-          <HStack className="w-full" space="md">
+          <HStack key={diagnosis.id} className="w-full" space="md">
             <FilePreviewCard file={diagnosis?.file} />
             <VStack>
               <Text>{diagnosis?.status}</Text>

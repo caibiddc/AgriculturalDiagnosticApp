@@ -33,10 +33,12 @@ import {HomeScreenProps} from '@/routes/types';
 import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {Sprout} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
-import {ScrollView} from 'react-native';
+import {RefreshControl, ScrollView} from 'react-native';
 
 const MainContent: React.FC<HomeScreenProps> = () => {
   const toast = useToast();
+
+  const [refreshing, setRefreshing] = useState(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const {image, takePhoto, choosePhoto, clearImage} = useImagePicker();
   const [options, setOptions] = useState<
@@ -66,6 +68,33 @@ const MainContent: React.FC<HomeScreenProps> = () => {
   useEffect(() => {
     fetchDiagnosisHistory();
   }, []);
+
+  // 处理下拉刷新
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchDiagnosisHistory();
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="success">
+            <ToastTitle>更新成功！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } catch (error) {
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>刷新失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // 打开相机拍照
   const handleTakePhoto = () => {
@@ -120,7 +149,10 @@ const MainContent: React.FC<HomeScreenProps> = () => {
         contentContainerStyle={{
           paddingBottom: isWeb ? 0 : 160,
           flexGrow: 1,
-        }}>
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <VStack className="mx-6 mt-6" space="md">
           <Heading>病害智能诊断</Heading>
 
