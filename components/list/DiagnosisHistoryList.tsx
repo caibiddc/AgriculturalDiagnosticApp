@@ -3,6 +3,7 @@ import {DIAGNOSIS_STATUS_COLOR, DiagnosisStatusMapper} from '@/constants';
 import {ListItem} from '@rneui/themed';
 import clsx from 'clsx';
 import React from 'react';
+import {GestureResponderEvent} from 'react-native';
 import FilePreviewCard from '../card/FilePreviewCard';
 import {Button, ButtonText} from '../ui/button';
 import {Heading} from '../ui/heading';
@@ -12,11 +13,13 @@ import {VStack} from '../ui/vstack';
 export type DiagnosisHistoryListProps = {
   diagnosisList?: DiagnosisHistory[];
   onCheckDetail?: (diagnosis: DiagnosisHistory) => void;
+  onCheckAll?: (event?: GestureResponderEvent) => void;
 };
 
 const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
   diagnosisList = [],
   onCheckDetail,
+  onCheckAll,
 }) => {
   return (
     <VStack className="mx-6 mt-6" space="md">
@@ -59,7 +62,7 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
           </ListItem.Swipeable>
         ))}
       </VStack>
-      <Button>
+      <Button action="secondary" onPress={onCheckAll}>
         <ButtonText>查看全部记录</ButtonText>
       </Button>
     </VStack>

@@ -35,7 +35,7 @@ import {Sprout} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {RefreshControl, ScrollView} from 'react-native';
 
-const MainContent: React.FC<HomeScreenProps> = () => {
+const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
   const toast = useToast();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -58,7 +58,7 @@ const MainContent: React.FC<HomeScreenProps> = () => {
 
   const fetchDiagnosisHistory = async () => {
     try {
-      const response = await getDiagnosisHistoryList({page: 1, pageSize: 5});
+      const response = await getDiagnosisHistoryList({page: 1, pageSize: 3});
       setDiagnosisList(response.data?.list || []);
     } catch (error) {
       console.log('Fetch diagnosis history error: ', error);
@@ -234,7 +234,12 @@ const MainContent: React.FC<HomeScreenProps> = () => {
             </Button>
           </HStack>
         </VStack>
-        <DiagnosisHistoryList diagnosisList={diagnosisList} />
+        <DiagnosisHistoryList
+          diagnosisList={diagnosisList}
+          onCheckAll={() => {
+            navigation.navigate('Profile', {screen: 'DiagnosisHistory'});
+          }}
+        />
       </ScrollView>
     </VStack>
   );

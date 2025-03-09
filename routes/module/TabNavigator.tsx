@@ -1,13 +1,14 @@
 import EncyclopediaScreen from '@/screens/encyclopedia';
 import HomeScreen from '@/screens/home';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigatorScreenParams} from '@react-navigation/native';
 import {IconMap, IconSelectedMap} from '../config/icons';
-import ProfileNavigator from './ProfileNavigator';
+import ProfileNavigator, {ProfileParamList} from './ProfileNavigator';
 
 export type BottomTabParamList = {
   Home: undefined;
   Encyclopedia: undefined;
-  Profile: undefined;
+  Profile: NavigatorScreenParams<ProfileParamList>;
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
