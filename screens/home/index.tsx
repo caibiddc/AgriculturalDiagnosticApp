@@ -1,5 +1,7 @@
-import {uploadDiseaseImage} from '@/api/modules/diagnosis';
+import {ResDiagnosisHistory} from '@/api/interface';
+import {getDiagnosisHistory, uploadDiseaseImage} from '@/api/modules/diagnosis';
 import MainLayout from '@/components/layout/MainLayout';
+import DiagnosisHistoryList from '@/components/list/DiagnosisHistoryList';
 import {EditPhotoIcon} from '@/components/modal/assets/icons/edit-photo';
 import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Button, ButtonText} from '@/components/ui/button';
@@ -26,7 +28,7 @@ import useImagePicker from '@/hooks/useImagePicker';
 import {HomeScreenProps} from '@/routes/types';
 import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {Sprout} from 'lucide-react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView} from 'react-native';
 
 const MainContent: React.FC<HomeScreenProps> = () => {
@@ -181,6 +183,7 @@ const MainContent: React.FC<HomeScreenProps> = () => {
             </Button>
           </HStack>
         </VStack>
+        <DiagnosisHistoryList />
       </ScrollView>
     </VStack>
   );

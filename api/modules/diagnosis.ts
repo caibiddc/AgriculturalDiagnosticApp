@@ -1,5 +1,10 @@
 import RequestHttp from '@/api';
 import {ImagePickerResult} from '@/hooks/useImagePicker';
+import {
+  ReqDiagnosisHistoryList,
+  ResDiagnosisHistory,
+  ResDiagnosisHistoryList,
+} from '../interface';
 
 // * 病害数据诊断
 export const startDiagnoseImage = async (diagnosisId: string | number) =>
@@ -17,4 +22,13 @@ export const uploadDiseaseImage = async (image: ImagePickerResult) => {
 
 // * 获取病害诊断历史
 export const getDiagnosisHistory = async () =>
-  RequestHttp.instance.get<any>('/diagnosis/history');
+  RequestHttp.instance.get<ResDiagnosisHistory>('/diagnosis/history');
+
+// * 获取病害诊断历史(分页)
+export const getDiagnosisHistoryList = async (
+  params: ReqDiagnosisHistoryList,
+) =>
+  RequestHttp.instance.get<ResDiagnosisHistoryList>(
+    '/diagnosis/history/list',
+    params,
+  );
