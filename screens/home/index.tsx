@@ -1,5 +1,9 @@
 import {ResDiagnosisHistory} from '@/api/interface';
-import {getDiagnosisHistory, uploadDiseaseImage} from '@/api/modules/diagnosis';
+import {
+  getDiagnosisHistory,
+  getDiagnosisHistoryList,
+  uploadDiseaseImage,
+} from '@/api/modules/diagnosis';
 import MainLayout from '@/components/layout/MainLayout';
 import DiagnosisHistoryList from '@/components/list/DiagnosisHistoryList';
 import {EditPhotoIcon} from '@/components/modal/assets/icons/edit-photo';
@@ -48,6 +52,20 @@ const MainContent: React.FC<HomeScreenProps> = () => {
     {label: '甘薯', value: '甘薯'},
     {label: '马铃薯', value: '马铃薯'},
   ]);
+  const [diagnosisList, setDiagnosisList] = useState<ResDiagnosisHistory>([]);
+
+  const fetchDiagnosisHistory = async () => {
+    try {
+      const response = await getDiagnosisHistoryList({page: 1, pageSize: 5});
+      setDiagnosisList(response.data?.list || []);
+    } catch (error) {
+      console.log('Fetch diagnosis history error: ', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDiagnosisHistory();
+  }, []);
 
   // 打开相机拍照
   const handleTakePhoto = () => {
@@ -87,6 +105,7 @@ const MainContent: React.FC<HomeScreenProps> = () => {
           </Toast>
         ),
       });
+      await fetchDiagnosisHistory();
     } catch (error) {
       console.log('Upload error: ', error);
     } finally {
@@ -183,7 +202,7 @@ const MainContent: React.FC<HomeScreenProps> = () => {
             </Button>
           </HStack>
         </VStack>
-        <DiagnosisHistoryList />
+        <DiagnosisHistoryList diagnosisList={diagnosisList} />
       </ScrollView>
     </VStack>
   );

@@ -37,7 +37,7 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({file}) => {
   }, [file]);
 
   return (
-    <Avatar size="2xl" className="bg-primary-600">
+    <Avatar size="lg" className="bg-primary-600">
       <AvatarImage
         alt={file?.originalFileName || 'file Image'}
         style={{width: '100%', height: '100%'}}

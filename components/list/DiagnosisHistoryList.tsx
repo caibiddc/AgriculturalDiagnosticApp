@@ -1,37 +1,31 @@
-import {ResDiagnosisHistory} from '@/api/interface';
+import {DiagnosisHistory, ResDiagnosisHistory} from '@/api/interface';
 import {getDiagnosisHistoryList} from '@/api/modules/diagnosis';
 import React, {useEffect, useState} from 'react';
-import {Center} from '../ui/center';
-import {Heading} from '../ui/heading';
-import {VStack} from '../ui/vstack';
 import FilePreviewCard from '../card/FilePreviewCard';
+import {Heading} from '../ui/heading';
 import {HStack} from '../ui/hstack';
+import {Text} from '../ui/text';
+import {VStack} from '../ui/vstack';
 
-const DiagnosisHistoryList: React.FC = () => {
-  const [diagnosisList, setDiagnosisList] = useState<ResDiagnosisHistory>([]);
+export type DiagnosisHistoryListProps = {
+  diagnosisList?: DiagnosisHistory[];
+};
 
-  const fetchDiagnosisHistory = async () => {
-    try {
-      const response = await getDiagnosisHistoryList({page: 1, pageSize: 5});
-      setDiagnosisList(response.data?.list || []);
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    fetchDiagnosisHistory();
-  }, []);
-
+const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
+  diagnosisList = [],
+}) => {
   return (
     <VStack className="mx-6 mt-6" space="md">
       <Heading>诊断历史</Heading>
-
-      <VStack className="w-full">
-        {diagnosisList.map((diagnosis, index) => (
-          <HStack key={index} className="w-full">
+      <VStack className="w-full" space="md">
+        {diagnosisList.map(diagnosis => (
+          <HStack className="w-full" space="md">
             <FilePreviewCard file={diagnosis?.file} />
-            <Center key={index} className="w-full">
-              <Heading>{diagnosis?.file?.originalFileName}</Heading>
-            </Center>
+            <VStack>
+              <Text>{diagnosis?.status}</Text>
+              <Text>{diagnosis?.file?.originalFileName}</Text>
+              <Text>{diagnosis?.createdAt}</Text>
+            </VStack>
           </HStack>
         ))}
       </VStack>
