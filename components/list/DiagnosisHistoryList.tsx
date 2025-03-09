@@ -1,5 +1,7 @@
 import {DiagnosisHistory} from '@/api/interface';
+import {DIAGNOSIS_STATUS_COLOR, DiagnosisStatusMapper} from '@/constants';
 import {ListItem} from '@rneui/themed';
+import clsx from 'clsx';
 import React from 'react';
 import FilePreviewCard from '../card/FilePreviewCard';
 import {Button, ButtonText} from '../ui/button';
@@ -34,7 +36,22 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
             <FilePreviewCard file={diagnosis?.file} />
             <ListItem.Content>
               <VStack>
-                <Text>{diagnosis?.status}</Text>
+                <Text
+                  className={clsx(
+                    'rounded-full',
+                    'px-2',
+                    'py-1',
+                    DIAGNOSIS_STATUS_COLOR[
+                      diagnosis?.status as keyof typeof DIAGNOSIS_STATUS_COLOR
+                    ],
+                  )}>
+                  {
+                    DiagnosisStatusMapper[
+                      (diagnosis?.status as keyof typeof DiagnosisStatusMapper) ||
+                        'pending'
+                    ]
+                  }
+                </Text>
                 <Text>{diagnosis?.createdAt}</Text>
               </VStack>
             </ListItem.Content>
