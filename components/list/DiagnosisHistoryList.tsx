@@ -4,6 +4,9 @@ import clsx from 'clsx';
 import {ChevronRight, Clock, History} from 'lucide-react-native';
 import React from 'react';
 import {GestureResponderEvent} from 'react-native';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import FilePreviewCard from '../card/FilePreviewCard';
 import {Button, ButtonText} from '../ui/button';
 import {Heading} from '../ui/heading';
@@ -12,6 +15,10 @@ import {Icon} from '../ui/icon';
 import {Pressable} from '../ui/pressable';
 import {Text} from '../ui/text';
 import {VStack} from '../ui/vstack';
+
+// 配置 dayjs
+dayjs.extend(relativeTime);
+dayjs.locale('zh-cn');
 
 export type DiagnosisHistoryListProps = {
   diagnosisList?: DiagnosisHistory[];
@@ -80,7 +87,7 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
                     }
                   </Text>
                   <Text className="text-typography-500 text-sm">
-                    {diagnosis?.createdAt}
+                    {dayjs(diagnosis?.createdAt).fromNow()}
                   </Text>
                 </HStack>
                 <Text className="text-typography-700 text-sm">
