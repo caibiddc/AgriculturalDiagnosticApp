@@ -10,7 +10,7 @@ export interface Role {
 }
 
 export interface Profile {
-  id: 2;
+  id: number;
   gender: number;
   avatar?: string;
   name?: string;

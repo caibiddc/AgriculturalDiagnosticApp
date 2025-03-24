@@ -61,6 +61,16 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
       reader.readAsDataURL(avatarRes);
       reader.onloadend = () => {
         setImageUrl(reader.result as string);
+        setProfileData(prev => {
+          if (!prev || !prev.profile) return prev;
+          return {
+            ...prev,
+            profile: {
+              ...prev.profile,
+              avatar: reader.result as string,
+            },
+          };
+        });
       };
     } catch (error) {
       console.log(error);
