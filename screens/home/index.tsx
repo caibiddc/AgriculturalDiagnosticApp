@@ -237,7 +237,13 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
         <DiagnosisHistoryList
           diagnosisList={diagnosisList}
           onCheckAll={() => {
-            navigation.navigate('Profile', {screen: 'DiagnosisHistory'});
+            navigation.reset({
+              index: 1,
+              routes: [
+                {name: 'Profile'},
+                {name: 'Profile', params: {screen: 'DiagnosisHistory'}},
+              ],
+            });
           }}
         />
       </ScrollView>
