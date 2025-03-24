@@ -36,7 +36,7 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
                 <ButtonText>查看</ButtonText>
               </Button>
             }>
-            <FilePreviewCard file={diagnosis?.file} />
+            <FilePreviewCard fileId={diagnosis?.fileId} />
             <ListItem.Content>
               <VStack>
                 <Text

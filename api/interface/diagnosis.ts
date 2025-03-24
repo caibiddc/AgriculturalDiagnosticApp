@@ -1,25 +1,60 @@
-import {FileMeta, PageData} from '.';
+import {PageData} from '.';
 
-export interface DiagnosisHistory {
-  id: number; // 主键ID
-  file: FileMeta; // 文件ID
-  diagnosisResult: object | null;
-  status: string; // 状态（默认值为 'pending'）
-  createdBy: number; // 创建者
-  updatedBy: number; // 更新者
-  createdAt: string; // 创建时间
-  updatedAt: string; // 更新时间
-}
+// 基础预测类型
+export type BasePrediction = {
+  class_id: number;
+  class_name: string;
+  confidence: number;
+};
 
-export interface ReqDiagnoseDisease {
-  fileId: string;
-}
+// 检测框类型
+export type BBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
-export type ResDiagnosisHistory = DiagnosisHistory[];
+// 分类预测
+export type ClassifyPrediction = BasePrediction & {
+  type: 'classify';
+};
 
+// 检测预测
+export type DetectPrediction = BasePrediction & {
+  type: 'detect';
+  bbox: BBox;
+};
+
+// 预测结果联合类型
+export type Prediction = ClassifyPrediction | DetectPrediction;
+
+// 诊断历史记录
+export type DiagnosisHistory = {
+  id: number;
+  fileId: number;
+  createdAt: string;
+  updatedAt: string;
+  diagnosisResult: ResStartDiagnoseDisease;
+  status: string;
+  createdBy: number;
+  updatedBy: number;
+};
+
+// 请求类型
 export type ReqDiagnosisHistoryList = {
   page: number;
   pageSize: number;
 };
+export type ReqStartDiagnoseDisease = {
+  diagnosisId: string | number;
+  serviceId: number;
+};
 
+// 响应类型
+export type ResStartDiagnoseDisease = {
+  predictions: Prediction[];
+};
+export type ResUploadDiagnosisImage = DiagnosisHistory;
 export type ResDiagnosisHistoryList = PageData<DiagnosisHistory>;
+export type ResDiagnosisHistory = DiagnosisHistory[];

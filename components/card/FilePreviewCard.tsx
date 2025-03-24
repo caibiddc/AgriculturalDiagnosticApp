@@ -1,10 +1,9 @@
-import {FileMeta} from '@/api/interface';
-import React, {useEffect, useState} from 'react';
-import {Avatar, AvatarFallbackText, AvatarImage} from '../ui/avatar';
 import {fileDownload} from '@/api/modules';
+import React, {useEffect, useState} from 'react';
+import {Avatar, AvatarImage} from '../ui/avatar';
 
 export type FilePreviewCardProps = {
-  file?: FileMeta;
+  fileId?: number;
 };
 
 const blobToBase64 = (blob: Blob): Promise<string> =>
@@ -17,13 +16,13 @@ const blobToBase64 = (blob: Blob): Promise<string> =>
     reader.readAsDataURL(blob);
   });
 
-const FilePreviewCard: React.FC<FilePreviewCardProps> = ({file}) => {
+const FilePreviewCard: React.FC<FilePreviewCardProps> = ({fileId}) => {
   const [imageData, setImageData] = useState<string>();
 
   const fetchImage = async () => {
     try {
-      if (!file?.id) return;
-      const response = await fileDownload(file.id);
+      if (!fileId) return;
+      const response = await fileDownload(fileId);
       const base64Data = await blobToBase64(response);
       setImageData(base64Data);
       console.log('base64 url', base64Data);
@@ -34,18 +33,14 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({file}) => {
 
   useEffect(() => {
     fetchImage();
-  }, [file]);
+  }, [fileId]);
 
   return (
     <Avatar size="lg" className="bg-primary-600">
       <AvatarImage
-        alt={file?.originalFileName || 'file Image'}
         style={{width: '100%', height: '100%'}}
         source={{uri: imageData}}
       />
-      {!imageData && (
-        <AvatarFallbackText>{file?.originalFileName}</AvatarFallbackText>
-      )}
     </Avatar>
   );
 };
