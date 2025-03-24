@@ -30,7 +30,8 @@ import {
   Settings,
 } from 'lucide-react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {Image, RefreshControl, ScrollView} from 'react-native';
+import {Image, RefreshControl, ScrollView, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const toast = useToast();
@@ -153,12 +154,36 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
         }>
         <VStack className="h-full w-full pb-8" space="2xl">
           {/* 信息栏背景 */}
-          <Box className="relative w-full md:h-[478px] h-[380px]">
-            <Image
-              source={require('@/assets/profile/image2.png')}
-              style={{width: '100%', height: '100%'}}
-              alt="Banner Image"
-            />
+          <Box className="relative w-full md:h-[478px] h-[380px] overflow-hidden">
+            <View className="absolute inset-0">
+              <LinearGradient
+                colors={['#f2f2f2', '#cdcbcc', '#999999']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0.8,
+                }}
+              />
+              {isWeb && (
+                <View
+                  className="absolute inset-0"
+                  style={
+                    {
+                      backgroundColor: 'transparent',
+                      backgroundImage: `repeating-linear-gradient(
+                      60deg,
+                      rgba(242, 242, 242, 0.1) 0px,
+                      rgba(242, 242, 242, 0.1) 1px,
+                      transparent 1px,
+                      transparent 75px
+                    )`,
+                    } as any
+                  }
+                />
+              )}
+            </View>
           </Box>
           <Center className="absolute md:mt-14 mt-6 w-full md:px-10 md:pt-6 pb-4">
             {/* 头像及个人信息 */}
