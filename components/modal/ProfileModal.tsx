@@ -280,9 +280,9 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
                           <SelectDragIndicatorWrapper>
                             <SelectDragIndicator />
                           </SelectDragIndicatorWrapper>
-                          <SelectItem label="隐藏" value="0" />
-                          <SelectItem label="男" value="1" />
-                          <SelectItem label="女" value="2" />
+                          <SelectItem label="隐藏" value="隐藏" />
+                          <SelectItem label="男" value="男" />
+                          <SelectItem label="女" value="女" />
                         </SelectContent>
                       </SelectPortal>
                     </Select>
