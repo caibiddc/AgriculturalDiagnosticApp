@@ -1,6 +1,6 @@
 import {fileDownload} from '@/api/modules';
 import React, {useEffect, useState} from 'react';
-import {Avatar, AvatarImage} from '../ui/avatar';
+import {Image} from '../ui/image';
 
 export type FilePreviewCardProps = {
   fileId?: number;
@@ -25,7 +25,6 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({fileId}) => {
       const response = await fileDownload(fileId);
       const base64Data = await blobToBase64(response);
       setImageData(base64Data);
-      console.log('base64 url', base64Data);
     } catch (error) {
       console.error('Fetch image error: ', error);
     }
@@ -35,13 +34,14 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({fileId}) => {
     fetchImage();
   }, [fileId]);
 
+  if (!imageData) return null;
   return (
-    <Avatar size="lg" className="bg-primary-600">
-      <AvatarImage
-        style={{width: '100%', height: '100%'}}
-        source={{uri: imageData}}
-      />
-    </Avatar>
+    <Image
+      size="lg"
+      source={{uri: imageData}}
+      className="rounded-lg bg-background-50"
+      alt="诊断图片"
+    />
   );
 };
 
