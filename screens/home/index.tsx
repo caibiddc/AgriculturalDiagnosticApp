@@ -282,12 +282,8 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
         <DiagnosisHistoryList
           diagnosisList={diagnosisList}
           onCheckAll={() => {
-            navigation.reset({
-              index: 1,
-              routes: [
-                {name: 'Profile'},
-                {name: 'Profile', params: {screen: 'DiagnosisHistory'}},
-              ],
+            navigation.navigate('Profile', {
+              screen: 'DiagnosisHistory',
             });
           }}
         />
