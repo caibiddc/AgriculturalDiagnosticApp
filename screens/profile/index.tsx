@@ -39,7 +39,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
 
   const [refreshing, setRefreshing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [imageData, setImageData] = useState<string>();
+  const [imageUrl, setImageUrl] = useState<string>();
   const [profileData, setProfileData] = useState<ResUserProfile>();
   const [userData, setUserData] = useState({
     history: 23,
@@ -50,13 +50,20 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
 
   const fetchProfile = async () => {
     try {
-      const response = await getUserProfile();
-      if (response.code !== 200 || !response.data) {
-        throw new Error(response.message);
+      const profileRes = await getUserProfile();
+      if (profileRes.code !== 200 || !profileRes.data) {
+        throw new Error(profileRes.message);
       }
-      setProfileData(response.data);
-      setImageData(response.data.profile?.avatar || '');
+      setProfileData(profileRes.data);
+      const avatarRes = await getAvatar();
+      // 将 Blob 转换为 base64
+      const reader = new FileReader();
+      reader.readAsDataURL(avatarRes);
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
     } catch (error) {
+      console.log(error);
       toast.show({
         placement: 'top right',
         render: ({id}) => (
@@ -121,7 +128,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
             };
           });
           if (avatar) {
-            setImageData(avatar);
+            setImageUrl(avatar);
           }
         }}
       />
@@ -150,14 +157,14 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
                 <AvatarImage
                   alt="Profile Image"
                   style={{width: '100%', height: '100%'}}
-                  source={{uri: imageData}}
+                  source={{uri: imageUrl}}
                 />
-                {!imageData && (
+                {!imageUrl && (
                   <AvatarFallbackText>
                     {profileData?.username}
                   </AvatarFallbackText>
                 )}
-                {imageData && <AvatarBadge />}
+                {imageUrl && <AvatarBadge />}
               </Avatar>
               <VStack className="gap-1 w-full items-center">
                 <Text size="2xl" className="font-roboto text-dark">
