@@ -107,7 +107,16 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
 
     const handleOpenModal = (values?: ResUserProfile) => {
       if (values && values.profile) {
-        setValue('gender', '' + values.profile.gender || '0');
+        // 将数字转换为对应的 label
+        const genderMap = {
+          0: '隐藏',
+          1: '男',
+          2: '女',
+        };
+        setValue(
+          'gender',
+          genderMap[values.profile.gender as keyof typeof genderMap] || '0',
+        );
         setValue('name', values.profile.name || '');
         setValue('phone', values.profile.phone || '');
         setValue('address', values.profile.address || '');
@@ -134,10 +143,19 @@ const ProfileModal = forwardRef<ProfileModalRef, ProfileModalProps>(
     const onSubmit = async (_data: userSchemaDetails) => {
       setSaveLoading(true);
       try {
+        // 将性别标签转换回数字
+        const genderMap = {
+          隐藏: 0,
+          男: 1,
+          女: 2,
+        };
+        const genderValue =
+          genderMap[_data.gender as keyof typeof genderMap] || 0;
+
         // @ts-ignore
         const profileResp = await updateUserProfile({
           ..._data,
-          gender: parseInt(_data.gender || '0'),
+          gender: genderValue,
         });
         if (profileResp.code !== 200) {
           throw new Error(profileResp.message);
