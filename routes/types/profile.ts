@@ -10,6 +10,10 @@ export type DiagnosisHistoryProps = NativeStackScreenProps<
   ProfileParamList,
   'DiagnosisHistory'
 >;
+export type DiagnosisDetailProps = NativeStackScreenProps<
+  ProfileParamList,
+  'DiagnosisDetail'
+>;
 export type ReportHistoryProps = NativeStackScreenProps<
   ProfileParamList,
   'ReportHistory'

@@ -1,6 +1,7 @@
 import ProfileScreen from '@/screens/profile';
 import AppFeedbackScreen from '@/screens/profile/app-feedback';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
+import DiagnosisDetailScreen from '@/screens/profile/diagnosis-history/detail';
 import MyCollectionScreen from '@/screens/profile/my-collection';
 import ReportHistoryScreen from '@/screens/profile/report-history';
 import SystemSettingsScreen from '@/screens/profile/system-setting';
@@ -9,8 +10,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 export type ProfileParamList = {
   ProfileMain: undefined;
-  DiagnosisHistory: {
-    diagnosisId?: number;
+  DiagnosisHistory: undefined;
+  DiagnosisDetail: {
+    diagnosisId: number;
   };
   ReportHistory: undefined;
   MyCollection: undefined;
@@ -34,6 +36,11 @@ const ProfileNavigator = () => {
         name="DiagnosisHistory"
         component={DiagnosisHistoryScreen}
         options={{title: '诊断历史'}}
+      />
+      <Stack.Screen
+        name="DiagnosisDetail"
+        component={DiagnosisDetailScreen}
+        options={{title: '诊断详情'}}
       />
       <Stack.Screen
         name="ReportHistory"
