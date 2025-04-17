@@ -18,14 +18,6 @@ export type ReportHistoryProps = NativeStackScreenProps<
   ProfileParamList,
   'ReportHistory'
 >;
-export type MyCollectionProps = NativeStackScreenProps<
-  ProfileParamList,
-  'MyCollection'
->;
-export type MyOrdersProps = NativeStackScreenProps<
-  ProfileParamList,
-  'MyOrders'
->;
 export type SystemSettingsProps = NativeStackScreenProps<
   ProfileParamList,
   'SystemSettings'

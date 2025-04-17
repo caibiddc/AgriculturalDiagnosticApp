@@ -25,7 +25,6 @@ const ProfileStatistics: React.FC<ProfileStatistics> = ({navigation, data}) => {
       value: data?.history || 0,
     },
     {label: '上报历史', navigateTo: 'ReportHistory', value: data?.report || 0},
-    {label: '我的收藏', navigateTo: 'MyCollection', value: data?.star || 0},
   ] as const;
 
   return (

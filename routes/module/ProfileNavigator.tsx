@@ -2,7 +2,6 @@ import ProfileScreen from '@/screens/profile';
 import AppFeedbackScreen from '@/screens/profile/app-feedback';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
 import DiagnosisDetailScreen from '@/screens/profile/diagnosis-history/detail';
-import MyCollectionScreen from '@/screens/profile/my-collection';
 import ReportHistoryScreen from '@/screens/profile/report-history';
 import SystemSettingsScreen from '@/screens/profile/system-setting';
 import UserAgreementScreen from '@/screens/profile/user-agreement';
@@ -15,8 +14,6 @@ export type ProfileParamList = {
     diagnosisId: number;
   };
   ReportHistory: undefined;
-  MyCollection: undefined;
-  MyOrders: undefined;
   SystemSettings: undefined;
   UserAgreement: undefined;
   AppFeedback: undefined;
@@ -46,11 +43,6 @@ const ProfileNavigator = () => {
         name="ReportHistory"
         component={ReportHistoryScreen}
         options={{title: '上报历史'}}
-      />
-      <Stack.Screen
-        name="MyCollection"
-        component={MyCollectionScreen}
-        options={{title: '我的收藏'}}
       />
       <Stack.Screen
         name="SystemSettings"
