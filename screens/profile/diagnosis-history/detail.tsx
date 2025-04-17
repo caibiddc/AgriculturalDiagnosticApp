@@ -106,17 +106,6 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 160}}>
         <VStack className="mx-6 mt-6" space="md">
-          <HStack className="items-center">
-            <Pressable
-              onPress={() => navigation.goBack()}
-              className="p-2 rounded-full active:bg-background-100">
-              <Icon as={ArrowLeft} size="md" className="text-typography-900" />
-            </Pressable>
-            <Heading size="lg" className="text-typography-900 ml-2">
-              诊断详情
-            </Heading>
-          </HStack>
-
           <Box className="bg-background-50 rounded-xl p-4 border border-outline-100">
             <VStack space="md">
               <FilePreviewCard fileId={diagnosis.fileId} />
