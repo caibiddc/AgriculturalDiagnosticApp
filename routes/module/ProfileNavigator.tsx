@@ -45,11 +45,6 @@ const ProfileNavigator = () => {
         options={{title: '我的收藏'}}
       />
       <Stack.Screen
-        name="MyOrders"
-        component={MyOrdersScreen}
-        options={{title: '我的订单'}}
-      />
-      <Stack.Screen
         name="SystemSettings"
         component={SystemSettingsScreen}
         options={{title: '系统设置'}}
