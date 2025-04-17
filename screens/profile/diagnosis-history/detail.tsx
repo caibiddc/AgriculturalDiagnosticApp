@@ -1,5 +1,6 @@
 import {DiagnosisHistory} from '@/api/interface/diagnosis';
 import {getDiagnosisHistory} from '@/api/modules/diagnosis';
+import FilePreviewCard from '@/components/card/FilePreviewCard';
 import MainLayout from '@/components/layout/MainLayout';
 import {Box} from '@/components/ui/box';
 import {Heading} from '@/components/ui/heading';
@@ -8,9 +9,19 @@ import {Icon} from '@/components/ui/icon';
 import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
 import {DiagnosisDetailProps} from '@/routes/types';
-import {Calendar, Crop} from 'lucide-react-native';
+import {DIAGNOSIS_STATUS_COLOR} from '@/constants';
+import {ArrowLeft, Calendar, Crop} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
-import {FlatList, ScrollView} from 'react-native';
+import {FlatList, Pressable, ScrollView} from 'react-native';
+import clsx from 'clsx';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import {DIAGNOSIS_STATUS_TEXT} from '@/constants/status';
+
+// 配置 dayjs
+dayjs.extend(relativeTime);
+dayjs.locale('zh-cn');
 
 const PAGE_SIZE = 10;
 
@@ -94,15 +105,42 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 160}}>
-        <VStack space="md" className="p-4">
-          <HStack space="sm" className="items-center">
-            <Heading size="xl" className="text-typography-900">
+        <VStack className="mx-6 mt-6" space="md">
+          <HStack className="items-center">
+            <Pressable
+              onPress={() => navigation.goBack()}
+              className="p-2 rounded-full active:bg-background-100">
+              <Icon as={ArrowLeft} size="md" className="text-typography-900" />
+            </Pressable>
+            <Heading size="lg" className="text-typography-900 ml-2">
               诊断详情
             </Heading>
           </HStack>
 
           <Box className="bg-background-50 rounded-xl p-4 border border-outline-100">
             <VStack space="md">
+              <FilePreviewCard fileId={diagnosis.fileId} />
+
+              <HStack className="items-center justify-between">
+                <Text
+                  className={clsx(
+                    'rounded-full px-3 py-1 text-sm font-medium',
+                    DIAGNOSIS_STATUS_COLOR[
+                      diagnosis.status as keyof typeof DIAGNOSIS_STATUS_COLOR
+                    ],
+                  )}>
+                  {
+                    DIAGNOSIS_STATUS_TEXT[
+                      (diagnosis.status as keyof typeof DIAGNOSIS_STATUS_TEXT) ||
+                        'pending'
+                    ]
+                  }
+                </Text>
+                <Text className="text-typography-500 text-sm">
+                  {dayjs(diagnosis.createdAt).fromNow()}
+                </Text>
+              </HStack>
+
               <HStack space="sm" className="items-center">
                 <Icon as={Crop} size="md" className="text-primary-500" />
                 <Text className="text-typography-900 font-medium text-lg">
@@ -136,7 +174,7 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
                     className="text-typography-500"
                   />
                   <Text className="text-typography-500">
-                    {new Date(diagnosis.createdAt).toLocaleString()}
+                    {dayjs(diagnosis.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                   </Text>
                 </HStack>
               </VStack>
