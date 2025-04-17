@@ -3,7 +3,7 @@ import {EncyclopediaStackParamList} from '../module/EncyclopediaNavigator';
 
 export type EncyclopediaScreenProps = NativeStackScreenProps<
   EncyclopediaStackParamList,
-  'Encyclopedia'
+  'EncyclopediaIndex'
 >;
 
 export type DiseaseDetailScreenProps = NativeStackScreenProps<

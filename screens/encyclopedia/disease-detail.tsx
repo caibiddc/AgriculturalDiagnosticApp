@@ -3,12 +3,14 @@ import {getDiseaseDetail} from '@/api/modules/Knowledge/disease';
 import MainLayout from '@/components/layout/MainLayout';
 import {Box} from '@/components/ui/box';
 import {Heading} from '@/components/ui/heading';
+import {HStack} from '@/components/ui/hstack';
 import {Icon} from '@/components/ui/icon';
 import {Image} from '@/components/ui/image';
 import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
+import {TREATMENT_METHOD} from '@/constants/knowledge';
 import {DiseaseDetailScreenProps} from '@/routes/types/encyclopedia';
-import {Sprout} from 'lucide-react-native';
+import {Bug, Droplets, Leaf, Thermometer, Wind} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {ScrollView} from 'react-native';
 
@@ -61,57 +63,136 @@ const DiseaseDetailScreen: React.FC<DiseaseDetailScreenProps> = ({route}) => {
               />
             ) : (
               <Box className="flex-1 items-center justify-center">
-                <Icon as={Sprout} size="xl" className="text-primary-500" />
+                <Icon as={Leaf} size="xl" className="text-primary-500" />
               </Box>
             )}
           </Box>
 
           {/* 病害基本信息 */}
-          <VStack space="md">
-            <Heading size="xl">{disease.name}</Heading>
-            <Text className="text-typography-600">{disease.alias}</Text>
+          <VStack space="sm" className="bg-background-50 p-4 rounded-xl">
+            <Heading size="xl" className="text-typography-900">
+              {disease.name}
+            </Heading>
+            {disease.alias && (
+              <Text className="text-typography-600 text-base">
+                别名：{disease.alias}
+              </Text>
+            )}
+            <Text className="text-typography-700 text-base">
+              所属作物：{disease.crop?.name || '未知'}
+            </Text>
           </VStack>
 
           {/* 病害详情 */}
-          <VStack space="md">
-            <Heading size="md">病害详情</Heading>
-            <Text className="text-typography-700">{disease.cause}</Text>
+          <VStack space="sm" className="bg-background-50 p-4 rounded-xl">
+            <HStack space="sm" className="items-center">
+              <Icon as={Bug} size="md" className="text-primary-500" />
+              <Heading size="md" className="text-typography-900">
+                病害详情
+              </Heading>
+            </HStack>
+            <Text className="text-typography-700 text-base leading-relaxed">
+              {disease.cause}
+            </Text>
           </VStack>
 
           {/* 传播途径 */}
-          <VStack space="md">
-            <Heading size="md">传播途径</Heading>
-            <Text className="text-typography-700">{disease.transmission}</Text>
+          <VStack space="sm" className="bg-background-50 p-4 rounded-xl">
+            <HStack space="sm" className="items-center">
+              <Icon as={Wind} size="md" className="text-primary-500" />
+              <Heading size="md" className="text-typography-900">
+                传播途径
+              </Heading>
+            </HStack>
+            <Text className="text-typography-700 text-base leading-relaxed">
+              {disease.transmission}
+            </Text>
           </VStack>
 
           {/* 症状 */}
-          <VStack space="md">
-            <Heading size="md">症状</Heading>
-            {disease.symptoms.map((symptom, index) => (
-              <Text key={index} className="text-typography-700">
-                • {symptom.description}
-              </Text>
-            ))}
+          <VStack space="sm" className="bg-background-50 p-4 rounded-xl">
+            <HStack space="sm" className="items-center">
+              <Icon as={Leaf} size="md" className="text-primary-500" />
+              <Heading size="md" className="text-typography-900">
+                症状表现
+              </Heading>
+            </HStack>
+            <VStack space="sm">
+              {disease.symptoms.map((symptom, index) => (
+                <Box
+                  key={index}
+                  className="bg-background-0 p-3 rounded-lg border border-outline-100">
+                  <Text className="text-typography-700 text-base font-medium">
+                    {symptom.stage}
+                  </Text>
+                  <Text className="text-typography-600 text-base mt-1">
+                    {symptom.description}
+                  </Text>
+                  {symptom.imageUrl && (
+                    <Box className="mt-2 aspect-video rounded-lg overflow-hidden">
+                      <Image
+                        source={{uri: symptom.imageUrl}}
+                        alt={`${symptom.stage}症状`}
+                        className="w-full h-full"
+                      />
+                    </Box>
+                  )}
+                </Box>
+              ))}
+            </VStack>
           </VStack>
 
           {/* 防治方法 */}
-          <VStack space="md">
-            <Heading size="md">防治方法</Heading>
-            {disease.treatments.map((treatment, index) => (
-              <Text key={index} className="text-typography-700">
-                • {treatment.method}
-              </Text>
-            ))}
+          <VStack space="sm" className="bg-background-50 p-4 rounded-xl">
+            <HStack space="sm" className="items-center">
+              <Icon as={Droplets} size="md" className="text-primary-500" />
+              <Heading size="md" className="text-typography-900">
+                防治方法
+              </Heading>
+            </HStack>
+            <VStack space="sm">
+              {disease.treatments.map((treatment, index) => (
+                <Box
+                  key={index}
+                  className="bg-background-0 p-3 rounded-lg border border-outline-100">
+                  <Text className="text-typography-700 text-base font-medium">
+                    {TREATMENT_METHOD[treatment.type]}
+                  </Text>
+                  <Text className="text-typography-600 text-base mt-1">
+                    {treatment.method}
+                  </Text>
+                  {treatment.recommendedProducts && (
+                    <Text className="text-typography-500 text-sm mt-1">
+                      推荐产品：{treatment.recommendedProducts}
+                    </Text>
+                  )}
+                </Box>
+              ))}
+            </VStack>
           </VStack>
 
           {/* 环境因素 */}
-          <VStack space="md">
-            <Heading size="md">环境因素</Heading>
-            {disease.environmentFactors.map((factor, index) => (
-              <Text key={index} className="text-typography-700">
-                • {factor.optimalRange}
-              </Text>
-            ))}
+          <VStack space="sm" className="bg-background-50 p-4 rounded-xl">
+            <HStack space="sm" className="items-center">
+              <Icon as={Thermometer} size="md" className="text-primary-500" />
+              <Heading size="md" className="text-typography-900">
+                环境因素
+              </Heading>
+            </HStack>
+            <VStack space="sm">
+              {disease.environmentFactors.map((factor, index) => (
+                <Box
+                  key={index}
+                  className="bg-background-0 p-3 rounded-lg border border-outline-100">
+                  <Text className="text-typography-700 text-base font-medium">
+                    {factor.factor}
+                  </Text>
+                  <Text className="text-typography-600 text-base mt-1">
+                    适宜范围：{factor.optimalRange}
+                  </Text>
+                </Box>
+              ))}
+            </VStack>
           </VStack>
         </VStack>
       </ScrollView>
