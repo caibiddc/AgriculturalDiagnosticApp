@@ -1,4 +1,5 @@
 import {DiagnosisHistory} from '@/api/interface/diagnosis';
+import {getCrops} from '@/api/modules/Knowledge/crop';
 import {
   getDiagnosisHistoryList,
   uploadDiseaseImage,
@@ -36,7 +37,7 @@ import {RefreshControl, ScrollView} from 'react-native';
 
 const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
   const toast = useToast();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const {image, takePhoto, choosePhoto, clearImage} = useImagePicker();
@@ -46,14 +47,35 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
       value: string;
       disabled?: boolean;
     }[]
-  >([
-    {label: '苹果', value: '苹果'},
-    {label: '水稻', value: '水稻'},
-    {label: '小麦', value: '小麦'},
-    {label: '甘薯', value: '甘薯'},
-    {label: '马铃薯', value: '马铃薯'},
-  ]);
+  >([]);
   const [diagnosisList, setDiagnosisList] = useState<DiagnosisHistory[]>([]);
+
+  // 获取作物列表
+  const fetchCrops = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getCrops();
+      if (response.data) {
+        const cropOptions = response.data.map(crop => ({
+          label: crop.name,
+          value: crop.name,
+        }));
+        setOptions(cropOptions);
+      }
+    } catch (error) {
+      console.error('获取作物列表失败:', error);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>获取作物列表失败</ToastTitle>
+          </Toast>
+        ),
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchDiagnosisHistory = async () => {
     try {
@@ -65,6 +87,7 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
   };
 
   useEffect(() => {
+    fetchCrops();
     fetchDiagnosisHistory();
   }, []);
 
@@ -176,7 +199,9 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
                   'h-12 flex justify-between rounded-xl border-2',
                   'border-primary-200 focus:border-primary-500',
                 )}>
-                <SelectInput placeholder="请选择植物" />
+                <SelectInput
+                  placeholder={isLoading ? '加载中...' : '请选择植物'}
+                />
                 <SelectIcon className="mr-4" as={ChevronDownIcon} />
               </SelectTrigger>
               <SelectPortal>
