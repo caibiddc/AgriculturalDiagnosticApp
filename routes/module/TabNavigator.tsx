@@ -1,13 +1,15 @@
-import EncyclopediaScreen from '@/screens/encyclopedia';
 import HomeScreen from '@/screens/home';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigatorScreenParams} from '@react-navigation/native';
 import {IconMap, IconSelectedMap} from '../config/icons';
+import EncyclopediaNavigator, {
+  EncyclopediaStackParamList,
+} from './EncyclopediaNavigator';
 import ProfileNavigator, {ProfileParamList} from './ProfileNavigator';
 
 export type BottomTabParamList = {
   Home: undefined;
-  Encyclopedia: undefined;
+  Encyclopedia: NavigatorScreenParams<EncyclopediaStackParamList>;
   Profile: NavigatorScreenParams<ProfileParamList>;
 };
 
@@ -31,7 +33,7 @@ const TabNavigator = () => (
     />
     <Tab.Screen
       name="Encyclopedia"
-      component={EncyclopediaScreen}
+      component={EncyclopediaNavigator}
       options={{title: '病害百科', headerShown: false}}
     />
     <Tab.Screen

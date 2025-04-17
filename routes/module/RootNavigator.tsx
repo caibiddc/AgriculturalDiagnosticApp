@@ -1,8 +1,9 @@
 import {useAppSelector} from '@/hooks';
+import CreatePassword from '@/screens/auth/create-password';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React from 'react';
 import AuthNavigator from './AuthNavigator';
 import TabNavigator from './TabNavigator';
-import CreatePassword from '@/screens/auth/create-password';
 
 // 根 Stack 参数类型
 export type RootStackParamList = {

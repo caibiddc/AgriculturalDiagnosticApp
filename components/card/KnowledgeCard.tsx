@@ -5,10 +5,13 @@ import {ChevronRightIcon, Icon} from '../ui/icon';
 import {Image} from '../ui/image';
 import {Pressable} from '../ui/pressable';
 import {Text} from '../ui/text';
+import {useState} from 'react';
+import {Sprout} from 'lucide-react-native';
 
 export interface Knowledge {
   title: string;
   url?: string;
+  description?: string;
 }
 
 export interface KnowledgeCardProps {
@@ -18,6 +21,12 @@ export interface KnowledgeCardProps {
 
 const KnowledgeCard: React.FC<KnowledgeCardProps> = ({knowledge, onPress}) => {
   const {isDark} = useAppSelector(state => state.global.themeConfig);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <Pressable
       className={`flex-1 rounded-xl bg-background-0 w-full h-full sm:gap-2 gap-1 flex flex-col lg:p-4 ${
@@ -27,13 +36,20 @@ const KnowledgeCard: React.FC<KnowledgeCardProps> = ({knowledge, onPress}) => {
       }`}
       onPress={onPress}>
       <Box className="rounded-lg bg-background-50 px-3 lg:px-6 py-[14px] lg:py-7 aspect-[17/12]">
-        <Image
-          source={{
-            uri: knowledge.url,
-          }}
-          alt={knowledge.title}
-          className={`flex-1 rounded lg:rounded-md shadow-[0px_0px_1.998px_0px_rgba(38,38,38,0.10)]`}
-        />
+        {knowledge.url && !imageError ? (
+          <Image
+            source={{
+              uri: knowledge.url,
+            }}
+            alt={knowledge.title}
+            className={`flex-1 rounded lg:rounded-md shadow-[0px_0px_1.998px_0px_rgba(38,38,38,0.10)]`}
+            onError={handleImageError}
+          />
+        ) : (
+          <Box className="flex-1 items-center justify-center">
+            <Icon as={Sprout} size="xl" className="text-primary-500" />
+          </Box>
+        )}
       </Box>
       <HStack className="justify-between px-1.5 mt-1">
         <Text className="text-typography-900 font-medium sm:text-base text-sm lg:text-xl">
