@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {DIAGNOSIS_STATUS_TEXT} from '@/constants/status';
+import {Button, ButtonText} from '@/components/ui/button';
 
 // 配置 dayjs
 dayjs.extend(relativeTime);
@@ -179,6 +180,20 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
               />
             </VStack>
           </Box>
+          <Button
+            className="w-full"
+            onPress={() =>
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Profile' as any,
+                  },
+                ],
+              })
+            }>
+            <ButtonText>返回个人信息页</ButtonText>
+          </Button>
         </VStack>
       </ScrollView>
     </MainLayout>
