@@ -1,12 +1,10 @@
-import {ResDiagnosisHistory} from '@/api/interface';
+import {DiagnosisHistory} from '@/api/interface/diagnosis';
 import {
   getDiagnosisHistoryList,
   uploadDiseaseImage,
 } from '@/api/modules/diagnosis';
 import MainLayout from '@/components/layout/MainLayout';
 import DiagnosisHistoryList from '@/components/list/DiagnosisHistoryList';
-import {EditPhotoIcon} from '@/components/modal/assets/icons/edit-photo';
-import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
 import {Button, ButtonText} from '@/components/ui/button';
 import {Heading} from '@/components/ui/heading';
 import {HStack} from '@/components/ui/hstack';
@@ -55,7 +53,7 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
     {label: '甘薯', value: '甘薯'},
     {label: '马铃薯', value: '马铃薯'},
   ]);
-  const [diagnosisList, setDiagnosisList] = useState<ResDiagnosisHistory>([]);
+  const [diagnosisList, setDiagnosisList] = useState<DiagnosisHistory[]>([]);
 
   const fetchDiagnosisHistory = async () => {
     try {

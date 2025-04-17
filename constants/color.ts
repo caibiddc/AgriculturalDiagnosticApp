@@ -1,3 +1,5 @@
+import {DIAGNOSIS_STATUS} from './status';
+
 export const ROLE_COLOR = {
   专家: 'blue',
   农民: 'green',
@@ -13,7 +15,8 @@ export const FILE_TYPE_COLOR = {
 } as const;
 
 export const DIAGNOSIS_STATUS_COLOR = {
-  pending: 'bg-secondary-500',
-  in_progress: 'bg-warning-500 text-white',
-  completed: 'bg-success-500 text-white',
+  [DIAGNOSIS_STATUS.PENDING]: 'bg-secondary-500',
+  [DIAGNOSIS_STATUS.PROCESSING]: 'bg-warning-500 text-white',
+  [DIAGNOSIS_STATUS.SUCCESS]: 'bg-success-500 text-white',
+  [DIAGNOSIS_STATUS.FAILED]: 'bg-error-500 text-white',
 } as const;

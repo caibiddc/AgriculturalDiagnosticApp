@@ -27,6 +27,11 @@ export interface PageData<T = any> {
   };
 }
 
+export type ReqPage = {
+  page: number;
+  pageSize: number;
+};
+
 export interface CustomInternalAxiosRequestConfig
   extends InternalAxiosRequestConfig {
   cancel?: boolean;
@@ -52,7 +57,8 @@ export type DeleteConfig = Omit<AxiosRequestConfig, 'params'> & {
   toast?: boolean;
 };
 
-export * from './file';
 export * from './auth';
 export * from './diagnosis';
+export * from './file';
+export * from './service';
 export * from './user';

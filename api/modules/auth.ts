@@ -33,8 +33,4 @@ export const getMenuList = () =>
 
 // * 获取角色字典
 export const getRoleDict = () =>
-  RequestHttp.instance.get<ResAuthDict>(
-    `/auth/role-dict`,
-    {},
-    {loading: false},
-  );
+  RequestHttp.instance.get<ResAuthDict>(`/auth/role-dict`);

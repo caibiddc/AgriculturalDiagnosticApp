@@ -31,10 +31,10 @@ const LogoutAlertDialog = ({
   const handleLogout = async () => {
     // 退出登录
     try {
-      const response = await logoutApi();
-      if (response.code !== 200) {
-        throw new Error(response.message);
-      }
+      // const response = await logoutApi();
+      // if (response.code !== 200) {
+      //   throw new Error(response.message);
+      // }
       // 清除用户信息
       dispatch(setAuthenticated(false));
       dispatch(setToken(''));

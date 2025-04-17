@@ -1,12 +1,13 @@
 import {DiagnosisHistory} from '@/api/interface';
-import {DIAGNOSIS_STATUS_COLOR, DiagnosisStatusMapper} from '@/constants';
+import {DIAGNOSIS_STATUS_COLOR} from '@/constants';
+import {DIAGNOSIS_STATUS_TEXT} from '@/constants/status';
 import clsx from 'clsx';
-import {ChevronRight, Clock, History} from 'lucide-react-native';
-import React from 'react';
-import {GestureResponderEvent} from 'react-native';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import {ChevronRight, Clock, History} from 'lucide-react-native';
+import React from 'react';
+import {GestureResponderEvent} from 'react-native';
 import FilePreviewCard from '../card/FilePreviewCard';
 import {Button, ButtonText} from '../ui/button';
 import {Heading} from '../ui/heading';
@@ -80,8 +81,8 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
                       ],
                     )}>
                     {
-                      DiagnosisStatusMapper[
-                        (diagnosis?.status as keyof typeof DiagnosisStatusMapper) ||
+                      DIAGNOSIS_STATUS_TEXT[
+                        (diagnosis?.status as keyof typeof DIAGNOSIS_STATUS_TEXT) ||
                           'pending'
                       ]
                     }

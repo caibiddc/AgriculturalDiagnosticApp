@@ -1,4 +1,5 @@
-import {PageData} from '.';
+import {LogLevel} from '@/enums';
+import {PageData, RemoteService, ReqPage} from '.';
 
 // 基础预测类型
 export type BasePrediction = {
@@ -18,12 +19,14 @@ export type BBox = {
 // 分类预测
 export type ClassifyPrediction = BasePrediction & {
   type: 'classify';
+  top5: BasePrediction[];
 };
 
 // 检测预测
 export type DetectPrediction = BasePrediction & {
   type: 'detect';
   bbox: BBox;
+  area: number;
 };
 
 // 预测结果联合类型
@@ -36,25 +39,36 @@ export type DiagnosisHistory = {
   createdAt: string;
   updatedAt: string;
   diagnosisResult: ResStartDiagnoseDisease;
-  status: string;
+  status: 'pending' | 'success' | 'failed' | 'processing';
   createdBy: number;
   updatedBy: number;
 };
 
-// 请求类型
-export type ReqDiagnosisHistoryList = {
-  page: number;
-  pageSize: number;
+// 诊断日志
+export type DiagnosisLog = {
+  id: number;
+  diagnosisId: number;
+  diagnosis?: DiagnosisHistory;
+  level: LogLevel;
+  message: string;
+  metadata: Record<string, any>;
+  createdAt: string;
 };
+
+// 请求类型
+export type ReqDiagnosisHistoryList = ReqPage;
 export type ReqStartDiagnoseDisease = {
   diagnosisId: string | number;
   serviceId: number;
+  configId: number;
 };
 
 // 响应类型
 export type ResStartDiagnoseDisease = {
-  predictions: Prediction[];
+  predictions?: Prediction[];
+  status: 'success' | 'failed';
+  task_id: string;
 };
 export type ResUploadDiagnosisImage = DiagnosisHistory;
 export type ResDiagnosisHistoryList = PageData<DiagnosisHistory>;
-export type ResDiagnosisHistory = DiagnosisHistory[];
+export type ResDiagnosisSupport = RemoteService[];

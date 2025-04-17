@@ -1,8 +1,8 @@
 import RequestHttp from '@/api';
 import {ImagePickerResult} from '@/hooks/useImagePicker';
 import {
+  DiagnosisHistory,
   ReqDiagnosisHistoryList,
-  ResDiagnosisHistory,
   ResDiagnosisHistoryList,
 } from '../interface';
 
@@ -22,7 +22,7 @@ export const uploadDiseaseImage = async (image: ImagePickerResult) => {
 
 // * 获取病害诊断历史
 export const getDiagnosisHistory = async () =>
-  RequestHttp.instance.get<ResDiagnosisHistory>('/diagnosis/history');
+  RequestHttp.instance.get<DiagnosisHistory[]>('/diagnosis/history');
 
 // * 获取病害诊断历史(分页)
 export const getDiagnosisHistoryList = async (
