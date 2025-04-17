@@ -309,6 +309,14 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
               screen: 'DiagnosisHistory',
             });
           }}
+          onCheckDetail={diagnosis => {
+            navigation.navigate('Profile', {
+              screen: 'DiagnosisDetail',
+              params: {
+                diagnosisId: diagnosis.id,
+              },
+            });
+          }}
         />
       </ScrollView>
     </VStack>
