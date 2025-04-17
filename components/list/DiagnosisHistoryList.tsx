@@ -33,11 +33,11 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
   onCheckAll,
 }) => {
   return (
-    <VStack className="mx-6 mt-6" space="md">
+    <VStack className="mx-6 mt-6" space="lg">
       <HStack className="items-center justify-between">
         <HStack space="sm" className="items-center">
-          <Icon as={History} size="md" className="text-primary-500" />
-          <Heading size="lg" className="text-typography-900">
+          <Icon as={History} size="xl" className="text-primary-500" />
+          <Heading size="xl" className="text-typography-900">
             诊断历史
           </Heading>
         </HStack>
@@ -45,8 +45,10 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
           variant="outline"
           size="sm"
           onPress={onCheckAll}
-          className="px-2">
-          <ButtonText className="text-primary-500">查看全部</ButtonText>
+          className="px-3 py-1.5">
+          <ButtonText className="text-primary-500 font-medium">
+            查看全部
+          </ButtonText>
           <Icon as={ChevronRight} size="sm" className="text-primary-500 ml-1" />
         </Button>
       </HStack>
@@ -54,10 +56,10 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
       <VStack className="w-full" space="md">
         {diagnosisList.length === 0 ? (
           <VStack
-            className="items-center justify-center py-8 bg-background-50 rounded-xl"
+            className="items-center justify-center py-12 bg-background-50 rounded-2xl"
             space="md">
             <Icon as={Clock} size="xl" className="text-typography-400" />
-            <Text className="text-typography-500">暂无诊断记录</Text>
+            <Text className="text-typography-500 text-base">暂无诊断记录</Text>
           </VStack>
         ) : (
           diagnosisList.map(diagnosis => (
@@ -66,9 +68,10 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
               onPress={() => onCheckDetail?.(diagnosis)}
               className={clsx(
                 'flex-row items-center p-4',
-                'rounded-xl bg-background-0',
+                'rounded-2xl bg-background-0',
                 'border border-outline-200',
                 'active:bg-background-50',
+                'shadow-sm',
               )}>
               <FilePreviewCard fileId={diagnosis?.fileId} />
               <VStack className="flex-1 ml-4" space="sm">
@@ -91,7 +94,7 @@ const DiagnosisHistoryList: React.FC<DiagnosisHistoryListProps> = ({
                     {dayjs(diagnosis?.createdAt).fromNow()}
                   </Text>
                 </HStack>
-                <Text className="text-typography-700 text-sm">
+                <Text className="text-typography-700 text-base font-medium">
                   点击查看诊断详情
                 </Text>
               </VStack>
