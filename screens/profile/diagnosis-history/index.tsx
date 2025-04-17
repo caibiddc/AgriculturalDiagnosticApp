@@ -2,6 +2,7 @@
 import {DiagnosisHistory} from '@/api/interface/diagnosis';
 import {getDiagnosisHistoryList} from '@/api/modules/diagnosis';
 import MainLayout from '@/components/layout/MainLayout';
+import {Divider} from '@/components/ui/divider';
 import {Heading} from '@/components/ui/heading';
 import {HStack} from '@/components/ui/hstack';
 import {Icon} from '@/components/ui/icon';
@@ -14,7 +15,7 @@ import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import clsx from 'clsx';
 import {Calendar, Clock, Crop, Info} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
-import {RefreshControl, ScrollView} from 'react-native';
+import {FlatList, RefreshControl} from 'react-native';
 
 const DiagnosisHistoryScreen: React.FC<DiagnosisHistoryProps> = ({
   navigation,
@@ -53,76 +54,78 @@ const DiagnosisHistoryScreen: React.FC<DiagnosisHistoryProps> = ({
     setRefreshing(false);
   };
 
+  const renderItem = ({item: diagnosis}: {item: DiagnosisHistory}) => (
+    <>
+      <Pressable
+        key={diagnosis.id}
+        onPress={() =>
+          navigation.navigate('DiagnosisDetail', {
+            diagnosisId: diagnosis.id,
+          })
+        }
+        className={clsx(
+          'bg-background-50 rounded-xl p-4',
+          'active:bg-background-100',
+        )}>
+        <VStack space="sm">
+          <HStack space="sm" className="items-center">
+            <Icon as={Crop} size="md" className="text-primary-500" />
+            <Text className="text-typography-900 font-medium">
+              {diagnosis.diagnosisResult?.predictions?.[0]?.class_name ||
+                '未知病害'}
+            </Text>
+          </HStack>
+          <HStack space="sm" className="items-center">
+            <Icon as={Calendar} size="sm" className="text-typography-500" />
+            <Text className="text-typography-500 text-sm">
+              {new Date(diagnosis.createdAt).toLocaleDateString()}
+            </Text>
+            <Icon as={Clock} size="sm" className="text-typography-500 ml-2" />
+            <Text className="text-typography-500 text-sm">
+              {new Date(diagnosis.createdAt).toLocaleTimeString()}
+            </Text>
+          </HStack>
+          <HStack space="sm" className="items-center">
+            <Icon as={Info} size="sm" className="text-typography-500" />
+            <Text className="text-typography-500 text-sm">
+              置信度:{' '}
+              {(
+                (diagnosis.diagnosisResult?.predictions?.[0]?.confidence || 0) *
+                100
+              ).toFixed(2)}
+              %
+            </Text>
+          </HStack>
+        </VStack>
+      </Pressable>
+      <Divider />
+    </>
+  );
+
   return (
     <MainLayout>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+      <FlatList
+        data={diagnosisList}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={{
+          padding: 16,
           paddingBottom: isWeb ? 0 : 160,
-          flexGrow: 1,
         }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
-        <VStack space="md" className="p-4">
-          <Heading size="xl" className="text-typography-900">
+        ListHeaderComponent={
+          <Heading size="xl" className="text-typography-900 mb-4">
             诊断历史
           </Heading>
-          {diagnosisList.map(diagnosis => (
-            <Pressable
-              key={diagnosis.id}
-              onPress={() =>
-                navigation.navigate('DiagnosisDetail', {
-                  diagnosisId: diagnosis.id,
-                })
-              }
-              className={clsx(
-                'bg-background-50 rounded-xl p-4',
-                'border border-outline-100',
-                'active:bg-background-100',
-              )}>
-              <VStack space="sm">
-                <HStack space="sm" className="items-center">
-                  <Icon as={Crop} size="md" className="text-primary-500" />
-                  <Text className="text-typography-900 font-medium">
-                    {diagnosis.diagnosisResult?.predictions?.[0]?.class_name ||
-                      '未知病害'}
-                  </Text>
-                </HStack>
-                <HStack space="sm" className="items-center">
-                  <Icon
-                    as={Calendar}
-                    size="sm"
-                    className="text-typography-500"
-                  />
-                  <Text className="text-typography-500 text-sm">
-                    {new Date(diagnosis.createdAt).toLocaleDateString()}
-                  </Text>
-                  <Icon
-                    as={Clock}
-                    size="sm"
-                    className="text-typography-500 ml-2"
-                  />
-                  <Text className="text-typography-500 text-sm">
-                    {new Date(diagnosis.createdAt).toLocaleTimeString()}
-                  </Text>
-                </HStack>
-                <HStack space="sm" className="items-center">
-                  <Icon as={Info} size="sm" className="text-typography-500" />
-                  <Text className="text-typography-500 text-sm">
-                    置信度:{' '}
-                    {(
-                      (diagnosis.diagnosisResult?.predictions?.[0]
-                        ?.confidence || 0) * 100
-                    ).toFixed(2)}
-                    %
-                  </Text>
-                </HStack>
-              </VStack>
-            </Pressable>
-          ))}
-        </VStack>
-      </ScrollView>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        removeClippedSubviews={true}
+      />
     </MainLayout>
   );
 };
