@@ -1,7 +1,6 @@
 import ProfileScreen from '@/screens/profile';
 import AppFeedbackScreen from '@/screens/profile/app-feedback';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
-import MyOrdersScreen from '@/screens/profile/my-order';
 import MyCollectionScreen from '@/screens/profile/my-collection';
 import ReportHistoryScreen from '@/screens/profile/report-history';
 import SystemSettingsScreen from '@/screens/profile/system-setting';
