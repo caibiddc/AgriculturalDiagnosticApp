@@ -12,7 +12,6 @@ export interface ProfileStatistics {
   data?: {
     history: number;
     report: number;
-    star: number;
   };
 }
 

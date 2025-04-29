@@ -2,6 +2,8 @@ import RequestHttp from '@/api';
 import {ImagePickerResult} from '@/hooks/useImagePicker';
 import {
   DiagnosisHistory,
+  DiagnosisStatistics,
+  RemoteService,
   ReqDiagnosisHistoryList,
   ResDiagnosisHistoryList,
 } from '../interface';
@@ -18,6 +20,16 @@ export const uploadDiseaseImage = async (image: ImagePickerResult) => {
     timeout: 60000,
     headers: {'Content-Type': 'multipart/form-data'},
   });
+};
+
+// * 获取诊断支持信息
+export const getDiagnosisSupport = async () => {
+  return RequestHttp.instance.get<RemoteService[]>('/diagnosis/support');
+};
+
+// * 获取诊断统计信息
+export const getDiagnosisStatistics = async () => {
+  return RequestHttp.instance.get<DiagnosisStatistics>('/diagnosis/statistics');
 };
 
 // * 获取病害诊断历史

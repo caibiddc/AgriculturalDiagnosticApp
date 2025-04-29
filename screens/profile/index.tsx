@@ -1,4 +1,5 @@
-import {ResUserProfile} from '@/api/interface';
+import {DiagnosisStatistics, ResUserProfile} from '@/api/interface';
+import {getDiagnosisStatistics} from '@/api/modules';
 import {getAvatar, getUserProfile} from '@/api/modules/user';
 import LogoutAlertDialog from '@/components/dialog/LogoutAlertDialog';
 import MainLayout from '@/components/layout/MainLayout';
@@ -42,11 +43,9 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
   const [profileData, setProfileData] = useState<ResUserProfile>();
-  const [userData, setUserData] = useState({
-    history: 23,
-    report: 123,
-    star: 40,
-    order: 1,
+  const [userData, setUserData] = useState<DiagnosisStatistics>({
+    history: 0,
+    report: 0,
   });
 
   const fetchProfile = async () => {
@@ -86,11 +85,31 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
     }
   };
 
+  const fetchDiagnosisStatistics = async () => {
+    try {
+      const res = await getDiagnosisStatistics();
+      if (res.code !== 200 || !res.data) {
+        throw new Error(res.message);
+      }
+      setUserData(res.data);
+    } catch (error) {
+      console.log(error);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>诊断统计信息获取失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    }
+  };
+
   // 处理下拉刷新
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await fetchProfile();
+      await Promise.allSettled([fetchProfile(), fetchDiagnosisStatistics()]);
       toast.show({
         placement: 'top right',
         render: ({id}) => (
@@ -115,6 +134,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
 
   useEffect(() => {
     fetchProfile();
+    fetchDiagnosisStatistics();
   }, []);
 
   return (
