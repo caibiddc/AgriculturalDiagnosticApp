@@ -5,6 +5,7 @@ import {
   useToast,
 } from '@/components/ui/toast';
 import {useCallback, useState} from 'react';
+import {Image} from 'react-native-compressor';
 import {
   ImagePickerResponse,
   launchCamera,
@@ -21,7 +22,7 @@ export interface ImagePickerResult {
 // 设置默认配置
 const defaultOptions = {
   mediaType: 'photo', // 确保选择的是图片
-  quality: 1, // 图片质量
+  quality: 0.7, // 图片质量，先进行初步压缩
 } as const;
 
 const useImagePicker = () => {
@@ -74,28 +75,51 @@ const useImagePicker = () => {
     }
   };
 
+  const handleImageResponse = async (response: ImagePickerResponse) => {
+    if (response.didCancel) {
+      setError('User cancelled the image picker');
+      return null;
+    } else if (response.errorCode) {
+      errorHandler(response);
+      setError(`ImagePicker Error: ${response.errorMessage}`);
+      return null;
+    } else if (response.assets && response.assets[0]) {
+      const {uri, type, fileName} = response.assets[0];
+      if (!uri || !type) {
+        setError('No image selected or type not found!');
+        return null;
+      }
+
+      try {
+        // 压缩图片，最大尺寸为 1MB
+        const compressedUri = await Image.compress(uri, {
+          maxWidth: 640,
+          maxHeight: 640,
+          quality: 0.8,
+        });
+
+        return {
+          uri: compressedUri,
+          type,
+          name: fileName ?? `disease-${Date.now()}.jpg`,
+        };
+      } catch (error) {
+        setError('图片压缩失败');
+        return null;
+      }
+    }
+    return null;
+  };
+
   // 封装拍照功能
   const takePhoto = useCallback(() => {
     setLoading(true);
     setError(null);
 
-    launchCamera(defaultOptions, (response: ImagePickerResponse) => {
-      if (response.didCancel) {
-        setError('User cancelled the photo picker');
-      } else if (response.errorCode) {
-        errorHandler(response);
-        setError(`Camera Error: ${response.errorMessage}`);
-      } else if (response.assets && response.assets[0]) {
-        const {uri, type, fileName} = response.assets[0];
-        if (!uri || !type) {
-          setError('No image selected or type not found!');
-          return;
-        }
-        setImage({
-          uri,
-          type,
-          name: fileName ?? `disease-${Date.now()}.jpg`,
-        });
+    launchCamera(defaultOptions, async (response: ImagePickerResponse) => {
+      const compressedImage = await handleImageResponse(response);
+      if (compressedImage) {
+        setImage(compressedImage);
       }
       setLoading(false);
     });
@@ -106,26 +130,16 @@ const useImagePicker = () => {
     setLoading(true);
     setError(null);
 
-    launchImageLibrary(defaultOptions, (response: ImagePickerResponse) => {
-      if (response.didCancel) {
-        setError('User cancelled the image picker');
-      } else if (response.errorCode) {
-        errorHandler(response);
-        setError(`ImagePicker Error: ${response.errorMessage}`);
-      } else if (response.assets && response.assets[0]) {
-        const {uri, type, fileName} = response.assets[0];
-        if (!uri || !type) {
-          setError('No image selected or type not found!');
-          return;
+    launchImageLibrary(
+      defaultOptions,
+      async (response: ImagePickerResponse) => {
+        const compressedImage = await handleImageResponse(response);
+        if (compressedImage) {
+          setImage(compressedImage);
         }
-        setImage({
-          uri,
-          type,
-          name: fileName ?? `disease-${Date.now()}.jpg`,
-        });
-      }
-      setLoading(false);
-    });
+        setLoading(false);
+      },
+    );
   }, []);
 
   // 清除图片

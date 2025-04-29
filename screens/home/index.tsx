@@ -150,19 +150,32 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
       setIsUploading(false);
       return;
     }
+
+    if (!selectedValue) {
+      toast.show({
+        placement: 'top right',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastTitle>请先选择植物类型</ToastTitle>
+          </Toast>
+        ),
+      });
+      setIsUploading(false);
+      return;
+    }
+
     try {
       console.log('Uploading image: ', image);
       const response = await uploadDiseaseImage(image);
       if (!response.data) throw new Error('上传失败');
-      const selectedOption = options.find(
-        option => option.value === selectedValue,
-      );
-      if (!selectedOption) throw new Error('请选择诊断类型');
+
       await startDiagnosisAsync({
         diagnosisId: response.data.id,
-        serviceId: selectedOption.value.serviceId,
-        configId: selectedOption.value.configId,
+        serviceId: selectedValue.serviceId,
+        configId: selectedValue.configId,
       });
+
       toast.show({
         placement: 'top right',
         duration: 3000,
@@ -175,6 +188,15 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
       await fetchDiagnosisHistory();
     } catch (error) {
       console.log('Upload error: ', error);
+      toast.show({
+        placement: 'top right',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastTitle>诊断失败，请重试</ToastTitle>
+          </Toast>
+        ),
+      });
     } finally {
       setIsUploading(false);
     }
@@ -309,7 +331,7 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
                   className="mr-2 text-primary-0"
                 />
                 <ButtonText>
-                  {isUploading ? '上传中...' : '上传图片'}
+                  {isUploading ? '上传中...' : '开始诊断'}
                 </ButtonText>
               </Button>
 
