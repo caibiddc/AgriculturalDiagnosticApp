@@ -6,15 +6,26 @@ import {Heading} from '@/components/ui/heading';
 import {HStack} from '@/components/ui/hstack';
 import {Icon} from '@/components/ui/icon';
 import {Image} from '@/components/ui/image';
+import {Pressable} from '@/components/ui/pressable';
 import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
 import {TREATMENT_METHOD} from '@/constants/knowledge';
 import {DiseaseDetailScreenProps} from '@/routes/types/encyclopedia';
-import {Bug, Droplets, Leaf, Thermometer, Wind} from 'lucide-react-native';
+import {
+  ArrowLeft,
+  Bug,
+  Droplets,
+  Leaf,
+  Thermometer,
+  Wind,
+} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {ScrollView} from 'react-native';
 
-const DiseaseDetailScreen: React.FC<DiseaseDetailScreenProps> = ({route}) => {
+const DiseaseDetailScreen: React.FC<DiseaseDetailScreenProps> = ({
+  route,
+  navigation,
+}) => {
   const {diseaseId} = route.params;
   const [disease, setDisease] = useState<Disease | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +63,18 @@ const DiseaseDetailScreen: React.FC<DiseaseDetailScreenProps> = ({route}) => {
     <MainLayout>
       <ScrollView className="flex-1">
         <VStack space="lg" className="p-4">
+          {/* 返回按钮 */}
+          <Pressable
+            onPress={() =>
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'EncyclopediaIndex'}],
+              })
+            }
+            className="mb-2">
+            <Icon as={ArrowLeft} size="xl" className="text-typography-900" />
+          </Pressable>
+
           {/* 病害图片 */}
           <Box className="w-full aspect-video rounded-xl overflow-hidden bg-background-50">
             {disease.crop?.imageUrl && !imageError ? (
