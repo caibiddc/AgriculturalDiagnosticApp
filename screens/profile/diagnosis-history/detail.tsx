@@ -10,7 +10,14 @@ import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
 import {DiagnosisDetailProps} from '@/routes/types';
 import {DIAGNOSIS_STATUS_COLOR} from '@/constants';
-import {ArrowLeft, Calendar, Crop} from 'lucide-react-native';
+import {
+  ArrowLeft,
+  Calendar,
+  Crop,
+  CheckCircle,
+  AlertCircle,
+  ChevronRight,
+} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {FlatList, Pressable, ScrollView} from 'react-native';
 import clsx from 'clsx';
@@ -101,6 +108,70 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
     </VStack>
   );
 
+  const renderMatchResultItem = ({
+    item: matchResult,
+    index,
+  }: {
+    item: any;
+    index: number;
+  }) => (
+    <Box key={index} className="bg-background-0 rounded-lg p-4 mb-3">
+      <Pressable
+        onPress={() =>
+          navigation.navigate('Encyclopedia' as any, {
+            screen: 'DiseaseDetail',
+            params: {diseaseId: matchResult.disease.id},
+          })
+        }>
+        <HStack className="items-center justify-between mb-2">
+          <HStack className="items-center flex-1">
+            <Text className="text-typography-900 font-medium text-lg flex-1">
+              {matchResult.disease.name}
+            </Text>
+            <Icon as={ChevronRight} size="sm" className="text-typography-400" />
+          </HStack>
+          <Box className="flex-row items-center ml-2">
+            <Text className="text-typography-600 mr-2">匹配度</Text>
+            <Box className="bg-primary-100 rounded-full px-3 py-1">
+              <Text className="text-primary-600 font-medium">
+                {(matchResult.score * 100).toFixed(1)}%
+              </Text>
+            </Box>
+          </Box>
+        </HStack>
+      </Pressable>
+
+      <VStack space="sm">
+        <Text className="text-typography-700 font-medium">匹配规则</Text>
+        {matchResult.matchedRules.map((rule: any, ruleIndex: number) => (
+          <Box
+            key={ruleIndex}
+            className="bg-background-50 rounded-lg p-3 border border-outline-100">
+            <HStack className="items-center mb-1">
+              <Icon
+                as={rule.type === 'exact' ? CheckCircle : AlertCircle}
+                size="sm"
+                className={clsx(
+                  'mr-2',
+                  rule.type === 'exact'
+                    ? 'text-success-500'
+                    : 'text-warning-500',
+                )}
+              />
+              <Text className="text-typography-700 font-medium">
+                {rule.field}: {rule.value}
+              </Text>
+            </HStack>
+            <Text className="text-typography-500 text-sm">
+              规则类型: {rule.type}
+              {rule.weight && ` | 权重: ${rule.weight}`}
+            </Text>
+          </Box>
+        ))}
+      </VStack>
+    </Box>
+  );
+
   return (
     <MainLayout>
       <ScrollView
@@ -169,15 +240,35 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
                 </HStack>
               </VStack>
 
-              <FlatList
-                data={displayedPredictions}
-                renderItem={renderPredictionItem}
-                keyExtractor={(_, index) => index.toString()}
-                onEndReached={loadMore}
-                onEndReachedThreshold={0.5}
-                scrollEnabled={false}
-                showsVerticalScrollIndicator={false}
-              />
+              {diagnosis.diagnosisResult?.matchResults?.length > 0 && (
+                <VStack space="sm">
+                  <Text className="text-typography-900 font-medium text-lg">
+                    知识库匹配结果
+                  </Text>
+                  <FlatList
+                    data={diagnosis.diagnosisResult.matchResults}
+                    renderItem={renderMatchResultItem}
+                    keyExtractor={(_, index) => index.toString()}
+                    scrollEnabled={false}
+                    showsVerticalScrollIndicator={false}
+                  />
+                </VStack>
+              )}
+
+              <VStack space="sm">
+                <Text className="text-typography-900 font-medium text-lg">
+                  模型预测结果
+                </Text>
+                <FlatList
+                  data={displayedPredictions}
+                  renderItem={renderPredictionItem}
+                  keyExtractor={(_, index) => index.toString()}
+                  onEndReached={loadMore}
+                  onEndReachedThreshold={0.5}
+                  scrollEnabled={false}
+                  showsVerticalScrollIndicator={false}
+                />
+              </VStack>
             </VStack>
           </Box>
           <Button
