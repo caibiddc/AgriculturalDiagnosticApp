@@ -10,6 +10,7 @@ import {Pressable} from '@/components/ui/pressable';
 import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
 import {DIAGNOSIS_STATUS_COLOR} from '@/constants';
+import {DIAGNOSIS_CLASS_NAME_ZH_CN} from '@/constants/diagnosis';
 import {DIAGNOSIS_STATUS_TEXT} from '@/constants/status';
 import {DiagnosisDetailProps} from '@/routes/types';
 import clsx from 'clsx';
@@ -167,14 +168,16 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
                           : 'text-warning-500',
                       )}
                     />
-                    <Text className="text-typography-700 font-medium">
-                      {rule.field}: {rule.value}
-                    </Text>
+                    <VStack className="flex-1" space="xs">
+                      <Text className="text-typography-700 font-medium break-words">
+                        {rule.field}: {rule.value}
+                      </Text>
+                      <Text className="text-typography-500 text-sm">
+                        规则类型: {rule.type}
+                        {rule.weight && ` | 权重: ${rule.weight}`}
+                      </Text>
+                    </VStack>
                   </HStack>
-                  <Text className="text-typography-500 text-sm">
-                    规则类型: {rule.type}
-                    {rule.weight && ` | 权重: ${rule.weight}`}
-                  </Text>
                 </Box>
               ))}
             </VStack>
@@ -217,7 +220,9 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
               <HStack space="sm" className="items-center">
                 <Icon as={Crop} size="md" className="text-primary-500" />
                 <Text className="text-typography-900 font-medium text-lg">
-                  {prediction?.class_name || '未知病害'}
+                  {DIAGNOSIS_CLASS_NAME_ZH_CN[
+                    prediction?.class_name as keyof typeof DIAGNOSIS_CLASS_NAME_ZH_CN
+                  ] || '未知病害'}
                 </Text>
               </HStack>
 

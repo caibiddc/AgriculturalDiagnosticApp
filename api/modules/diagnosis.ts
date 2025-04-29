@@ -1,10 +1,12 @@
 import RequestHttp from '@/api';
 import {ImagePickerResult} from '@/hooks/useImagePicker';
 import {
+  DiagnoseResult,
   DiagnosisHistory,
   DiagnosisStatistics,
   RemoteService,
   ReqDiagnosisHistoryList,
+  ReqStartDiagnoseDisease,
   ResDiagnosisHistoryList,
 } from '../interface';
 
@@ -16,10 +18,32 @@ export const startDiagnoseImage = async (diagnosisId: string | number) =>
 export const uploadDiseaseImage = async (image: ImagePickerResult) => {
   const formData = new FormData();
   formData.append('file', image);
-  return RequestHttp.instance.post<null>('/diagnosis/upload', formData, {
-    timeout: 60000,
-    headers: {'Content-Type': 'multipart/form-data'},
-  });
+  return RequestHttp.instance.post<DiagnosisHistory>(
+    '/diagnosis/upload',
+    formData,
+    {
+      timeout: 60000,
+      headers: {'Content-Type': 'multipart/form-data'},
+    },
+  );
+};
+
+// * 开始诊断
+export const startDiagnosis = async (params: ReqStartDiagnoseDisease) => {
+  const {diagnosisId, ...data} = params;
+  return RequestHttp.instance.post<DiagnoseResult>(
+    `/diagnosis/${diagnosisId}/start`,
+    data,
+  );
+};
+
+// * 开始诊断（异步）
+export const startDiagnosisAsync = async (params: ReqStartDiagnoseDisease) => {
+  const {diagnosisId, ...data} = params;
+  return RequestHttp.instance.post<DiagnoseResult>(
+    `/diagnosis/${diagnosisId}/start/async`,
+    data,
+  );
 };
 
 // * 获取诊断支持信息

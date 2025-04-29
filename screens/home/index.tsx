@@ -2,6 +2,7 @@ import {DiagnosisHistory} from '@/api/interface/diagnosis';
 import {getCrops} from '@/api/modules/Knowledge/crop';
 import {
   getDiagnosisHistoryList,
+  startDiagnosisAsync,
   uploadDiseaseImage,
 } from '@/api/modules/diagnosis';
 import MainLayout from '@/components/layout/MainLayout';
@@ -96,6 +97,7 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
     setRefreshing(true);
     try {
       await fetchDiagnosisHistory();
+      console.log('diagnosisList: ', diagnosisList);
       toast.show({
         placement: 'top right',
         render: ({id}) => (
@@ -146,7 +148,13 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
     }
     try {
       console.log('Uploading image: ', image);
-      await uploadDiseaseImage(image);
+      const response = await uploadDiseaseImage(image);
+      if (!response.data) throw new Error('上传失败');
+      await startDiagnosisAsync({
+        diagnosisId: response.data.id,
+        serviceId: 5,
+        configId: 106,
+      });
       toast.show({
         placement: 'top right',
         duration: 3000,

@@ -22,6 +22,7 @@ import {Pressable} from '@/components/ui/pressable';
 import {Text} from '@/components/ui/text';
 import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
 import {VStack} from '@/components/ui/vstack';
+import {DIAGNOSIS_CLASS_NAME_ZH_CN} from '@/constants/diagnosis';
 import {DiagnosisHistoryProps} from '@/routes/types';
 import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {ListItem} from '@rneui/themed';
@@ -200,8 +201,10 @@ const DiagnosisHistoryScreen: React.FC<DiagnosisHistoryProps> = ({
           )}
           <Icon as={Crop} size="md" className="text-primary-500" />
           <Text className="text-typography-900 font-medium">
-            {diagnosis.diagnosisResult?.predictions?.[0]?.class_name ||
-              '未知病害'}
+            {DIAGNOSIS_CLASS_NAME_ZH_CN[
+              diagnosis.diagnosisResult?.predictions?.[0]
+                ?.class_name as keyof typeof DIAGNOSIS_CLASS_NAME_ZH_CN
+            ] || '未知病害'}
           </Text>
         </HStack>
         <HStack space="sm" className="items-center">
