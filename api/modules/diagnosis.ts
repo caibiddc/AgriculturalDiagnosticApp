@@ -60,6 +60,10 @@ export const getDiagnosisStatistics = async () => {
 export const getDiagnosisHistory = async () =>
   RequestHttp.instance.get<DiagnosisHistory[]>('/diagnosis/history');
 
+// * 获取病害诊断状态
+export const getDiagnosisStatus = async (id: number) =>
+  RequestHttp.instance.get<DiagnosisHistory>(`/diagnosis/${id}/status`);
+
 // * 获取病害诊断历史(分页)
 export const getDiagnosisHistoryList = async (
   params: ReqDiagnosisHistoryList,

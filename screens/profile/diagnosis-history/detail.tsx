@@ -1,5 +1,10 @@
 import {DiagnosisHistory} from '@/api/interface/diagnosis';
-import {getDiagnosisHistory} from '@/api/modules/diagnosis';
+import {
+  getDiagnosisHistory,
+  getDiagnosisSupport,
+  getDiagnosisStatus,
+  startDiagnosisAsync,
+} from '@/api/modules/diagnosis';
 import FilePreviewCard from '@/components/card/FilePreviewCard';
 import MainLayout from '@/components/layout/MainLayout';
 import {Box} from '@/components/ui/box';
@@ -7,7 +12,20 @@ import {Button, ButtonText} from '@/components/ui/button';
 import {HStack} from '@/components/ui/hstack';
 import {Icon} from '@/components/ui/icon';
 import {Pressable} from '@/components/ui/pressable';
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from '@/components/ui/select';
 import {Text} from '@/components/ui/text';
+import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
 import {VStack} from '@/components/ui/vstack';
 import {DIAGNOSIS_STATUS_COLOR} from '@/constants';
 import {DIAGNOSIS_CLASS_NAME_ZH_CN} from '@/constants/diagnosis';
@@ -21,15 +39,22 @@ import {
   AlertCircle,
   Calendar,
   CheckCircle,
+  ChevronDownIcon,
   Crop,
   ExternalLink,
 } from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
-import {FlatList, ScrollView} from 'react-native';
+import {FlatList, ScrollView, RefreshControl} from 'react-native';
 
 // 配置 dayjs
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
+
+type DiagnosisOption = {
+  label: string;
+  value: {serviceId: number; configId: number};
+  disabled?: boolean;
+};
 
 const PAGE_SIZE = 10;
 
@@ -37,10 +62,17 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
   route,
   navigation,
 }) => {
+  const toast = useToast();
   const [diagnosis, setDiagnosis] = useState<DiagnosisHistory>();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<{
+    serviceId: number;
+    configId: number;
+  } | null>(null);
+  const [options, setOptions] = useState<DiagnosisOption[]>([]);
 
   const fetchDiagnosis = async () => {
     try {
@@ -59,15 +91,113 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
     }
   };
 
+  const fetchDiagnosisSupport = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getDiagnosisSupport();
+      if (response.data) {
+        const supportOptions = response.data.map(support => ({
+          label: support.key,
+          value: support.value,
+        }));
+        setOptions(supportOptions);
+      }
+    } catch (error) {
+      console.error('获取诊断支持信息失败:', error);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>获取诊断支持信息失败</ToastTitle>
+          </Toast>
+        ),
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    if (!route.params?.diagnosisId) return;
+
+    setRefreshing(true);
+    try {
+      const response = await getDiagnosisStatus(route.params.diagnosisId);
+      if (response.data) {
+        setDiagnosis(response.data);
+        toast.show({
+          placement: 'top right',
+          render: ({id}) => (
+            <Toast nativeID={id} variant="solid" action="success">
+              <ToastTitle>更新成功！</ToastTitle>
+            </Toast>
+          ),
+        });
+      }
+    } catch (error) {
+      console.error('获取诊断状态失败:', error);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>更新失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     if (route.params?.diagnosisId) {
       fetchDiagnosis();
+      fetchDiagnosisSupport();
     }
   }, [route.params?.diagnosisId]);
 
-  const loadMore = () => {
-    if (!isLoading && hasMore) {
-      setCurrentPage(prev => prev + 1);
+  const handleRediagnosis = async () => {
+    if (!selectedValue) {
+      toast.show({
+        placement: 'top right',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastTitle>请先选择植物类型</ToastTitle>
+          </Toast>
+        ),
+      });
+      return;
+    }
+
+    try {
+      await startDiagnosisAsync({
+        diagnosisId: route.params?.diagnosisId,
+        serviceId: selectedValue.serviceId,
+        configId: selectedValue.configId,
+      });
+
+      toast.show({
+        placement: 'top right',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="success" variant="solid">
+            <ToastTitle>开始重新诊断，请稍后刷新查看结果</ToastTitle>
+          </Toast>
+        ),
+      });
+      await fetchDiagnosis();
+    } catch (error) {
+      console.log('Rediagnosis error: ', error);
+      toast.show({
+        placement: 'top right',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastTitle>重新诊断失败，请重试</ToastTitle>
+          </Toast>
+        ),
+      });
     }
   };
 
@@ -191,7 +321,10 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
     <MainLayout>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 160}}>
+        contentContainerStyle={{paddingBottom: 160}}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <VStack className="mx-6 mt-6" space="md">
           <Box className="bg-background-50 rounded-xl p-4 border border-outline-100">
             <VStack space="md">
@@ -280,11 +413,78 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
                   data={displayedPredictions}
                   renderItem={renderPredictionItem}
                   keyExtractor={(_, index) => index.toString()}
-                  onEndReached={loadMore}
-                  onEndReachedThreshold={0.5}
                   scrollEnabled={false}
                   showsVerticalScrollIndicator={false}
                 />
+              </VStack>
+
+              {/* 重新诊断区域 */}
+              <VStack space="md" className="mt-4">
+                <Text className="text-typography-900 font-medium text-lg">
+                  重新诊断
+                </Text>
+
+                {/* 植物选择 */}
+                <VStack space="sm">
+                  <Text className="text-typography-700 font-medium">
+                    选择植物类型
+                  </Text>
+                  <Select
+                    className="pb-8"
+                    onValueChange={value => {
+                      const option = options.find(
+                        opt =>
+                          opt.value.serviceId === JSON.parse(value).serviceId &&
+                          opt.value.configId === JSON.parse(value).configId,
+                      );
+                      if (option) {
+                        setSelectedValue(option.value);
+                      }
+                    }}>
+                    <SelectTrigger
+                      variant="outline"
+                      size="md"
+                      className={clsx(
+                        'h-12 flex justify-between rounded-xl border-2',
+                        'border-primary-200 focus:border-primary-500',
+                      )}>
+                      <SelectInput
+                        placeholder={isLoading ? '加载中...' : '请选择植物'}
+                      />
+                      <SelectIcon className="mr-4" as={ChevronDownIcon} />
+                    </SelectTrigger>
+                    <SelectPortal>
+                      <SelectBackdrop />
+                      <SelectContent>
+                        <SelectDragIndicatorWrapper>
+                          <SelectDragIndicator />
+                        </SelectDragIndicatorWrapper>
+                        {options.map((option, index) => (
+                          <SelectItem
+                            key={index}
+                            label={option.label}
+                            value={JSON.stringify(option.value)}
+                            disabled={option.disabled}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </SelectPortal>
+                  </Select>
+                </VStack>
+
+                {/* 重新诊断按钮 */}
+                <Button
+                  size="lg"
+                  variant="solid"
+                  action="primary"
+                  className={clsx(
+                    'h-14 rounded-xl',
+                    'bg-primary-500 active:bg-primary-600',
+                  )}
+                  onPress={handleRediagnosis}>
+                  <ButtonText>开始重新诊断</ButtonText>
+                </Button>
               </VStack>
             </VStack>
           </Box>
