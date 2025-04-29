@@ -26,8 +26,15 @@ import {
   PutConfig,
 } from './interface';
 
+const getBaseURL = () => {
+  const {apiConfig} = store.getState().global;
+  if (!apiConfig) {
+    return 'http://10.114.248.186/api';
+  }
+  return `${apiConfig.protocol}://${apiConfig.baseURL}`;
+};
+
 const config = {
-  baseURL: 'http://10.114.248.186/api',
   timeout: 10000,
   withCredentials: true,
 };
@@ -171,7 +178,13 @@ class RequestHttp {
 
   static initialize(toast: ReturnType<typeof useToast>) {
     if (!RequestHttp.instance) {
-      RequestHttp.instance = new RequestHttp(config, toast);
+      RequestHttp.instance = new RequestHttp(
+        {
+          ...config,
+          baseURL: getBaseURL(),
+        },
+        toast,
+      );
     }
     return RequestHttp.instance;
   }

@@ -17,7 +17,7 @@ import {SafeAreaView, useColorScheme} from 'react-native';
 import {Provider} from 'react-redux';
 import colors from 'tailwindcss/colors';
 import './global.css';
-import {setThemeConfig} from './store/modules/globalSlice';
+import {setThemeConfig, setApiConfig} from './store/modules/globalSlice';
 
 // 从 AsyncStorage 获取初始数据
 const loadInitialData = async () => {
@@ -25,12 +25,20 @@ const loadInitialData = async () => {
   const isAuthenticated = (await localGet('is_authenticated')) || false;
   const authRouter = await localGet('auth_router');
   const authButtons = await localGet('auth_buttons');
+  const savedApiConfig = await localGet('api_config');
+
+  const defaultApiConfig = {
+    baseURL: '10.114.248.186/api',
+    protocol: 'http',
+  };
+
   if (token) {
     return {
       token,
       isAuthenticated,
       authRouter,
       authButtons,
+      apiConfig: savedApiConfig || defaultApiConfig,
     };
   } else {
     return {
@@ -38,6 +46,7 @@ const loadInitialData = async () => {
       isAuthenticated: false,
       authRouter: '',
       authButtons: '',
+      apiConfig: defaultApiConfig,
     };
   }
 };
@@ -76,12 +85,13 @@ function NavigationWrapper(): React.JSX.Element {
 
   useEffect(() => {
     loadInitialData().then(
-      ({token, authRouter, authButtons, isAuthenticated}) => {
+      ({token, authRouter, authButtons, isAuthenticated, apiConfig}) => {
         dispatch(setToken(token));
         dispatch(setAuthenticated(isAuthenticated));
         dispatch(setAuthRouter(authRouter));
         dispatch(setAuthButtons(authButtons));
         dispatch(setThemeConfig({isDark: isDarkMode}));
+        dispatch(setApiConfig(apiConfig));
       },
     );
   }, []);
