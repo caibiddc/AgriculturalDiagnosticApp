@@ -3,29 +3,28 @@ import {getDiagnosisHistory} from '@/api/modules/diagnosis';
 import FilePreviewCard from '@/components/card/FilePreviewCard';
 import MainLayout from '@/components/layout/MainLayout';
 import {Box} from '@/components/ui/box';
-import {Heading} from '@/components/ui/heading';
+import {Button, ButtonText} from '@/components/ui/button';
 import {HStack} from '@/components/ui/hstack';
 import {Icon} from '@/components/ui/icon';
+import {Pressable} from '@/components/ui/pressable';
 import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
-import {DiagnosisDetailProps} from '@/routes/types';
 import {DIAGNOSIS_STATUS_COLOR} from '@/constants';
-import {
-  ArrowLeft,
-  Calendar,
-  Crop,
-  CheckCircle,
-  AlertCircle,
-  ChevronRight,
-} from 'lucide-react-native';
-import React, {useEffect, useState} from 'react';
-import {FlatList, Pressable, ScrollView} from 'react-native';
+import {DIAGNOSIS_STATUS_TEXT} from '@/constants/status';
+import {DiagnosisDetailProps} from '@/routes/types';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {DIAGNOSIS_STATUS_TEXT} from '@/constants/status';
-import {Button, ButtonText} from '@/components/ui/button';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Crop,
+  ExternalLink,
+} from 'lucide-react-native';
+import React, {useEffect, useState} from 'react';
+import {FlatList, ScrollView} from 'react-native';
 
 // 配置 dayjs
 dayjs.extend(relativeTime);
@@ -115,61 +114,74 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
     item: any;
     index: number;
   }) => (
-    <Box key={index} className="bg-background-0 rounded-lg p-4 mb-3">
-      <Pressable
-        onPress={() =>
-          navigation.navigate('Encyclopedia' as any, {
-            screen: 'DiseaseDetail',
-            params: {diseaseId: matchResult.disease.id},
-          })
-        }>
-        <HStack className="items-center justify-between mb-2">
-          <HStack className="items-center flex-1">
-            <Text className="text-typography-900 font-medium text-lg flex-1">
-              {matchResult.disease.name}
-            </Text>
-            <Icon as={ChevronRight} size="sm" className="text-typography-400" />
-          </HStack>
-          <Box className="flex-row items-center ml-2">
-            <Text className="text-typography-600 mr-2">匹配度</Text>
-            <Box className="bg-primary-100 rounded-full px-3 py-1">
-              <Text className="text-primary-600 font-medium">
-                {(matchResult.score * 100).toFixed(1)}%
-              </Text>
-            </Box>
-          </Box>
-        </HStack>
-      </Pressable>
-
-      <VStack space="sm">
-        <Text className="text-typography-700 font-medium">匹配规则</Text>
-        {matchResult.matchedRules.map((rule: any, ruleIndex: number) => (
-          <Box
-            key={ruleIndex}
-            className="bg-background-50 rounded-lg p-3 border border-outline-100">
-            <HStack className="items-center mb-1">
-              <Icon
-                as={rule.type === 'exact' ? CheckCircle : AlertCircle}
-                size="sm"
-                className={clsx(
-                  'mr-2',
-                  rule.type === 'exact'
-                    ? 'text-success-500'
-                    : 'text-warning-500',
-                )}
-              />
-              <Text className="text-typography-700 font-medium">
-                {rule.field}: {rule.value}
-              </Text>
+    <Pressable
+      onPress={() =>
+        navigation.navigate('Encyclopedia' as any, {
+          screen: 'DiseaseDetail',
+          params: {diseaseId: matchResult.disease.id},
+        })
+      }>
+      {({pressed}) => (
+        <Box
+          className={clsx(
+            'bg-background-0 rounded-lg p-4 mb-3 border border-outline-100',
+            pressed && 'bg-background-50',
+          )}>
+          <VStack space="sm">
+            <HStack className="items-center justify-between">
+              <HStack className="items-center flex-1">
+                <Icon as={Crop} size="md" className="text-primary-500 mr-2" />
+                <Text className="text-typography-900 font-medium text-lg flex-1">
+                  {matchResult.disease.name}
+                </Text>
+              </HStack>
+              <Box className="flex-row items-center">
+                <Text className="text-typography-600 mr-2">匹配度</Text>
+                <Box className="bg-primary-100 rounded-full px-3 py-1">
+                  <Text className="text-primary-600 font-medium">
+                    {(matchResult.score * 100).toFixed(1)}%
+                  </Text>
+                </Box>
+              </Box>
             </HStack>
-            <Text className="text-typography-500 text-sm">
-              规则类型: {rule.type}
-              {rule.weight && ` | 权重: ${rule.weight}`}
-            </Text>
-          </Box>
-        ))}
-      </VStack>
-    </Box>
+
+            <HStack className="items-center justify-end">
+              <Text className="text-primary-500 text-sm mr-1">查看详情</Text>
+              <Icon as={ExternalLink} size="sm" className="text-primary-500" />
+            </HStack>
+
+            <VStack space="sm">
+              <Text className="text-typography-700 font-medium">匹配规则</Text>
+              {matchResult.matchedRules.map((rule: any, ruleIndex: number) => (
+                <Box
+                  key={ruleIndex}
+                  className="bg-background-50 rounded-lg p-3 border border-outline-100">
+                  <HStack className="items-center mb-1">
+                    <Icon
+                      as={rule.type === 'exact' ? CheckCircle : AlertCircle}
+                      size="sm"
+                      className={clsx(
+                        'mr-2',
+                        rule.type === 'exact'
+                          ? 'text-success-500'
+                          : 'text-warning-500',
+                      )}
+                    />
+                    <Text className="text-typography-700 font-medium">
+                      {rule.field}: {rule.value}
+                    </Text>
+                  </HStack>
+                  <Text className="text-typography-500 text-sm">
+                    规则类型: {rule.type}
+                    {rule.weight && ` | 权重: ${rule.weight}`}
+                  </Text>
+                </Box>
+              ))}
+            </VStack>
+          </VStack>
+        </Box>
+      )}
+    </Pressable>
   );
 
   return (
