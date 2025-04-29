@@ -4,7 +4,7 @@ import {
   DiagnoseResult,
   DiagnosisHistory,
   DiagnosisStatistics,
-  RemoteService,
+  DiagnosisSupport,
   ReqDiagnosisHistoryList,
   ReqStartDiagnoseDisease,
   ResDiagnosisHistoryList,
@@ -48,7 +48,7 @@ export const startDiagnosisAsync = async (params: ReqStartDiagnoseDisease) => {
 
 // * 获取诊断支持信息
 export const getDiagnosisSupport = async () => {
-  return RequestHttp.instance.get<RemoteService[]>('/diagnosis/support');
+  return RequestHttp.instance.get<DiagnosisSupport[]>('/diagnosis/support');
 };
 
 // * 获取诊断统计信息

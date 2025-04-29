@@ -1,7 +1,7 @@
-import {DiagnosisHistory} from '@/api/interface/diagnosis';
-import {getCrops} from '@/api/modules/Knowledge/crop';
+import {DiagnosisHistory, DiagnosisSupport} from '@/api/interface/diagnosis';
 import {
   getDiagnosisHistoryList,
+  getDiagnosisSupport,
   startDiagnosisAsync,
   uploadDiseaseImage,
 } from '@/api/modules/diagnosis';
@@ -36,40 +36,44 @@ import {Camera, Image as ImageIcon, Sprout} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {RefreshControl, ScrollView} from 'react-native';
 
+type DiagnosisOption = {
+  label: string;
+  value: {serviceId: number; configId: number};
+  disabled?: boolean;
+};
+
 const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const {image, takePhoto, choosePhoto, clearImage} = useImagePicker();
-  const [options, setOptions] = useState<
-    {
-      label: string;
-      value: string;
-      disabled?: boolean;
-    }[]
-  >([]);
+  const [selectedValue, setSelectedValue] = useState<{
+    serviceId: number;
+    configId: number;
+  } | null>(null);
+  const [options, setOptions] = useState<DiagnosisOption[]>([]);
   const [diagnosisList, setDiagnosisList] = useState<DiagnosisHistory[]>([]);
 
-  // 获取作物列表
-  const fetchCrops = async () => {
+  // 获取诊断支持信息
+  const fetchDiagnosisSupport = async () => {
     try {
       setIsLoading(true);
-      const response = await getCrops();
+      const response = await getDiagnosisSupport();
       if (response.data) {
-        const cropOptions = response.data.map(crop => ({
-          label: crop.name,
-          value: crop.name,
+        const supportOptions = response.data.map(support => ({
+          label: support.key,
+          value: support.value,
         }));
-        setOptions(cropOptions);
+        setOptions(supportOptions);
       }
     } catch (error) {
-      console.error('获取作物列表失败:', error);
+      console.error('获取诊断支持信息失败:', error);
       toast.show({
         placement: 'top right',
         render: ({id}) => (
           <Toast nativeID={id} variant="solid" action="error">
-            <ToastTitle>获取作物列表失败</ToastTitle>
+            <ToastTitle>获取诊断支持信息失败</ToastTitle>
           </Toast>
         ),
       });
@@ -88,7 +92,7 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
   };
 
   useEffect(() => {
-    fetchCrops();
+    fetchDiagnosisSupport();
     fetchDiagnosisHistory();
   }, []);
 
@@ -150,17 +154,21 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
       console.log('Uploading image: ', image);
       const response = await uploadDiseaseImage(image);
       if (!response.data) throw new Error('上传失败');
+      const selectedOption = options.find(
+        option => option.value === selectedValue,
+      );
+      if (!selectedOption) throw new Error('请选择诊断类型');
       await startDiagnosisAsync({
         diagnosisId: response.data.id,
-        serviceId: 5,
-        configId: 106,
+        serviceId: selectedOption.value.serviceId,
+        configId: selectedOption.value.configId,
       });
       toast.show({
         placement: 'top right',
         duration: 3000,
         render: ({id}) => (
           <Toast nativeID={`toast-${id}`} action="success" variant="solid">
-            <ToastTitle>上传成功</ToastTitle>
+            <ToastTitle>上传成功, 请稍后刷新查看诊断结果</ToastTitle>
           </Toast>
         ),
       });
@@ -199,7 +207,18 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
             <Text className="text-typography-700 font-medium">
               选择植物类型
             </Text>
-            <Select className="pb-8">
+            <Select
+              className="pb-8"
+              onValueChange={value => {
+                const option = options.find(
+                  opt =>
+                    opt.value.serviceId === JSON.parse(value).serviceId &&
+                    opt.value.configId === JSON.parse(value).configId,
+                );
+                if (option) {
+                  setSelectedValue(option.value);
+                }
+              }}>
               <SelectTrigger
                 variant="outline"
                 size="md"
@@ -221,8 +240,8 @@ const MainContent: React.FC<HomeScreenProps> = ({navigation}) => {
                   {options.map((option, index) => (
                     <SelectItem
                       key={index}
-                      label={option.value}
-                      value={option.value}
+                      label={option.label}
+                      value={JSON.stringify(option.value)}
                       disabled={option.disabled}>
                       {option.label}
                     </SelectItem>

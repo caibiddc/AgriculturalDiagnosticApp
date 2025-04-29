@@ -50,6 +50,16 @@ export type DiagnosisHistory = {
   updatedBy: number;
 };
 
+// 诊断支持
+export type DiagnosisSupport = {
+  id: number;
+  key: string;
+  value: {serviceId: number; configId: number};
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 // 诊断日志
 export type DiagnosisLog = {
   id: number;
