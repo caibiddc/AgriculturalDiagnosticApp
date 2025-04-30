@@ -29,7 +29,7 @@ import {
 const getBaseURL = () => {
   const {apiConfig} = store.getState().global;
   if (!apiConfig) {
-    return 'http://10.114.248.186/api';
+    return 'https://www.mmdxiaoxin.top/api';
   }
   return `${apiConfig.protocol}://${apiConfig.baseURL}`;
 };

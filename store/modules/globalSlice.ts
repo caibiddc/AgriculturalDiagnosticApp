@@ -21,8 +21,8 @@ const initialState: GlobalState = {
     isDark: false,
   },
   apiConfig: {
-    baseURL: '10.114.248.186/api',
-    protocol: 'http',
+    baseURL: 'www.mmdxiaoxin.top/api',
+    protocol: 'https',
   },
 };
 

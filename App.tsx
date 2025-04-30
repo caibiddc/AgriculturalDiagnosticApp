@@ -28,8 +28,8 @@ const loadInitialData = async () => {
   const savedApiConfig = await localGet('api_config');
 
   const defaultApiConfig = {
-    baseURL: '10.114.248.186/api',
-    protocol: 'http',
+    baseURL: 'www.mmdxiaoxin.top/api',
+    protocol: 'https',
   };
 
   if (token) {
