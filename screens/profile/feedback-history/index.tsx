@@ -28,7 +28,6 @@ import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {ListItem} from '@rneui/themed';
 import clsx from 'clsx';
 import {
-  AlertCircle,
   CheckCircle,
   Clock,
   MessageSquare,
@@ -104,7 +103,9 @@ const FeedbackHistoryScreen: React.FC<FeedbackHistoryProps> = ({
         }
       });
     } else {
-      navigation.navigate('AppFeedback');
+      navigation.navigate('FeedbackDetail', {
+        feedbackId: id,
+      });
     }
   };
 

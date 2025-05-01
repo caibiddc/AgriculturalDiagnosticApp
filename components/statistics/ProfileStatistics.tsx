@@ -25,7 +25,7 @@ const ProfileStatistics: React.FC<ProfileStatistics> = ({navigation, data}) => {
     },
     {
       label: '反馈历史',
-      navigateTo: 'ReportHistory',
+      navigateTo: 'FeedbackHistory',
       value: data?.feedback || 0,
     },
   ] as const;

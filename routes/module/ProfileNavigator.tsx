@@ -3,6 +3,7 @@ import AppFeedbackScreen from '@/screens/profile/app-feedback';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
 import DiagnosisDetailScreen from '@/screens/profile/diagnosis-history/detail';
 import FeedbackHistoryScreen from '@/screens/profile/feedback-history';
+import FeedbackDetailScreen from '@/screens/profile/feedback-history/detail';
 import SystemSettingsScreen from '@/screens/profile/system-setting';
 import UserAgreementScreen from '@/screens/profile/user-agreement';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -46,6 +47,11 @@ const ProfileNavigator = () => {
         name="FeedbackHistory"
         component={FeedbackHistoryScreen}
         options={{title: '反馈历史'}}
+      />
+      <Stack.Screen
+        name="FeedbackDetail"
+        component={FeedbackDetailScreen}
+        options={{title: '反馈详情'}}
       />
       <Stack.Screen
         name="SystemSettings"
