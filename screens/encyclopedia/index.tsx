@@ -1,33 +1,85 @@
+import {Crop, Disease} from '@/api/interface/knowledge';
+import {getCrops} from '@/api/modules/Knowledge/crop';
+import {getKnowledgeList} from '@/api/modules/Knowledge/knowledge';
 import KnowledgeCard from '@/components/card/KnowledgeCard';
-import EncyclopediaFilter from '@/components/filter/EncyclopediaFilter';
 import MainLayout from '@/components/layout/MainLayout';
 import {Box} from '@/components/ui/box';
 import {Grid, GridItem} from '@/components/ui/grid';
 import {Heading} from '@/components/ui/heading';
 import {HStack} from '@/components/ui/hstack';
+import {ChevronDownIcon} from '@/components/ui/icon';
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from '@/components/ui/select';
 import {Text} from '@/components/ui/text';
 import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
 import {VStack} from '@/components/ui/vstack';
-import {getKnowledgeList} from '@/api/modules/Knowledge/knowledge';
-import {Disease} from '@/api/interface/knowledge';
 import {EncyclopediaScreenProps} from '@/routes/types';
 import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
+import {SearchBar} from '@rneui/themed';
 import clsx from 'clsx';
-import React, {useEffect, useState} from 'react';
-import {RefreshControl, SafeAreaView, ScrollView} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
   const toast = useToast();
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [diseaseList, setDiseaseList] = useState<Disease[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [selectedCrop, setSelectedCrop] = useState<number | undefined>();
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [tempSearchKeyword, setTempSearchKeyword] = useState('');
 
-  const fetchDiseaseList = async () => {
+  const fetchCrops = async () => {
     try {
-      setIsLoading(true);
-      const response = await getKnowledgeList({page: 1, pageSize: 12});
-      if (response.data?.list) {
-        setDiseaseList(response.data.list);
+      const response = await getCrops();
+      if (response.data) {
+        setCrops(response.data);
+      }
+    } catch (error) {
+      console.error('获取作物列表失败:', error);
+    }
+  };
+
+  const fetchDiseaseList = async (isLoadMore = false) => {
+    try {
+      if (!isLoadMore) {
+        setIsLoading(true);
+      }
+      const response = await getKnowledgeList({
+        page: isLoadMore ? page + 1 : 1,
+        pageSize: 12,
+        cropId: selectedCrop,
+        keyword: searchKeyword,
+      });
+      const list = response?.data?.list;
+      if (list) {
+        if (isLoadMore) {
+          setDiseaseList(prev => [...prev, ...list]);
+          setPage(prev => prev + 1);
+        } else {
+          setDiseaseList(list);
+          setPage(1);
+        }
+        setHasMore(list.length === 12);
       }
     } catch (error) {
       console.error('获取病害知识失败:', error);
@@ -41,12 +93,17 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
       });
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchDiseaseList();
+    fetchCrops();
   }, []);
+
+  useEffect(() => {
+    fetchDiseaseList();
+  }, [selectedCrop, searchKeyword]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -62,23 +119,78 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
       });
     } catch (error) {
       console.error('刷新失败:', error);
-    } finally {
-      setRefreshing(false);
     }
+  };
+
+  const onEndReached = useCallback(() => {
+    if (!isLoading && hasMore) {
+      fetchDiseaseList(true);
+    }
+  }, [isLoading, hasMore]);
+
+  const handleSearch = () => {
+    setSearchKeyword(tempSearchKeyword);
+  };
+
+  const handleCancel = () => {
+    setTempSearchKeyword('');
+    setSearchKeyword('');
   };
 
   const Header: React.FC = () => {
     return (
-      <HStack className="py-6 px-5 items-center justify-between md:px-8 md:pt-9 xl:pt-[90px] lg:pt-[70px] lg:px-[70px] xl:px-[100px] bg-background-100">
-        <VStack space="sm">
-          <Box className="text-typography-900 font-bold text-2xl md:text-3xl lg:text-4xl">
-            <Heading>病害百科</Heading>
-          </Box>
-          <Box className="text-typography-600 text-base md:text-lg lg:text-xl">
-            <Text>探索各类作物病害知识</Text>
-          </Box>
-        </VStack>
-      </HStack>
+      <VStack
+        space="md"
+        className="py-6 px-5 md:px-8 md:pt-9 xl:pt-[90px] lg:pt-[70px] lg:px-[70px] xl:px-[100px] bg-background-100">
+        <HStack className="items-center justify-between">
+          <VStack space="sm">
+            <Box className="text-typography-900 font-bold text-2xl md:text-3xl lg:text-4xl">
+              <Heading>病害百科</Heading>
+            </Box>
+            <Box className="text-typography-600 text-base md:text-lg lg:text-xl">
+              <Text>探索各类作物病害知识</Text>
+            </Box>
+          </VStack>
+          <Select
+            selectedValue={selectedCrop?.toString()}
+            onValueChange={value =>
+              setSelectedCrop(value ? Number(value) : undefined)
+            }>
+            <SelectTrigger variant="outline" size="md">
+              <SelectInput placeholder="选择作物" className="h-12" />
+              <SelectIcon className="mr-3" as={ChevronDownIcon} />
+            </SelectTrigger>
+            <SelectPortal>
+              <SelectBackdrop />
+              <SelectContent>
+                <SelectDragIndicatorWrapper>
+                  <SelectDragIndicator />
+                </SelectDragIndicatorWrapper>
+                <SelectItem label="全部作物" value="" />
+                {crops.map(crop => (
+                  <SelectItem
+                    key={crop.id}
+                    label={crop.name}
+                    value={crop.id.toString()}
+                  />
+                ))}
+              </SelectContent>
+            </SelectPortal>
+          </Select>
+        </HStack>
+        <View style={styles.searchContainer}>
+          <SearchBar
+            placeholder="搜索病害名称"
+            onChangeText={setTempSearchKeyword}
+            value={tempSearchKeyword}
+            containerStyle={styles.searchBarContainer}
+            inputContainerStyle={styles.searchBarInputContainer}
+            onSubmitEditing={handleSearch}
+            onCancel={handleCancel}
+            showCancel
+          />
+        </View>
+      </VStack>
     );
   };
 
@@ -91,7 +203,18 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
       }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }>
+      }
+      onScroll={({nativeEvent}) => {
+        const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
+        const paddingToBottom = 20;
+        if (
+          layoutMeasurement.height + contentOffset.y >=
+          contentSize.height - paddingToBottom
+        ) {
+          onEndReached();
+        }
+      }}
+      scrollEventThrottle={400}>
       <Box className="bg-background-50">
         <Header />
       </Box>
@@ -122,6 +245,16 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
             </GridItem>
           ))}
         </Grid>
+        {isLoading && (
+          <View className="py-4 items-center">
+            <Text>加载中...</Text>
+          </View>
+        )}
+        {!hasMore && diseaseList.length > 0 && (
+          <View className="py-4 items-center">
+            <Text>没有更多数据了</Text>
+          </View>
+        )}
       </Box>
     </ScrollView>
   );
@@ -136,5 +269,21 @@ const EncyclopediaScreen: React.FC<EncyclopediaScreenProps> = props => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  searchContainer: {
+    flex: 1,
+  },
+  searchBarContainer: {
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    padding: 0,
+  },
+  searchBarInputContainer: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+  },
+});
 
 export default EncyclopediaScreen;
