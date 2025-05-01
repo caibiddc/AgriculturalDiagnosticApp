@@ -11,7 +11,7 @@ export interface ProfileStatistics {
   navigation: NavigationProp<ProfileParamList & {CreatePassword: undefined}>;
   data?: {
     history: number;
-    report: number;
+    feedback: number;
   };
 }
 
@@ -23,7 +23,11 @@ const ProfileStatistics: React.FC<ProfileStatistics> = ({navigation, data}) => {
       navigateTo: 'DiagnosisHistory',
       value: data?.history || 0,
     },
-    {label: '上报历史', navigateTo: 'ReportHistory', value: data?.report || 0},
+    {
+      label: '上报历史',
+      navigateTo: 'ReportHistory',
+      value: data?.feedback || 0,
+    },
   ] as const;
 
   return (

@@ -4,7 +4,7 @@ import {MatchResult} from './knowledge';
 
 export type DiagnosisStatistics = {
   history: number;
-  report: number;
+  feedback: number;
 };
 
 // 基础预测类型

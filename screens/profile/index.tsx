@@ -45,7 +45,7 @@ const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
   const [profileData, setProfileData] = useState<ResUserProfile>();
   const [userData, setUserData] = useState<DiagnosisStatistics>({
     history: 0,
-    report: 0,
+    feedback: 0,
   });
 
   const fetchProfile = async () => {
