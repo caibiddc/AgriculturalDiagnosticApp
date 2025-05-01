@@ -16,7 +16,7 @@ export type DiagnosisDetailProps = NativeStackScreenProps<
 >;
 export type FeedbackHistoryProps = NativeStackScreenProps<
   ProfileParamList,
-  'ReportHistory'
+  'FeedbackHistory'
 >;
 export type SystemSettingsProps = NativeStackScreenProps<
   ProfileParamList,

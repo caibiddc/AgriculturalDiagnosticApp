@@ -2,7 +2,7 @@ import ProfileScreen from '@/screens/profile';
 import AppFeedbackScreen from '@/screens/profile/app-feedback';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
 import DiagnosisDetailScreen from '@/screens/profile/diagnosis-history/detail';
-import FeedbackHistoryScreen from '@/screens/profile/report-history';
+import FeedbackHistoryScreen from '@/screens/profile/feedback-history';
 import SystemSettingsScreen from '@/screens/profile/system-setting';
 import UserAgreementScreen from '@/screens/profile/user-agreement';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -13,7 +13,7 @@ export type ProfileParamList = {
   DiagnosisDetail: {
     diagnosisId: number;
   };
-  ReportHistory: undefined;
+  FeedbackHistory: undefined;
   SystemSettings: undefined;
   UserAgreement: undefined;
   AppFeedback: undefined;
@@ -40,7 +40,7 @@ const ProfileNavigator = () => {
         options={{title: '诊断详情'}}
       />
       <Stack.Screen
-        name="ReportHistory"
+        name="FeedbackHistory"
         component={FeedbackHistoryScreen}
         options={{title: '反馈历史'}}
       />
