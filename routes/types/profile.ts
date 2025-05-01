@@ -18,6 +18,10 @@ export type FeedbackHistoryProps = NativeStackScreenProps<
   ProfileParamList,
   'FeedbackHistory'
 >;
+export type FeedbackDetailProps = NativeStackScreenProps<
+  ProfileParamList,
+  'FeedbackDetail'
+>;
 export type SystemSettingsProps = NativeStackScreenProps<
   ProfileParamList,
   'SystemSettings'
