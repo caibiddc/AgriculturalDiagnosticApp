@@ -2,6 +2,7 @@ import ProfileScreen from '@/screens/profile';
 import AppFeedbackScreen from '@/screens/profile/app-feedback';
 import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
 import DiagnosisDetailScreen from '@/screens/profile/diagnosis-history/detail';
+import FeedbackSubmitScreen from '@/screens/profile/diagnosis-history/feedback-submit';
 import FeedbackHistoryScreen from '@/screens/profile/feedback-history';
 import FeedbackDetailScreen from '@/screens/profile/feedback-history/detail';
 import SystemSettingsScreen from '@/screens/profile/system-setting';
@@ -18,6 +19,7 @@ export type ProfileParamList = {
   FeedbackDetail: {
     feedbackId: number;
   };
+  FeedbackSubmit: undefined;
   SystemSettings: undefined;
   UserAgreement: undefined;
   AppFeedback: undefined;
@@ -67,6 +69,11 @@ const ProfileNavigator = () => {
         name="AppFeedback"
         component={AppFeedbackScreen}
         options={{title: '应用反馈'}}
+      />
+      <Stack.Screen
+        name="FeedbackSubmit"
+        component={FeedbackSubmitScreen}
+        options={{title: '反馈提交'}}
       />
     </Stack.Navigator>
   );

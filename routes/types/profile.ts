@@ -22,6 +22,10 @@ export type FeedbackDetailProps = NativeStackScreenProps<
   ProfileParamList,
   'FeedbackDetail'
 >;
+export type FeedbackSubmitScreenProps = NativeStackScreenProps<
+  ProfileParamList,
+  'FeedbackSubmit'
+>;
 export type SystemSettingsProps = NativeStackScreenProps<
   ProfileParamList,
   'SystemSettings'
