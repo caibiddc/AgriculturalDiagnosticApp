@@ -45,6 +45,7 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
   const [hasMore, setHasMore] = useState(true);
   const [crops, setCrops] = useState<Crop[]>([]);
   const [selectedCrop, setSelectedCrop] = useState<number | undefined>();
+  const [selectedCropName, setSelectedCropName] = useState<string>('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [tempSearchKeyword, setTempSearchKeyword] = useState('');
 
@@ -137,6 +138,18 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
     setSearchKeyword('');
   };
 
+  const handleCropChange = (value: string) => {
+    if (value === '') {
+      setSelectedCrop(undefined);
+      setSelectedCropName('');
+    } else {
+      const cropId = Number(value);
+      const crop = crops.find(c => c.id === cropId);
+      setSelectedCrop(cropId);
+      setSelectedCropName(crop?.name || '');
+    }
+  };
+
   const Header: React.FC = () => {
     return (
       <VStack
@@ -153,11 +166,13 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
           </VStack>
           <Select
             selectedValue={selectedCrop?.toString()}
-            onValueChange={value =>
-              setSelectedCrop(value ? Number(value) : undefined)
-            }>
+            onValueChange={handleCropChange}>
             <SelectTrigger variant="outline" size="md">
-              <SelectInput placeholder="选择作物" className="h-12" />
+              <SelectInput
+                placeholder="选择作物"
+                className="h-12"
+                value={selectedCropName || '选择作物'}
+              />
               <SelectIcon className="mr-3" as={ChevronDownIcon} />
             </SelectTrigger>
             <SelectPortal>
