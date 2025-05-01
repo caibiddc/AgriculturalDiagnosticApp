@@ -19,7 +19,9 @@ export type ProfileParamList = {
   FeedbackDetail: {
     feedbackId: number;
   };
-  FeedbackSubmit: undefined;
+  FeedbackSubmit: {
+    diagnosisId: number;
+  };
   SystemSettings: undefined;
   UserAgreement: undefined;
   AppFeedback: undefined;

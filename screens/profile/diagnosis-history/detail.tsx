@@ -42,6 +42,7 @@ import {
   ChevronDownIcon,
   Crop,
   ExternalLink,
+  MessageSquare,
 } from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {FlatList, ScrollView, RefreshControl} from 'react-native';
@@ -486,6 +487,30 @@ const DiagnosisDetailScreen: React.FC<DiagnosisDetailProps> = ({
                   <ButtonText>开始重新诊断</ButtonText>
                 </Button>
               </VStack>
+
+              {/* 反馈入口 */}
+              <Button
+                size="lg"
+                variant="outline"
+                action="secondary"
+                className={clsx(
+                  'h-14 rounded-xl',
+                  'border-primary-200 active:border-primary-500',
+                )}
+                onPress={() =>
+                  navigation.navigate('FeedbackSubmit', {
+                    diagnosisId: diagnosis.id,
+                  })
+                }>
+                <HStack space="sm" className="items-center">
+                  <Icon
+                    as={MessageSquare}
+                    size="md"
+                    className="text-primary-500"
+                  />
+                  <ButtonText>提交反馈</ButtonText>
+                </HStack>
+              </Button>
             </VStack>
           </Box>
           <Button

@@ -29,6 +29,7 @@
     "@gluestack-ui/select": "^0.1.31",
     "@gluestack-ui/spinner": "^0.1.15",
     "@gluestack-ui/switch": "^0.1.27",
+    "@gluestack-ui/textarea": "^0.1.25",
     "@gluestack-ui/toast": "^1.0.9",
     "@hookform/resolvers": "^4.1.2",
     "@legendapp/motion": "^2.4.0",
