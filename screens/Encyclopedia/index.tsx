@@ -78,7 +78,6 @@ const MainContent: React.FC<EncyclopediaScreenProps> = ({navigation}) => {
             <Text>探索各类作物病害知识</Text>
           </Box>
         </VStack>
-        <EncyclopediaFilter />
       </HStack>
     );
   };
