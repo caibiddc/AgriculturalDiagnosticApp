@@ -2,11 +2,16 @@ import RequestHttp from '@/api';
 import {ImagePickerResult} from '@/hooks/useImagePicker';
 import {
   DiagnoseResult,
+  DiagnosisFeedback,
   DiagnosisHistory,
   DiagnosisStatistics,
   DiagnosisSupport,
+  PageData,
+  ReqCreateDiagnosisFeedback,
   ReqDiagnosisHistoryList,
+  ReqPage,
   ReqStartDiagnoseDisease,
+  ReqUpdateDiagnosisFeedback,
   ResDiagnosisHistoryList,
 } from '../interface';
 
@@ -83,4 +88,55 @@ export const deleteDiagnosisHistories = async (params: {
   diagnosisIds: string;
 }) => {
   return RequestHttp.instance.delete<null>(`/diagnosis/history`, params);
+};
+
+// * 获取诊断反馈列表
+export const getDiagnosisFeedbackList = async (
+  params: ReqPage & {status?: string},
+) => {
+  return RequestHttp.instance.get<PageData<DiagnosisFeedback>>(
+    '/diagnosis/feedback/list',
+    params,
+  );
+};
+
+// * 获取诊断反馈详情
+export const getDiagnosisFeedbackDetail = async (id: number | string) => {
+  return RequestHttp.instance.get<DiagnosisFeedback>(
+    `/diagnosis/feedback/${id}`,
+  );
+};
+
+// * 创建诊断反馈
+export const createDiagnosisFeedback = async (
+  diagnosisId: number | string,
+  params: ReqCreateDiagnosisFeedback,
+) => {
+  return RequestHttp.instance.post<DiagnosisFeedback>(
+    `/diagnosis/history/${diagnosisId}/feedback`,
+    params,
+  );
+};
+
+// * 更新诊断反馈
+export const updateDiagnosisFeedback = async (
+  id: number | string,
+  params: ReqUpdateDiagnosisFeedback,
+) => {
+  return RequestHttp.instance.put<DiagnosisFeedback>(
+    `/diagnosis/feedback/${id}`,
+    params,
+  );
+};
+
+// * 删除诊断反馈
+export const deleteDiagnosisFeedback = async (id: number | string) => {
+  return RequestHttp.instance.delete<null>(`/diagnosis/feedback/${id}`);
+};
+
+// * 批量删除诊断反馈
+export const deleteDiagnosisFeedbacks = async (params: {
+  feedbackIds: string;
+}) => {
+  return RequestHttp.instance.delete<null>(`/diagnosis/feedback`, params);
 };

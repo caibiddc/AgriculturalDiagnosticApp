@@ -1,5 +1,5 @@
 import {LogLevel} from '@/enums';
-import {PageData, RemoteService, ReqPage} from '.';
+import {PageData, ReqPage} from '.';
 import {MatchResult} from './knowledge';
 
 export type DiagnosisStatistics = {
@@ -71,12 +71,43 @@ export type DiagnosisLog = {
   createdAt: string;
 };
 
+// 诊断反馈
+export type DiagnosisFeedback = {
+  id: number;
+  diagnosisId: number;
+  diagnosis?: DiagnosisHistory;
+  feedbackContent: string;
+  additionalInfo: Record<string, any>;
+  status: 'pending' | 'processing' | 'resolved' | 'rejected';
+  expertId: number;
+  expertComment: string;
+  correctedResult: Record<string, any>;
+  createdBy: number;
+  updatedBy: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 // 请求类型
 export type ReqDiagnosisHistoryList = ReqPage;
 export type ReqStartDiagnoseDisease = {
   diagnosisId: string | number;
   serviceId: number;
   configId: number;
+};
+export type ReqDiagnosisSupport = {
+  key: string;
+  value: {serviceId: number; configId: number};
+  description: string;
+};
+export type ReqCreateDiagnosisFeedback = {
+  feedbackContent: string;
+  additionalInfo?: Record<string, any>;
+};
+export type ReqUpdateDiagnosisFeedback = {
+  status: 'pending' | 'processing' | 'resolved' | 'rejected';
+  expertComment: string;
+  correctedResult: Record<string, any>;
 };
 
 // 响应类型
@@ -88,4 +119,3 @@ export type DiagnoseResult = {
 };
 export type ResUploadDiagnosisImage = DiagnosisHistory;
 export type ResDiagnosisHistoryList = PageData<DiagnosisHistory>;
-export type ResDiagnosisSupport = RemoteService[];
