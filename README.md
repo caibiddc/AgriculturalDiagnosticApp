@@ -1,97 +1,166 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 农业诊断应用 (Agricultural Diagnostic App)
 
-# Getting Started
+一个基于React Native开发的智能农业诊断应用，帮助农民快速识别和诊断农作物病害。
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 功能特点
 
-## Step 1: Start Metro
+- 🔐 用户认证系统
+- 📱 病害智能诊断
+- 📚 病害百科知识库
+- 👤 个人诊断历史记录
+- 💬 用户反馈系统
+- ⚙️ 系统设置
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 技术栈
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- React Native 0.77.1
+- TypeScript
+- Redux Toolkit
+- React Navigation
+- Gluestack UI
+- NativeWind (TailwindCSS)
+- React Hook Form
+- Axios
 
-```sh
-# Using npm
+## 开始使用
+
+### 环境要求
+
+- Node.js >= 18
+- React Native CLI
+- Android Studio (Android开发)
+- Xcode (iOS开发)
+
+### 安装步骤
+
+1. 克隆项目
+
+```bash
+git clone [项目地址]
+cd AgriculturalDiagnosticApp
+```
+
+2. 安装依赖
+
+```bash
+# 使用npm
+npm install
+
+# 或使用yarn
+yarn install
+```
+
+3. iOS额外设置
+
+```bash
+# 安装CocoaPods依赖
+cd ios
+bundle install
+bundle exec pod install
+cd ..
+```
+
+### 运行项目
+
+1. 启动Metro服务器
+
+```bash
+# 使用npm
 npm start
 
-# OR using Yarn
+# 或使用yarn
 yarn start
 ```
 
-## Step 2: Build and run your app
+2. 运行应用
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Android:
 
-### Android
-
-```sh
-# Using npm
+```bash
 npm run android
-
-# OR using Yarn
+# 或
 yarn android
 ```
 
-### iOS
+iOS:
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+```bash
 npm run ios
-
-# OR using Yarn
+# 或
 yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 项目结构
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```
+src/
+├── screens/          # 页面组件
+├── components/       # 可复用组件
+├── routes/          # 导航配置
+├── store/           # Redux状态管理
+├── services/        # API服务
+├── hooks/           # 自定义Hooks
+├── utils/           # 工具函数
+└── assets/          # 静态资源
+```
 
-## Step 3: Modify your app
+## 主要功能模块
 
-Now that you have successfully run the app, let's make changes!
+### 认证模块
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- 登录/注册
+- 忘记密码
+- 创建密码
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### 首页模块
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+- 快速诊断
+- 诊断历史
+- 功能导航
 
-## Congratulations! :tada:
+### 百科模块
 
-You've successfully run and modified your React Native App. :partying_face:
+- 病害列表
+- 病害详情
+- 搜索功能
 
-### Now what?
+### 个人中心
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+- 用户信息
+- 诊断历史
+- 反馈历史
+- 系统设置
 
-# Troubleshooting
+## 开发指南
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+### 代码规范
 
-# Learn More
+- 使用ESLint进行代码检查
+- 使用Prettier进行代码格式化
+- 遵循TypeScript类型定义
 
-To learn more about React Native, take a look at the following resources:
+### 提交规范
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- feat: 新功能
+- fix: 修复bug
+- docs: 文档更新
+- style: 代码格式
+- refactor: 重构
+- test: 测试
+- chore: 构建过程或辅助工具的变动
+
+## 贡献指南
+
+1. Fork 项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 提交Pull Request
+
+## 许可证
+
+[添加许可证信息]
+
+## 联系方式
+
+[添加联系方式]
