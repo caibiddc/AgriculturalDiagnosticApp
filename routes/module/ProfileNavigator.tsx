@@ -1,0 +1,84 @@
+import ProfileScreen from '@/screens/profile';
+import AppFeedbackScreen from '@/screens/profile/app-feedback';
+import DiagnosisHistoryScreen from '@/screens/profile/diagnosis-history';
+import DiagnosisDetailScreen from '@/screens/profile/diagnosis-history/detail';
+import FeedbackSubmitScreen from '@/screens/profile/diagnosis-history/feedback-submit';
+import FeedbackHistoryScreen from '@/screens/profile/feedback-history';
+import FeedbackDetailScreen from '@/screens/profile/feedback-history/detail';
+import SystemSettingsScreen from '@/screens/profile/system-setting';
+import UserAgreementScreen from '@/screens/profile/user-agreement';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+export type ProfileParamList = {
+  ProfileMain: undefined;
+  DiagnosisHistory: undefined;
+  DiagnosisDetail: {
+    diagnosisId: number;
+  };
+  FeedbackHistory: undefined;
+  FeedbackDetail: {
+    feedbackId: number;
+  };
+  FeedbackSubmit: {
+    diagnosisId: number;
+  };
+  SystemSettings: undefined;
+  UserAgreement: undefined;
+  AppFeedback: undefined;
+};
+
+const Stack = createNativeStackNavigator<ProfileParamList>();
+
+const ProfileNavigator = () => {
+  return (
+    <Stack.Navigator initialRouteName="ProfileMain">
+      <Stack.Screen
+        name="ProfileMain"
+        component={ProfileScreen}
+        options={{title: '个人信息'}}
+      />
+      <Stack.Screen
+        name="DiagnosisHistory"
+        component={DiagnosisHistoryScreen}
+        options={{title: '诊断历史'}}
+      />
+      <Stack.Screen
+        name="DiagnosisDetail"
+        component={DiagnosisDetailScreen}
+        options={{title: '诊断详情'}}
+      />
+      <Stack.Screen
+        name="FeedbackHistory"
+        component={FeedbackHistoryScreen}
+        options={{title: '反馈历史'}}
+      />
+      <Stack.Screen
+        name="FeedbackDetail"
+        component={FeedbackDetailScreen}
+        options={{title: '反馈详情'}}
+      />
+      <Stack.Screen
+        name="SystemSettings"
+        component={SystemSettingsScreen}
+        options={{title: '系统设置'}}
+      />
+      <Stack.Screen
+        name="UserAgreement"
+        component={UserAgreementScreen}
+        options={{title: '用户协议及服务条款'}}
+      />
+      <Stack.Screen
+        name="AppFeedback"
+        component={AppFeedbackScreen}
+        options={{title: '应用反馈'}}
+      />
+      <Stack.Screen
+        name="FeedbackSubmit"
+        component={FeedbackSubmitScreen}
+        options={{title: '反馈提交'}}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export default ProfileNavigator;

@@ -1,2 +1,3 @@
-export * from "./color";
-export * from "./mimeType";
+export * from './color';
+export * from './mimeType';
+export * from './mapper';

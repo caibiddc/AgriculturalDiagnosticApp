@@ -1,23 +1,46 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {localGet, localSet} from '@/utils';
 
+export interface ThemeConfigProp {
+  isDark: boolean;
+}
+
+export interface ApiConfigProp {
+  baseURL: string;
+  protocol: 'http' | 'https';
+}
+
+// 定义菜单状态的类型
 interface GlobalState {
-  sidebar: boolean;
+  themeConfig: ThemeConfigProp;
+  apiConfig: ApiConfigProp;
 }
 
 const initialState: GlobalState = {
-  sidebar: false,
+  themeConfig: {
+    isDark: false,
+  },
+  apiConfig: {
+    baseURL: 'www.mmdxiaoxin.top/api',
+    protocol: 'https',
+  },
 };
 
 const globalSlice = createSlice({
   name: 'global',
   initialState,
   reducers: {
-    setSidebar(state, action: PayloadAction<boolean>) {
-      state.sidebar = action.payload;
+    // 设置主题配置
+    setThemeConfig(state, action: PayloadAction<ThemeConfigProp>) {
+      state.themeConfig = action.payload;
+    },
+    // 设置API配置
+    setApiConfig(state, action: PayloadAction<ApiConfigProp>) {
+      state.apiConfig = action.payload;
+      localSet('api_config', action.payload);
     },
   },
 });
 
-// 导出 actions 和 reducer
-export const {setSidebar} = globalSlice.actions;
+export const {setThemeConfig, setApiConfig} = globalSlice.actions;
 export default globalSlice.reducer;

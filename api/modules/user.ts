@@ -1,51 +1,53 @@
-import http from '@/api';
+import RequestHttp from '@/api';
 import {
   ResUserDetail,
   ResUserList,
   ResUserProfile,
   UserCreateParams,
   UserListParams,
-  UserProfileParams,
+  ReqUpdateProfile,
   UserUpdateParams,
 } from '../interface';
 
 export const getUserList = (data: UserListParams) =>
-  http.get<ResUserList>('/user/list', data, {loading: false});
+  RequestHttp.instance.get<ResUserList>('/user/list', data);
 
 export const getUserProfile = () =>
-  http.get<ResUserProfile>('/user/profile', {}, {loading: false});
+  RequestHttp.instance.get<ResUserProfile>('/user/profile', {});
 
 export const getAvatar = (): Promise<Blob> =>
-  http.get(
+  RequestHttp.instance.get(
     `/user/avatar`,
     {},
-    {loading: false, responseType: 'blob'},
+    {responseType: 'blob'},
   ) as unknown as Promise<Blob>;
 
 export const uploadAvatar = (data: FormData) =>
-  http.post<null>('/user/avatar', data, {loading: false});
+  RequestHttp.instance.post<null>('/user/avatar', data, {
+    headers: {'Content-Type': 'multipart/form-data'},
+  });
 
-export const updateUserProfile = (data: UserProfileParams) =>
-  http.put<null>('/user/profile', data);
+export const updateUserProfile = (data: ReqUpdateProfile) =>
+  RequestHttp.instance.put<null>('/user/profile', data);
 
 export const resetUserPassword = (data: {
   currentPassword: string;
   newPassword: string;
-}) => http.put<null>('/user/reset/password', data, {loading: false});
+}) => RequestHttp.instance.put<null>('/user/reset/password', data);
 
 export const createUser = (data: UserCreateParams) =>
-  http.post<null>('/user/create', data);
+  RequestHttp.instance.post<null>('/user/create', data);
 
 export const getUserById = (id: number | string) =>
-  http.get<ResUserDetail>(`/user/${id}`, {}, {loading: false});
+  RequestHttp.instance.get<ResUserDetail>(`/user/${id}`, {});
 
 export const updateUserById = (id: number | string, data: UserUpdateParams) =>
-  http.put<null>(`/user/${id}`, data, {loading: false});
+  RequestHttp.instance.put<null>(`/user/${id}`, data);
 
 export const deleteUserById = (id: number | string) =>
-  http.delete<null>(`/user/${id}`);
+  RequestHttp.instance.delete<null>(`/user/${id}`);
 
 export const resetUserById = (id: number | string) =>
-  http.put<null>(`/user/${id}/reset/password`);
+  RequestHttp.instance.put<null>(`/user/${id}/reset/password`);
 
-export const logoutApi = () => http.post<null>('/user/logout');
+export const logoutApi = () => RequestHttp.instance.post<null>('/user/logout');

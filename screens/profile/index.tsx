@@ -1,172 +1,253 @@
+import {DiagnosisStatistics, ResUserProfile} from '@/api/interface';
+import {getDiagnosisStatistics} from '@/api/modules';
+import {getAvatar, getUserProfile} from '@/api/modules/user';
 import LogoutAlertDialog from '@/components/dialog/LogoutAlertDialog';
-import {Avatar, AvatarBadge, AvatarImage} from '@/components/ui/avatar';
+import MainLayout from '@/components/layout/MainLayout';
+import ListMenu from '@/components/menu/ListMenu';
+import ProfileModal, {ProfileModalRef} from '@/components/modal/ProfileModal';
+import ProfileStatistics from '@/components/statistics/ProfileStatistics';
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallbackText,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import {Box} from '@/components/ui/box';
 import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
 import {Center} from '@/components/ui/center';
-import {Divider} from '@/components/ui/divider';
-import {Heading} from '@/components/ui/heading';
 import {HStack} from '@/components/ui/hstack';
-import {EditIcon, Icon} from '@/components/ui/icon';
+import {EditIcon} from '@/components/ui/icon';
 import {Text} from '@/components/ui/text';
+import {Toast, ToastTitle, useToast} from '@/components/ui/toast';
 import {VStack} from '@/components/ui/vstack';
 import {ProfileScreenProps} from '@/routes/types';
 import {isWeb} from '@gluestack-ui/nativewind-utils/IsWeb';
 import {
   ChevronRightIcon,
-  GlobeIcon,
-  InboxIcon,
-  LucideIcon,
-  PhoneIcon,
+  CircleHelp,
+  LogOut,
+  MessageSquareMore,
+  RotateCcw,
+  Settings,
 } from 'lucide-react-native';
-import React, {useState} from 'react';
-import {Image, ScrollView} from 'react-native';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import React, {useEffect, useRef, useState} from 'react';
+import {Image, RefreshControl, ScrollView, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
-interface UserStats {
-  friends: string;
-  friendsText: string;
-  followers: string;
-  followersText: string;
-  rewards: string;
-  rewardsText: string;
-  posts: string;
-  postsText: string;
-}
-const userData: UserStats[] = [
-  {
-    friends: '45K',
-    friendsText: 'Friends',
-    followers: '500M',
-    followersText: 'Followers',
-    rewards: '40',
-    rewardsText: 'Rewards',
-    posts: '346',
-    postsText: 'Posts',
-  },
-];
+const MainContent: React.FC<ProfileScreenProps> = ({navigation}) => {
+  const toast = useToast();
 
-interface AccountCardType {
-  iconName: LucideIcon | typeof Icon;
-  subText: string;
-  endIcon: LucideIcon | typeof Icon;
-}
-const accountData: AccountCardType[] = [
-  {
-    iconName: InboxIcon,
-    subText: 'Settings',
-    endIcon: ChevronRightIcon,
-  },
-  {
-    iconName: GlobeIcon,
-    subText: 'Notifications',
-    endIcon: ChevronRightIcon,
-  },
-  {
-    iconName: PhoneIcon,
-    subText: 'Rewards',
-    endIcon: ChevronRightIcon,
-  },
-];
+  const profileRef = useRef<ProfileModalRef>(null);
 
-const MainContent: React.FC = () => {
-  const [openLogoutAlertDialog, setOpenLogoutAlertDialog] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>();
+  const [profileData, setProfileData] = useState<ResUserProfile>();
+  const [userData, setUserData] = useState<DiagnosisStatistics>({
+    history: 0,
+    feedback: 0,
+  });
+
+  const fetchProfile = async () => {
+    try {
+      const profileRes = await getUserProfile();
+      if (profileRes.code !== 200 || !profileRes.data) {
+        throw new Error(profileRes.message);
+      }
+      setProfileData(profileRes.data);
+      const avatarRes = await getAvatar();
+      // 将 Blob 转换为 base64
+      const reader = new FileReader();
+      reader.readAsDataURL(avatarRes);
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+        setProfileData(prev => {
+          if (!prev || !prev.profile) return prev;
+          return {
+            ...prev,
+            profile: {
+              ...prev.profile,
+              avatar: reader.result as string,
+            },
+          };
+        });
+      };
+    } catch (error) {
+      console.log(error);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>用户信息获取失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    }
+  };
+
+  const fetchDiagnosisStatistics = async () => {
+    try {
+      const res = await getDiagnosisStatistics();
+      if (res.code !== 200 || !res.data) {
+        throw new Error(res.message);
+      }
+      setUserData(res.data);
+    } catch (error) {
+      console.log(error);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>诊断统计信息获取失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    }
+  };
+
+  // 处理下拉刷新
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.allSettled([fetchProfile(), fetchDiagnosisStatistics()]);
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="success">
+            <ToastTitle>更新成功！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } catch (error) {
+      toast.show({
+        placement: 'top right',
+        render: ({id}) => (
+          <Toast nativeID={id} variant="solid" action="error">
+            <ToastTitle>刷新失败！</ToastTitle>
+          </Toast>
+        ),
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    fetchDiagnosisStatistics();
+  }, []);
+
   return (
     <VStack className="h-full w-full mb-16 md:mb-0">
+      {/* 退出确认 */}
+      <LogoutAlertDialog
+        openLogoutAlertDialog={openDialog}
+        setOpenLogoutAlertDialog={setOpenDialog}
+      />
+      {/* 编辑信息弹窗 */}
+      <ProfileModal
+        ref={profileRef}
+        onSave={(data, avatar) => {
+          // @ts-ignore
+          setProfileData(prev => {
+            return {
+              ...prev,
+              profile: {
+                ...prev?.profile,
+                ...data,
+              },
+            };
+          });
+          if (avatar) {
+            setImageUrl(avatar);
+          }
+        }}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: isWeb ? 0 : 160,
           flexGrow: 1,
-        }}>
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <VStack className="h-full w-full pb-8" space="2xl">
-          <Box className="relative w-full md:h-[478px] h-[380px]">
-            <Image
-              source={require('@/assets/profile/image2.png')}
-              height={100}
-              width={100}
-              alt="Banner Image"
-            />
+          {/* 信息栏背景 */}
+          <Box className="relative w-full md:h-[478px] h-[380px] overflow-hidden">
+            <View className="absolute inset-0">
+              <LinearGradient
+                colors={['#f2f2f2', '#cdcbcc', '#999999']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0.8,
+                }}
+              />
+              {isWeb && (
+                <View
+                  className="absolute inset-0"
+                  style={
+                    {
+                      backgroundColor: 'transparent',
+                      backgroundImage: `repeating-linear-gradient(
+                      60deg,
+                      rgba(242, 242, 242, 0.1) 0px,
+                      rgba(242, 242, 242, 0.1) 1px,
+                      transparent 1px,
+                      transparent 75px
+                    )`,
+                    } as any
+                  }
+                />
+              )}
+            </View>
           </Box>
-          <HStack className="absolute pt-6 px-10 hidden md:flex">
-            <Text className="text-typography-900 font-roboto">
-              home &gt; {` `}
-            </Text>
-            <Text className="font-semibold text-typography-900 ">profile</Text>
-          </HStack>
           <Center className="absolute md:mt-14 mt-6 w-full md:px-10 md:pt-6 pb-4">
+            {/* 头像及个人信息 */}
             <VStack space="lg" className="items-center">
               <Avatar size="2xl" className="bg-primary-600">
                 <AvatarImage
                   alt="Profile Image"
                   style={{width: '100%', height: '100%'}}
-                  source={require('@/assets/profile/image.png')}
+                  source={{uri: imageUrl}}
                 />
-                <AvatarBadge />
+                {!imageUrl && (
+                  <AvatarFallbackText>
+                    {profileData?.username}
+                  </AvatarFallbackText>
+                )}
+                {imageUrl && <AvatarBadge />}
               </Avatar>
               <VStack className="gap-1 w-full items-center">
                 <Text size="2xl" className="font-roboto text-dark">
-                  mmdxiaoxin
+                  {profileData?.username}
                 </Text>
                 <Text className="font-roboto text-sm text-typograpphy-700">
-                  中国
+                  {profileData?.profile?.address}
                 </Text>
               </VStack>
-              <>
-                {userData.map((item, index) => {
-                  return (
-                    <HStack className="items-center gap-1" key={index}>
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold justify-center items-center">
-                          {item.friends}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.friendsText}
-                        </Text>
-                      </VStack>
-                      <Divider orientation="vertical" className="h-10" />
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold">
-                          {item.followers}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.followersText}
-                        </Text>
-                      </VStack>
-                      <Divider orientation="vertical" className="h-10" />
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold">
-                          {item.rewards}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.rewardsText}
-                        </Text>
-                      </VStack>
-                      <Divider orientation="vertical" className="h-10" />
-                      <VStack className="py-3 px-4 items-center" space="xs">
-                        <Text className="text-dark font-roboto font-semibold">
-                          {item.posts}
-                        </Text>
-                        <Text className="text-dark text-xs font-roboto">
-                          {item.postsText}
-                        </Text>
-                      </VStack>
-                    </HStack>
-                  );
-                })}
-              </>
+              {/* 数据统计组件 */}
+              <ProfileStatistics navigation={navigation} data={userData} />
+              {/* 编辑信息按钮 */}
               <Button
                 variant="outline"
                 action="secondary"
                 onPress={() => {
-                  // setShowModal(true)
+                  if (profileRef.current) {
+                    profileRef.current.openModal(profileData);
+                  }
                 }}
                 className="gap-3 relative">
-                <ButtonText className="text-dark">Edit Profile</ButtonText>
+                <ButtonText className="text-dark">编辑信息</ButtonText>
                 <ButtonIcon as={EditIcon} />
               </Button>
             </VStack>
           </Center>
           <VStack className="mx-6" space="2xl">
+            {/* 专家问诊 */}
             <HStack
               className="py-5 px-6 border rounded-xl border-border-300 justify-between items-center"
               space="2xl">
@@ -180,89 +261,83 @@ const MainContent: React.FC = () => {
                 </Box>
                 <VStack>
                   <Text className="text-typography-900 text-lg" size="lg">
-                    Invite & get rewards
+                    专家问诊
                   </Text>
                   <Text className="font-roboto text-sm md:text-[16px]">
-                    Your code r45dAsdeK8
+                    对系统智能诊断不满意？
                   </Text>
                 </VStack>
               </HStack>
               <Button className="p-0 md:py-2 md:px-4 bg-background-0 active:bg-background-0 md:bg-background-900 ">
                 <ButtonText className="md:text-typography-0 text-typography-800 text-sm">
-                  Invite
+                  联系专家
                 </ButtonText>
               </Button>
             </HStack>
-            <Heading className="font-roboto" size="xl">
-              Account
-            </Heading>
-            <VStack className="py-2 px-4 border rounded-xl border-border-300 justify-between items-center">
-              {accountData.map((item, index) => {
-                return (
-                  <React.Fragment key={index}>
-                    <HStack
-                      space="2xl"
-                      className="justify-between items-center w-full flex-1 py-3 px-2">
-                      <HStack className="items-center" space="md">
-                        <Icon as={item.iconName} className="stroke-[#747474]" />
-                        <Text size="lg">{item.subText}</Text>
-                      </HStack>
-                      <Icon as={item.endIcon} />
-                    </HStack>
-                    {accountData.length - 1 !== index && (
-                      <Divider className="my-1" />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </VStack>
-            <Heading className="font-roboto" size="xl">
-              Preferences
-            </Heading>
-            <VStack className="py-2 px-4 border rounded-xl border-border-300 justify-between items-center">
-              {accountData.map((item, index) => {
-                return (
-                  <React.Fragment key={index}>
-                    <HStack
-                      space="2xl"
-                      className="justify-between items-center w-full flex-1 py-3 px-2"
-                      key={index}>
-                      <HStack className="items-center" space="md">
-                        <Icon as={item.iconName} className="stroke-[#747474]" />
-                        <Text size="lg">{item.subText}</Text>
-                      </HStack>
-                      <Icon as={item.endIcon} />
-                    </HStack>
-                    {accountData.length - 1 !== index && (
-                      <Divider className="my-1" />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </VStack>
+            {/* 个人账户菜单 */}
+            <ListMenu
+              title="个人账户"
+              items={[
+                {
+                  iconName: Settings,
+                  subText: '系统设置',
+                  endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('SystemSettings');
+                  },
+                },
+                {
+                  iconName: RotateCcw,
+                  subText: '修改密码',
+                  endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('CreatePassword');
+                  },
+                },
+                {
+                  iconName: LogOut,
+                  subText: '退出登陆',
+                  endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    setOpenDialog(true);
+                  },
+                },
+              ]}
+            />
+            {/* 联系我们菜单 */}
+            <ListMenu
+              title="联系我们"
+              items={[
+                {
+                  iconName: CircleHelp,
+                  subText: '用户协议及服务条款',
+                  endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('UserAgreement');
+                  },
+                },
+                {
+                  iconName: MessageSquareMore,
+                  subText: '应用反馈',
+                  endIcon: ChevronRightIcon,
+                  onPress: () => {
+                    navigation.navigate('AppFeedback');
+                  },
+                },
+              ]}
+            />
           </VStack>
-          <Button
-            onPress={() => {
-              setOpenLogoutAlertDialog(true);
-            }}>
-            <ButtonText className="font-medium">退出登陆</ButtonText>
-          </Button>
         </VStack>
-
-        <LogoutAlertDialog
-          openLogoutAlertDialog={openLogoutAlertDialog}
-          setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
-        />
       </ScrollView>
     </VStack>
   );
 };
 
-const ProfileScreen: React.FC<ProfileScreenProps> = () => {
+const ProfileScreen: React.FC<ProfileScreenProps> = props => {
   return (
-    <DashboardLayout title="个人信息">
-      <MainContent />
-    </DashboardLayout>
+    <MainLayout>
+      <MainContent {...props} />
+    </MainLayout>
   );
 };
 
