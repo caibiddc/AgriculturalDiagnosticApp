@@ -15,6 +15,7 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import {AxiosCanceler} from './helper/axiosCancel';
+import {resolveApiBaseURL} from './endpoint';
 import {checkStatus} from './helper/checkStatus';
 import {
   ApiResponse,
@@ -26,13 +27,7 @@ import {
   PutConfig,
 } from './interface';
 
-const getBaseURL = () => {
-  const {apiConfig} = store.getState().global;
-  if (!apiConfig) {
-    return 'https://www.mmdxiaoxin.top/api';
-  }
-  return `${apiConfig.protocol}://${apiConfig.baseURL}`;
-};
+const getBaseURL = () => resolveApiBaseURL(store.getState().global.apiConfig);
 
 const config = {
   timeout: 10000,
@@ -57,6 +52,8 @@ class RequestHttp {
 
     this.service.interceptors.request.use(
       async (config: CustomInternalAxiosRequestConfig) => {
+        // Read current server setting on every request, including after AsyncStorage hydration.
+        config.baseURL = getBaseURL();
         config.cancel ??= true;
         config.cancel && axiosCanceler.addPending(config);
         const token = store.getState().auth.token;
@@ -103,6 +100,9 @@ class RequestHttp {
       },
       async (error: CustomAxiosError) => {
         const {response} = error;
+        if (error.config) {
+          axiosCanceler.removePending(error.config);
+        }
         // 请求取消单独判断，不需要提示错误信息
         if (error.message === 'canceled') {
           return Promise.reject(error);
@@ -149,7 +149,7 @@ class RequestHttp {
             });
           }
           // 其他状态码错误
-          error.config.toast &&
+          error.config?.toast &&
             // @ts-ignore
             checkStatus(response.status, this.toast, response?.data?.message);
           console.log(response.data);
@@ -177,6 +177,10 @@ class RequestHttp {
   }
 
   static initialize(toast: ReturnType<typeof useToast>) {
+    if (RequestHttp.instance) {
+      RequestHttp.instance.toast = toast;
+      return RequestHttp.instance;
+    }
     if (!RequestHttp.instance) {
       RequestHttp.instance = new RequestHttp(
         {
