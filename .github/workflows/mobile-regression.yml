@@ -1,0 +1,23 @@
+name: Mobile regression
+on:
+  push:
+    branches: [fix/mobile-reliability]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Focused request lifecycle tests
+        run: npm test -- --runInBand --runTestsByPath __tests__/apiHelpers.test.ts
+      - name: Full mobile Jest suite
+        run: npm test -- --runInBand
