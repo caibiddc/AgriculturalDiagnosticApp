@@ -46,7 +46,7 @@ const loadInitialData = async () => {
       isAuthenticated: false,
       authRouter: '',
       authButtons: '',
-      apiConfig: defaultApiConfig,
+      apiConfig: savedApiConfig || defaultApiConfig,
     };
   }
 };
