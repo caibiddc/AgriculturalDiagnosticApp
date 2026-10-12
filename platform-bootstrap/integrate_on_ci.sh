@@ -5,6 +5,7 @@ test "$GITHUB_ACTIONS" = "true" || { echo "Expected GitHub Actions" >&2; exit 2;
 test "$(git branch --show-current)" = "chore/platform-migration-preparation" || exit 2
 git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+git fetch origin "+refs/heads/main:refs/remotes/origin/main"
 git switch -c integration/full-platform
 
 # Keep existing mobile history, move current mobile files into apps/mobile.
@@ -37,7 +38,7 @@ cp platform-bootstrap/verify_repository.sh scripts/verify_repository.sh
 cp platform-bootstrap/nginx.conf.template deploy/nginx/agri-site.conf.template
 {
   printf '# source\tbranch\tsha\n'
-  printf 'mobile\tmain\t%s\n' "$(git rev-parse main)"
+  printf 'mobile\tmain\t%s\n' "$(git rev-parse refs/remotes/origin/main)"
   printf 'web\tmain\t%s\n' "$(git rev-parse refs/remotes/web/main)"
   printf 'backend\tmaster\t%s\n' "$(git rev-parse refs/remotes/backend/master)"
   printf 'ai\tmaster\t%s\n' "$(git rev-parse refs/remotes/ai/master)"
