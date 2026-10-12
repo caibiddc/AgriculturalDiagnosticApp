@@ -1,0 +1,35 @@
+name: Integrate agricultural platform (safe branch)
+on:
+  push:
+    branches: [chore/platform-migration-preparation]
+    paths:
+      - "platform-bootstrap/**"
+      - ".github/workflows/integrate-platform.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/platform-migration-preparation
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Consolidate original Git histories and verify
+        run: |
+          bash platform-bootstrap/integrate_on_ci.sh
+      - name: Push new integration branch (never force)
+        run: |
+          git push --set-upstream origin integration/full-platform
+      - name: Open draft PR (best effort)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create --draft --base main --head integration/full-platform \
+            --title "chore: integrate web, mobile, backend and AI with original Git histories" \
+            --body "Automated four-repository non-squash Git history consolidation. Includes minimum config fixes. **Review licensing, secrets, builds, GPU tests, and university leak-scan requirements before merging.**" \
+            || echo "PR creation unavailable; integration branch remains published."
